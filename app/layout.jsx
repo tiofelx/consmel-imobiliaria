@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: "if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }"
+            __html: "(function(){if('scrollRestoration' in history){history.scrollRestoration='manual';}try{var nav=performance.getEntriesByType&&performance.getEntriesByType('navigation');var type=nav&&nav[0]&&nav[0].type;if(type==='reload'){window.scrollTo(0,0);}}catch(e){}})();"
           }}
         />
       </head>
