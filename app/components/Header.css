@@ -6,9 +6,9 @@
   z-index: var(--z-sticky);
   transition:
     opacity 460ms cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 360ms ease,
-    border-color 360ms ease,
-    box-shadow 360ms ease;
+    background-color 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   will-change: opacity;
