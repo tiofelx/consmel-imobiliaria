@@ -10,12 +10,21 @@ import { usePathname } from 'next/navigation';
 export default function Header({ user }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerOpacity, setHeaderOpacity] = useState(1);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(false);
   const [headerStyle, setHeaderStyle] = useState('solid'); // 'solid' | 'translucent'
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
   const opacityRef = useRef(1);
   const pathname = usePathname();
   const isHome = pathname === '/';
+
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      setIsHeaderVisible(true);
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, []);
 
   // Scroll-based opacity and style effect
   useEffect(() => {
@@ -81,7 +90,8 @@ export default function Header({ user }) {
   };
 
   // Determine if header should be interactive (clickable)
-  const isClickable = headerOpacity > 0.1;
+  const effectiveOpacity = isHeaderVisible ? headerOpacity : 0;
+  const isClickable = effectiveOpacity > 0.1;
 
   // Determine header class based on style state
   const getHeaderClass = () => {
@@ -93,7 +103,7 @@ export default function Header({ user }) {
     <header
       className={`header ${getHeaderClass()}`}
       style={{
-        opacity: headerOpacity,
+        opacity: effectiveOpacity,
         pointerEvents: isClickable ? 'auto' : 'none'
       }}
     >
@@ -105,6 +115,7 @@ export default function Header({ user }) {
             alt="Consmel Imobiliária"
             width={320}
             height={115}
+            sizes="(max-width: 768px) 194px, 320px"
             priority
             className="logo-image"
           />
