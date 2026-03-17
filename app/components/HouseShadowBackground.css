@@ -8,14 +8,7 @@
     bottom: 0;
     height: 100%;
     overflow: hidden;
-    background-color: #1f3654;
-    background: linear-gradient(to bottom,
-            #1e3a5f 0%,
-            #33506f 14%,
-            #6b4a44 34%,
-            #9b4f35 52%,
-            #c15b32 68%,
-            #d06a37 100%);
+    background: transparent;
     z-index: 0;
 }
 
