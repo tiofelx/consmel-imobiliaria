@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import './Header.css';
 
@@ -9,38 +9,9 @@ import { usePathname } from 'next/navigation';
 
 export default function Header({ user }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [headerStyle, setHeaderStyle] = useState('solid'); // 'solid' | 'translucent'
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const lastScrollY = useRef(0);
   const pathname = usePathname();
   const isHome = pathname === '/';
-
-  // Scroll-based style effect
-  useEffect(() => {
-    const initialScrollY = window.scrollY;
-    lastScrollY.current = initialScrollY;
-
-    // Prevent class/style jump when page restores scroll position on reload.
-    if (initialScrollY <= 20) {
-      setHeaderStyle('solid');
-    } else {
-      setHeaderStyle('translucent');
-    }
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY <= 20) {
-        setHeaderStyle('solid');
-      } else {
-        setHeaderStyle('translucent');
-      }
-
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -56,7 +27,7 @@ export default function Header({ user }) {
   // Determine header class based on style state
   const getHeaderClass = () => {
     if (!isHome) return 'header-solid';
-    return headerStyle === 'solid' ? 'header-solid-home' : 'header-transparent';
+    return 'header-solid-home';
   };
 
   return (
