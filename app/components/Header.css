@@ -50,8 +50,8 @@
   /* Increased side padding for balance */
   max-width: 100%;
   margin: 0;
-  height: 90px;
-  min-height: 90px;
+  height: 70px;
+  min-height: 70px;
 }
 
 /* Logo Styles */
@@ -72,8 +72,8 @@
 }
 
 .logo-image {
-  width: 320px;
-  height: 115px;
+  width: 194px;
+  height: 70px;
   max-width: none;
   object-fit: contain;
   aspect-ratio: 320 / 115;
@@ -339,8 +339,16 @@
 /* Desktop (1024px and up) */
 @media (min-width: 1024px) {
   .header-container {
+    height: 90px;
+    min-height: 90px;
     padding-top: var(--space-5);
     padding-bottom: var(--space-5);
+  }
+
+  .logo-image {
+    width: 320px;
+    height: 115px;
+    max-width: 320px;
   }
 
   .nav-link {

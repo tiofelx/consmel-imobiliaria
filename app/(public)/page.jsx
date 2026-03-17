@@ -36,19 +36,6 @@ export default function Home() {
     fetchProperties();
   }, []);
 
-  // Stabilize reload behavior: avoid browser restoring mid-page position
-  // before all dynamic sections settle, which causes visible jump on iOS.
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const navEntry = performance.getEntriesByType('navigation')[0];
-    const isReload = navEntry && navEntry.type === 'reload';
-
-    if (isReload) {
-      window.scrollTo(0, 0);
-    }
-  }, []);
-
   // activeFilters state
   const [activeFilters, setActiveFilters] = useState({
     transactionType: '',

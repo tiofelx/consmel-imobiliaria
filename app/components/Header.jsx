@@ -41,8 +41,8 @@ export default function Header({ user }) {
           <Image
             src="/images/logo.png"
             alt="Consmel Imobiliária"
-            width={320}
-            height={115}
+            width={194}
+            height={70}
             priority
             className="logo-image"
           />
