@@ -2,6 +2,8 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import './HouseShadowBackground.css';
 import { skyCloudsSvgMarkup } from './skySilhouetteSvg';
 
+const BASE_SKYLINE_GRADIENT = 'linear-gradient(to bottom, #1e3a5f 0%, #33506f 14%, #6b4a44 34%, #9b4f35 52%, #c15b32 68%, #d06a37 100%)';
+
 const SMALL_STAR_VIEWBOX = {
     minX: 0,
     maxX: 1440,
@@ -415,7 +417,13 @@ const HouseShadowBackground = memo(() => {
     }, [cloudLoopDistance]);
 
     return (
-        <div className="house-shadow-container">
+        <div
+            className="house-shadow-container"
+            style={{
+                backgroundColor: '#1f3654',
+                backgroundImage: BASE_SKYLINE_GRADIENT
+            }}
+        >
             <div className="sky-layer">
                 {/* Decorative Stars */}
                 <div className="star" style={{ top: '6%', left: '12%', width: '2px', height: '2px', animationDelay: '0s' }}></div>
