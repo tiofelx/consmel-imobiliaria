@@ -19,11 +19,11 @@ export default function Header({ user }) {
   const isHome = pathname === '/';
 
   useEffect(() => {
-    const frameId = window.requestAnimationFrame(() => {
+    const fadeInTimer = window.setTimeout(() => {
       setIsHeaderVisible(true);
-    });
+    }, 70);
 
-    return () => window.cancelAnimationFrame(frameId);
+    return () => window.clearTimeout(fadeInTimer);
   }, []);
 
   // Scroll-based opacity and style effect
@@ -38,7 +38,7 @@ export default function Header({ user }) {
       const scrollDelta = currentScrollY - previousScrollY;
 
       // Ignore micro-jitter from momentum/restored scrolling.
-      if (Math.abs(scrollDelta) < 2) {
+      if (Math.abs(scrollDelta) < 3) {
         lastScrollY.current = currentScrollY;
         return;
       }
@@ -55,7 +55,7 @@ export default function Header({ user }) {
       else if (isScrollingUp) {
         setHeaderStyle('translucent');
         // Increase opacity based on scroll distance
-        const opacityIncrease = Math.abs(scrollDelta) / 100; // Adjust speed here
+        const opacityIncrease = Math.abs(scrollDelta) / 220;
         opacityRef.current = Math.min(1, opacityRef.current + opacityIncrease);
         setHeaderOpacity(opacityRef.current);
       }
@@ -66,7 +66,7 @@ export default function Header({ user }) {
           setHeaderStyle('solid');
         }
         // Decrease opacity based on scroll distance
-        const opacityDecrease = Math.abs(scrollDelta) / 150; // Adjust speed here
+        const opacityDecrease = Math.abs(scrollDelta) / 260;
         opacityRef.current = Math.max(0, opacityRef.current - opacityDecrease);
         setHeaderOpacity(opacityRef.current);
       }
