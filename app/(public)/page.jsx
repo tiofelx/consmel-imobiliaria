@@ -13,6 +13,8 @@ import SmartSearchFilter from '../components/SmartSearchFilter';
 import { searchProperties } from '@/lib/properties';
 import './page.css';
 
+const heroFallbackGradient = 'linear-gradient(to bottom, #1e3a5f 0%, #33506f 14%, #6b4a44 34%, #9b4f35 52%, #c15b32 68%, #d06a37 100%)';
+
 export default function Home() {
   // State for properties and loading
   const [properties, setProperties] = useState([]);
@@ -80,8 +82,20 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-background">
+      <section
+        className="hero"
+        style={{
+          minHeight: '100svh',
+          backgroundColor: '#1f3654'
+        }}
+      >
+        <div
+          className="hero-background"
+          style={{
+            backgroundColor: '#1f3654',
+            backgroundImage: heroFallbackGradient
+          }}
+        >
           <HouseShadowBackground />
           <div className="hero-overlay"></div>
         </div>

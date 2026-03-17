@@ -4,6 +4,7 @@ import './Footer.css';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const showConsultoria = false;
 
   return (
     <footer className="footer">
@@ -52,7 +53,7 @@ export default function Footer() {
             <ul className="footer-links">
               <li><Link href="/imoveis?tipo=venda">Compra de Imóveis</Link></li>
               <li><Link href="/imoveis?tipo=aluguel">Aluguel de Imóveis</Link></li>
-              <li><Link href="/contato">Avaliação de Imóveis</Link></li>
+              {showConsultoria && <li><Link href="/contato">Consultoria</Link></li>}
             </ul>
           </div>
 
