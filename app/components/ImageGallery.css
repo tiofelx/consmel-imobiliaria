@@ -1,0 +1,364 @@
+.image-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background-color: #fff;
+  border-radius: 0;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.gallery-main {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: var(--color-gray-900);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-height: 550px;
+  cursor: zoom-in;
+  box-shadow: var(--shadow-md);
+}
+
+.gallery-image {
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.gallery-main:hover .gallery-image {
+  transform: scale(1.02);
+}
+
+/* Watermark */
+.watermark-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75%;
+  height: auto;
+  z-index: 20;
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.modal-watermark {
+  opacity: 0.35;
+  width: 85%;
+}
+
+/* Expand Overlay */
+.expand-overlay {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 25;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.gallery-main:hover .expand-overlay {
+  opacity: 1;
+}
+
+/* Room Label Badge */
+.room-label-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  z-index: 30;
+  border-radius: var(--radius-sm);
+}
+
+/* Image Counter */
+.image-counter {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  border-radius: 20px;
+  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  color: white;
+  font-size: 14px;
+  z-index: 30;
+}
+
+/* Navigation Buttons */
+.gallery-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-secondary);
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+  z-index: 10;
+  opacity: 0;
+}
+
+.gallery-main:hover .gallery-nav-btn {
+  opacity: 1;
+}
+
+.gallery-nav-btn:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.1);
+  color: var(--color-primary);
+}
+
+.prev-btn {
+  left: var(--space-4);
+}
+
+.next-btn {
+  right: var(--space-4);
+}
+
+/* Thumbnails */
+.gallery-thumbnails {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding: var(--space-2) 4px;
+  scrollbar-width: thin;
+  justify-content: flex-start;
+}
+
+.thumbnail-btn {
+  flex: 0 0 100px;
+  height: 70px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  opacity: 0.7;
+  transition: all 0.2s;
+}
+
+.thumbnail-btn:hover {
+  opacity: 1;
+}
+
+.thumbnail-btn.active {
+  border-color: var(--color-primary);
+  opacity: 1;
+  box-shadow: 0 0 0 2px rgba(232, 93, 44, 0.2);
+}
+
+.thumbnail-image {
+  object-fit: cover;
+}
+
+/* Modal Lightbox - RENAMED to avoid conflicts */
+.lightbox-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.lightbox-modal-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 2010;
+  border: none;
+  cursor: pointer;
+}
+
+.lightbox-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.lightbox-modal-content {
+  position: relative;
+  width: 90%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-modal-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.lightbox-modal-image {
+  object-fit: contain;
+}
+
+.lightbox-modal-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 2005;
+  border: none;
+  cursor: pointer;
+}
+
+.lightbox-modal-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-prev {
+  left: -80px;
+}
+
+.modal-next {
+  right: -80px;
+}
+
+.lightbox-modal-info {
+  position: absolute;
+  bottom: -60px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  font-size: 14px;
+}
+
+.lightbox-modal-label {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 16px;
+  border-radius: var(--radius-sm);
+}
+
+.lightbox-modal-counter {
+  opacity: 0.8;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 1200px) {
+  .modal-prev {
+    left: 16px;
+  }
+
+  .modal-next {
+    right: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-main {
+    aspect-ratio: 4 / 3;
+    /* Taller on mobile for better visibility */
+    max-height: 400px;
+    border-radius: 0;
+    /* Full width feel */
+  }
+
+  .expand-overlay {
+    opacity: 1;
+    top: 12px;
+    left: 12px;
+  }
+
+  .gallery-nav-btn {
+    opacity: 1;
+    width: 36px;
+    height: 36px;
+  }
+
+  .thumbnail-btn {
+    flex: 0 0 80px;
+    height: 60px;
+  }
+
+  .lightbox-modal-content {
+    width: 100%;
+    height: 70%;
+  }
+
+  .lightbox-modal-nav-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .lightbox-modal-close {
+    top: 16px;
+    right: 16px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

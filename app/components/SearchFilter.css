@@ -1,0 +1,132 @@
+.search-filter-card {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.search-filter-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.search-filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Transaction Type Buttons - Large and Prominent */
+.transaction-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.transaction-btn {
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  border: 2px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-transform: capitalize;
+}
+
+.transaction-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.transaction-btn.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--text-inverse);
+}
+
+/* Filter Fields - Vertical Layout */
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.filter-field label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.filter-field select {
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-primary);
+  border: 2px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+  padding-right: var(--space-10);
+}
+
+.filter-field select:hover {
+  border-color: var(--color-primary);
+}
+
+.filter-field select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-subtle);
+}
+
+/* Submit Button - Full Width Green */
+.btn-search-submit {
+  width: 100%;
+  padding: var(--space-4);
+  background: var(--color-primary);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  margin-top: var(--space-2);
+}
+
+.btn-search-submit:hover {
+  background: var(--color-primary-dark);
+  color: var(--text-inverse);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-search-submit:active {
+  transform: translateY(0);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .search-filter-card {
+    max-width: 100%;
+    padding: var(--space-6);
+  }
+  
+  .transaction-btn {
+    font-size: var(--font-size-base);
+    padding: var(--space-3) var(--space-4);
+  }
+}

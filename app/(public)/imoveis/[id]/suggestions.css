@@ -1,0 +1,93 @@
+/* Suggestion Cards */
+.suggestion-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow request */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.suggestion-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.suggestion-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+}
+
+.suggestion-image {
+  object-fit: cover;
+}
+
+.suggestion-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.suggestion-type {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.suggestion-price {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.suggestion-location {
+  font-size: 0.875rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.suggestion-whatsapp-btn {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #25D366;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.suggestion-whatsapp-btn:hover {
+  background-color: #128C7E;
+}
+
+.suggestions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+/* Ensure items have consistent width but don't stretch too wide */
+.suggestions-grid > * {
+  flex: 0 1 320px; /* Base width */
+  min-width: 280px;
+  max-width: 350px;
+  width: 100%;
+}

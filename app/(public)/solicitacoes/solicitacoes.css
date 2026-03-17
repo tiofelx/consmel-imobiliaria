@@ -1,0 +1,64 @@
+.request-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--bg-primary);
+  padding: var(--space-6); /* Reduced padding */
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Unified Form Grid - Ultra Compact */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.form-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-2);
+  text-align: center;
+}
+
+/* Compact Inputs and Labels */
+.request-form .form-group label {
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+.request-form .form-input,
+.request-form .form-textarea {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+}
+
+/* Container Padding */
+.request-container {
+  padding: var(--space-5);
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .span-2 { grid-column: span 2; }
+}
+
+@media (min-width: 1024px) {
+  .form-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .span-md-1 { grid-column: span 1; }
+  .span-md-2 { grid-column: span 2; }
+  .span-full { grid-column: 1 / -1; }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}

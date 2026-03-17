@@ -1,0 +1,136 @@
+/* Page Hero styles moved to globals.css */
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  align-items: center;
+  /* Center content vertically */
+  margin-top: var(--space-12);
+  /* Lowered content as requested */
+}
+
+.content-column h2 {
+  margin-bottom: var(--space-6);
+}
+
+.content-column p {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-5);
+  line-height: var(--line-height-relaxed);
+}
+
+.highlight-box {
+  background: var(--color-primary-subtle);
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  border-left: 4px solid var(--color-primary);
+  max-width: 250px;
+  /* Reduced width per user feedback */
+  aspect-ratio: 1 / 1;
+  /* Make it square */
+  display: flex;
+  /* Adjust content alignment */
+  flex-direction: column;
+  justify-content: center;
+  margin-inline: auto;
+  /* Center card horizontally in its grid column */
+}
+
+.highlight-box h3 {
+  color: var(--color-primary);
+  margin-bottom: var(--space-3);
+}
+
+.mvv-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+}
+
+.mvv-card {
+  background: var(--bg-primary);
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.mvv-icon {
+  width: 80px;
+  height: 80px;
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-6);
+}
+
+.mvv-card h3 {
+  margin-bottom: var(--space-4);
+}
+
+.mvv-card p,
+.mvv-card ul {
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.mvv-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.mvv-card li {
+  padding-left: var(--space-6);
+  position: relative;
+  margin-bottom: var(--space-2);
+}
+
+.mvv-card li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.diferencial-item {
+  padding: var(--space-8);
+  border-left: 3px solid var(--color-gray-200);
+  transition: border-color var(--transition-base);
+}
+
+.diferencial-item:hover {
+  border-left-color: var(--color-primary);
+}
+
+.diferencial-number {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  font-family: var(--font-family-display);
+  color: var(--color-primary);
+  /* Use primary color */
+  opacity: 0.4;
+  /* Reduced opacity for watermark effect but visible */
+}
+
+.diferencial-item h3 {
+  margin-bottom: var(--space-3);
+}
+
+.diferencial-item p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .content-grid {
+    grid-template-columns: 1.5fr 1fr;
+  }
+
+  .mvv-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

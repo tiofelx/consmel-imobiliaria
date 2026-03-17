@@ -1,0 +1,134 @@
+.filters-section {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.filters-bar {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filter-btn {
+  padding: var(--space-3) var(--space-6);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 2px solid var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.filter-btn.active {
+  background: var(--color-primary);
+  color: var(--text-inverse);
+  border-color: var(--color-primary);
+}
+
+.results-header {
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--color-gray-200);
+}
+
+.results-count {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.no-results {
+  text-align: center;
+  padding: var(--space-20) var(--space-8);
+  color: var(--text-secondary);
+}
+
+.no-results svg {
+  margin: 0 auto var(--space-6);
+  opacity: 0.3;
+}
+
+.no-results h3 {
+  margin-bottom: var(--space-3);
+  color: var(--text-primary);
+}
+
+.no-results p {
+  margin-bottom: 0;
+}
+
+/* Centered Properties Grid */
+.properties-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.properties-grid>* {
+  width: 100%;
+  max-width: 400px;
+}
+
+@media (min-width: 768px) {
+  .properties-grid>* {
+    width: calc((100% - var(--space-6)) / 2);
+    max-width: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .properties-grid>* {
+    width: calc((100% - (2 * var(--space-6))) / 3);
+  }
+}
+
+/* Dynamic Page Hero Banners */
+.page-hero-dynamic {
+  position: relative;
+  padding: var(--space-20) 0 var(--space-16);
+  text-align: center;
+  color: var(--text-inverse);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  /* Parallax feel */
+}
+
+/* Default / Todos */
+.hero-todos {
+  background-image: linear-gradient(rgba(30, 58, 95, 0.85), rgba(232, 93, 44, 0.85)), url('/images/recepcao.png');
+}
+
+/* Venda */
+.hero-venda {
+  /* Using recepcao-2.png (Sale) */
+  background-image: linear-gradient(rgba(30, 58, 95, 0.8), rgba(232, 93, 44, 0.7)), url('/images/recepcao-2.png');
+}
+
+/* Aluguel */
+.hero-aluguel {
+  /* Using recepcao.png (Rent) */
+  background-image: linear-gradient(rgba(30, 58, 95, 0.8), rgba(232, 93, 44, 0.7)), url('/images/recepcao.png');
+}
+
+.page-hero-dynamic h1 {
+  color: var(--text-inverse);
+  margin-bottom: var(--space-4);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.page-hero-dynamic .hero-description {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: var(--font-size-xl);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}

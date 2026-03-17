@@ -1,0 +1,217 @@
+/* Container for Mascot + Button */
+.whatsapp-container {
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  z-index: var(--z-fixed);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+/* The Mascot Image */
+.whatsapp-mascot {
+  width: 95px;
+  height: auto;
+  position: absolute;
+  bottom: 25px;
+  right: 0;
+  z-index: -1;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+  animation: fabSlideInUp 0.5s ease-out 0.5s both;
+  -webkit-animation: fabSlideInUp 0.5s ease-out 0.5s both;
+  pointer-events: auto;
+}
+
+/* Wrapper controls the entry animation */
+.whatsapp-fab-wrapper {
+  animation: fabSlideInUp 0.5s ease-out 0.2s both;
+  -webkit-animation: fabSlideInUp 0.5s ease-out 0.2s both;
+  pointer-events: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* The FAB itself */
+.whatsapp-fab {
+  width: 64px;
+  height: 64px;
+  background: #25d366;
+  color: var(--text-inverse);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  pointer-events: auto;
+  position: relative;
+  /* Shadow Ray (box-shadow) Only - Continuous 2s loop */
+  animation: shadowPulse 2s infinite;
+  -webkit-animation: shadowPulse 2s infinite;
+}
+
+.whatsapp-fab svg {
+  /* ICON Breathing animation (Scale only) */
+  /* ICON Breathing animation (Scale only) - Synced with shadow */
+  animation: scalePulse 2s infinite;
+  -webkit-animation: scalePulse 2s infinite;
+  /* Ensure smooth rendering */
+  transform-origin: center;
+  -webkit-transform-origin: center;
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .whatsapp-fab:hover {
+    transform: scale(1.1) !important;
+    -webkit-transform: scale(1.1) !important;
+    background: #1da851;
+    color: var(--text-inverse);
+    box-shadow: 0 12px 40px rgba(37, 211, 102, 0.4);
+    animation: none;
+    -webkit-animation: none;
+  }
+
+  .whatsapp-fab:hover svg {
+    animation: none;
+    -webkit-animation: none;
+  }
+}
+
+.whatsapp-fab:active {
+  transform: scale(0.95) !important;
+  -webkit-transform: scale(0.95) !important;
+}
+
+/* 1. Shadow Pulse (The Green Ray) - Applied to Container */
+@keyframes shadowPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 0 0 20px rgba(37, 211, 102, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+  }
+}
+
+@-webkit-keyframes shadowPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 0 0 20px rgba(37, 211, 102, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+  }
+}
+
+/* 2. Scale Pulse (Breathing Icon) - Applied to SVG */
+@keyframes scalePulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@-webkit-keyframes scalePulse {
+  0% {
+    -webkit-transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.2);
+  }
+
+  100% {
+    -webkit-transform: scale(1);
+  }
+}
+
+/* Define fabSlideInUp locally for robust cross-browser support */
+@keyframes fabSlideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@-webkit-keyframes fabSlideInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@-webkit-keyframes float {
+
+  0%,
+  100% {
+    -webkit-transform: translateY(0);
+  }
+
+  50% {
+    -webkit-transform: translateY(-5px);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .whatsapp-container {
+    bottom: var(--space-6);
+    right: var(--space-6);
+  }
+
+  .whatsapp-mascot {
+    width: 80px;
+    bottom: 20px;
+    right: 0;
+  }
+
+  .whatsapp-fab {
+    width: 56px;
+    height: 56px;
+  }
+
+  .whatsapp-fab svg {
+    width: 24px;
+    height: 24px;
+  }
+}

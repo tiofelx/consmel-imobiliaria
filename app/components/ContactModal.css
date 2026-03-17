@@ -1,0 +1,281 @@
+.contact-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(8px);
+  overflow-y: auto;
+}
+
+.contact-modal-overlay.open {
+  opacity: 1;
+}
+
+.contact-modal-overlay.closing {
+  opacity: 0;
+}
+
+.contact-modal-content {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 16px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(30px);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin: auto;
+}
+
+.contact-modal-content.modal-lg {
+  max-width: 1000px;
+}
+
+.contact-modal-overlay.open .contact-modal-content {
+  transform: translateY(0);
+}
+
+.contact-modal-overlay.closing .contact-modal-content {
+  transform: translateY(30px);
+}
+
+.contact-modal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  padding: 8px;
+  z-index: 10;
+  transition: all 0.2s;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.contact-modal-close-btn:hover {
+  color: var(--color-primary);
+  background-color: #f8f9fa;
+  transform: rotate(90deg);
+}
+
+.contact-modal-body {
+  padding: 40px;
+}
+
+.contact-modal-title {
+  text-align: center;
+  margin-bottom: 32px;
+  font-size: 2rem;
+  color: var(--color-secondary);
+  font-weight: 800;
+}
+
+/* Contact Grid Layout */
+.contact-grid-modal {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+@media (min-width: 992px) {
+  .contact-grid-modal {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+/* Info Cards */
+.contact-info h3 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: var(--color-secondary);
+}
+
+.contact-info p {
+  margin-bottom: 24px;
+}
+
+.info-card {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  border: 1px solid #eee;
+}
+
+.info-card:hover {
+  background: white;
+  border-color: var(--color-primary);
+  transform: translateX(8px);
+  box-shadow: var(--shadow-md);
+}
+
+.info-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-card h4 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.info-card a {
+  color: var(--color-secondary);
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.info-card a:hover {
+  color: var(--color-primary);
+}
+
+.info-card p {
+  margin: 0;
+  color: var(--color-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-weight: 700;
+}
+
+/* Social Links in Modal */
+.social-links-modal {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid #eee;
+}
+
+.social-links-modal h4 {
+  margin-bottom: 20px;
+  color: var(--color-secondary);
+}
+
+.social-buttons-modal {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.social-btn.instagram {
+  background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 10px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+}
+
+/* Map Section */
+.map-section-modal {
+  margin-top: 40px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eee;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .contact-modal-overlay {
+    padding: 20px 10px;
+  }
+
+  .contact-modal-body {
+    padding: 30px 20px;
+  }
+
+  .contact-modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+  }
+
+  .contact-grid-modal {
+    gap: 32px;
+  }
+
+  .contact-info h3 {
+    font-size: 1.25rem;
+  }
+
+  .info-card {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .info-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .info-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .info-card a {
+    font-size: 0.9rem;
+  }
+
+  .social-buttons-modal {
+    flex-direction: column;
+  }
+
+  .social-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .map-section-modal iframe {
+    height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-modal-body {
+    padding: 24px 16px;
+  }
+  
+  .contact-modal-title {
+    font-size: 1.35rem;
+  }
+}

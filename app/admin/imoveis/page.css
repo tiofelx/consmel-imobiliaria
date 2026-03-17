@@ -1,0 +1,175 @@
+/* Admin Imóveis Page Styles */
+
+.admin-table-container {
+    background: var(--admin-card-bg);
+    border-radius: var(--admin-radius-lg);
+    border: 1px solid var(--admin-border);
+    overflow-x: auto;
+    box-shadow: var(--admin-shadow-sm);
+}
+
+.table-header {
+    padding: 24px 28px;
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    border-bottom: 1px solid var(--admin-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table-title {
+    font-weight: 700;
+    color: var(--admin-text-primary);
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: var(--admin-radius);
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--admin-transition);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.6), 0 0 40px rgba(249, 115, 22, 0.4);
+    color: #ffffff !important;
+}
+
+.btn-header-action {
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(249, 115, 22, 0.2);
+    transition: var(--admin-transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+    color: #ffffff !important;
+    text-decoration: none;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-header-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.6), 0 0 40px rgba(249, 115, 22, 0.4);
+    color: #ffffff !important;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    color: var(--admin-text-secondary);
+    font-weight: 600;
+    text-align: left;
+    padding: 16px 28px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 2px solid var(--admin-border);
+}
+
+td {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--admin-border);
+    color: var(--admin-text-primary);
+    font-size: 0.95rem;
+    transition: var(--admin-transition);
+}
+
+tr {
+    transition: var(--admin-transition);
+}
+
+tbody tr:hover {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.02) 0%, rgba(249, 115, 22, 0.05) 100%);
+}
+
+tbody tr:hover td {
+    color: var(--admin-text-primary);
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:nth-child(even) {
+    background-color: rgba(248, 250, 252, 0.5);
+}
+
+tbody tr:nth-child(even):hover {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.02) 0%, rgba(249, 115, 22, 0.05) 100%);
+}
+
+.property-thumb {
+    width: 70px;
+    height: 50px;
+    border-radius: var(--admin-radius-sm);
+    object-fit: cover;
+    background-color: var(--admin-border);
+    box-shadow: var(--admin-shadow-sm);
+    transition: var(--admin-transition);
+}
+
+tr:hover .property-thumb {
+    transform: scale(1.05);
+    box-shadow: var(--admin-shadow);
+}
+
+.status-badge {
+    display: inline-flex;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: var(--admin-transition);
+}
+
+.status-active {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #047857;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.status-pending {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #b45309;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}
+
+.action-btn {
+    padding: 8px;
+    color: var(--admin-text-secondary);
+    border-radius: var(--admin-radius-sm);
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin-right: 4px;
+    transition: var(--admin-transition);
+}
+
+.action-btn:hover {
+    background: var(--admin-primary-light);
+    color: var(--admin-primary);
+    transform: scale(1.1);
+}

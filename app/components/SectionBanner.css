@@ -1,0 +1,56 @@
+.section-banner {
+  position: relative;
+  width: 100%;
+  padding: 100px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: var(--space-8);
+  overflow: hidden; /* Clip blurred edges */
+}
+
+/* New blurred background element */
+.section-banner-bg {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  filter: blur(4px);
+  z-index: 0;
+}
+
+.section-banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay for text readability */
+  z-index: 1;
+}
+
+.section-banner-content {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+}
+
+.section-banner-content h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  margin-bottom: var(--space-6);
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.section-banner-content .btn {
+  padding: var(--space-3) var(--space-8);
+  font-size: var(--font-size-lg);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

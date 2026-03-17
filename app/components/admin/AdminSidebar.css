@@ -1,0 +1,107 @@
+/* ==========================================================================
+   AdminSidebar.css
+   Estilização isolada e segura para a Sidebar do painel administrativo
+   ========================================================================== */
+
+/* --- container e fundo com gradiente escuro --- */
+.admin-sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, var(--admin-gradient-start, #1e293b) 0%, var(--admin-gradient-end, #0f172a) 100%);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* overlay de padrão sutil */
+.admin-sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* --- navegação principal --- */
+.admin-sidebar .sidebar-nav {
+    padding: 24px 16px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+/* --- links / itens do menu --- */
+.admin-sidebar .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    border-radius: var(--admin-radius, 12px);
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* barra ativadora lateral (escondida por padrão) */
+.admin-sidebar .nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: linear-gradient(90deg, var(--admin-primary, #f97316), transparent);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: var(--admin-radius, 12px);
+}
+
+/* --- estados de link: hover e active --- */
+@media (hover: hover) and (pointer: fine) {
+    .admin-sidebar .nav-item:hover,
+    .admin-sidebar .nav-item:focus-visible {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.08);
+        outline: none;
+    }
+
+    .admin-sidebar .nav-item:hover::before,
+    .admin-sidebar .nav-item:focus-visible::before {
+        width: 4px;
+    }
+
+    .admin-sidebar .nav-item:hover svg,
+    .admin-sidebar .nav-item:focus-visible svg {
+        color: var(--admin-primary, #f97316);
+    }
+}
+
+.admin-sidebar .nav-item.active {
+    color: #ffffff;
+    background: linear-gradient(90deg, rgba(249, 115, 22, 0.2) 0%, rgba(249, 115, 22, 0.05) 100%);
+}
+
+.admin-sidebar .nav-item.active::before {
+    width: 4px;
+    background: var(--admin-primary, #f97316);
+}
+
+.admin-sidebar .nav-item.active svg {
+    color: var(--admin-primary, #f97316);
+}
+
+.admin-sidebar .nav-item svg {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}

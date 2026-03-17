@@ -1,0 +1,184 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// Imóvel
+// ==========================================
+
+// ==========================================
+// Usuário (Admin / Cliente)
+// ==========================================
+model User {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String // Hashed password
+  name     String?
+  role     String  @default("CLIENT") // "ADMIN" | "CLIENT"
+  phone    String?
+
+  // 2FA Fields
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret  String? // Encrypted Secret
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Property {
+  id              String  @id
+  title           String
+  description     String?
+  transactionType String // "Venda" | "Aluguel"
+  category        String // "Casa" | "Apartamento" | "Terreno"
+
+  // Valores
+  price    Float
+  condoFee Float?
+  iptu     Float?
+
+  // Características
+  bedrooms      Int?
+  suites        Int?
+  bathrooms     Int?
+  parkingSpaces Int?
+  usableArea    Float?
+  totalArea     Float?
+  features      String[]
+
+  // Endereço
+  cep          String?
+  street       String?
+  number       String?
+  complement   String?
+  neighborhood String?
+  city         String?
+  state        String?
+
+  // Geolocalização
+  latitude  Float?
+  longitude Float?
+
+  // Mídia
+  images PropertyImage[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([transactionType])
+  @@index([transactionType, category])
+  @@index([city, neighborhood])
+  @@index([createdAt])
+  @@map("properties")
+}
+
+// ==========================================
+// Imagens do Imóvel
+// ==========================================
+model PropertyImage {
+  id    Int    @id @default(autoincrement())
+  url   String
+  order Int    @default(0)
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+
+  @@map("property_images")
+}
+
+// ==========================================
+// Cliente / Lead
+// ==========================================
+model Client {
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String
+  phone    String?
+  interest String // "Compra" | "Aluguel"
+  status   String  @default("Novo") // "Novo" | "Em Negociação" | "Visita Agendada" | "Arquivado"
+  notes    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([interest])
+  @@map("clients")
+}
+
+// ==========================================
+// Evento da Agenda
+// ==========================================
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  date        DateTime
+  time        String // "09:00"
+  type        String // "visit" | "meeting" | "call"
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("events")
+}
+
+// ==========================================
+// Alertas de Segurança / Fraude
+// ==========================================
+model Alert {
+  id       Int      @id @default(autoincrement())
+  type     String // "fraud" | "suspicious_password" | "ddd_mismatch" | "location_mismatch"
+  severity String   @default("medium") // "low" | "medium" | "high"
+  source   String // "register" | "cadastro-imovel"
+  name     String?
+  email    String?
+  phone    String?
+  address  String?
+  reasons  String[]
+  resolved Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@map("alerts")
+}
+
+// ==========================================
+// Bloqueios de IP (Blacklist)
+// ==========================================
+model BlockedIp {
+  id        Int      @id @default(autoincrement())
+  ip        String   @unique
+  reason    String
+  createdAt DateTime @default(now())
+
+  @@map("blocked_ips")
+}
+
+model SecurityEvent {
+  id        Int      @id @default(autoincrement())
+  event     String
+  severity  String   @default("medium")
+  ip        String
+  userAgent String?
+  route     String?
+  reason    String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([severity, createdAt])
+  @@index([ip, createdAt])
+  @@map("security_events")
+}

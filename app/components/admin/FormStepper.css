@@ -1,0 +1,102 @@
+/* ==========================================================================
+   FormStepper.css
+   Estilização isolada e segura para o componente FormStepper do Admin
+   ========================================================================== */
+
+.step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 32px 0 48px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
+.step-indicator .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+
+.step-indicator .step-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--admin-card-bg, #ffffff);
+    border: 3px solid var(--admin-border, #e2e8f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--admin-text-muted, #94a3b8);
+    transition: all var(--admin-transition, 0.3s cubic-bezier(0.4, 0, 0.2, 1));
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.step-indicator .step-label {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--admin-text-muted, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: var(--admin-transition, 0.3s cubic-bezier(0.4, 0, 0.2, 1));
+    text-align: center;
+}
+
+.step-indicator .step-item.active .step-circle {
+    border-color: var(--admin-primary, #f97316);
+    background: var(--admin-primary, #f97316);
+    color: white;
+    transform: scale(1.15);
+    box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3);
+}
+
+.step-indicator .step-item.active .step-label {
+    color: var(--admin-primary, #f97316);
+    font-weight: 800;
+}
+
+.step-indicator .step-item.completed .step-circle {
+    border-color: var(--admin-primary, #f97316);
+    background: var(--admin-primary, #f97316);
+    color: white;
+}
+
+.step-indicator .step-item.completed .step-label {
+    color: var(--admin-text-primary, #0f172a);
+}
+
+.step-indicator .step-line {
+    flex: 2;
+    height: 3px;
+    background: var(--admin-border, #e2e8f0);
+    margin: 0 -10px;
+    position: relative;
+    top: -15px;
+    /* Adjusting for label height to center with circles */
+    z-index: 1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.step-indicator .step-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background: var(--admin-primary, #f97316);
+    transition: width 0.5s ease-in-out;
+}
+
+.step-indicator .step-line.active::after {
+    width: 100%;
+}

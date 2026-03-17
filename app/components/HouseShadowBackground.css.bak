@@ -1,0 +1,665 @@
+/* Container handling the background gradient and positioning */
+.house-shadow-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    bottom: 0;
+    height: 100%;
+    overflow: hidden;
+    /* Hot Sunset Gradient: Full orange tones */
+    background: linear-gradient(to bottom,
+            #7a4530 0%,
+            #a04a30 20%,
+            #c45530 35%,
+            #d96030 50%,
+            #e87030 70%,
+            #f08535 100%);
+    z-index: 0;
+}
+
+.sky-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 500px;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.sky-layer svg {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.sky-stars-svg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.sky-layer .sky-stars-svg {
+    z-index: 0;
+}
+
+.airplane-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.airplane-svg {
+    display: block;
+    width: 42px;
+    height: 42px;
+    max-width: none;
+    max-height: none;
+    overflow: visible;
+    filter: drop-shadow(0 6px 10px rgba(22, 28, 35, 0.18));
+}
+
+.sky-layer .airplane-svg {
+    width: 42px;
+    height: 42px;
+}
+
+.city-layer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: clamp(300px, 33vw, 560px);
+    min-height: 450px;
+    z-index: 2;
+    pointer-events: none;
+    margin-top: -24px;
+}
+
+.city-layer svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* The Silhouette Container Animation */
+.house-silhouette {
+    transform: translateY(100%);
+    opacity: 0;
+    animation: riseUp 2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
+    will-change: transform, opacity;
+}
+
+@keyframes riseUp {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+/* Stars */
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    z-index: 0;
+    opacity: 0;
+    animation: twinkle 3s infinite alternate;
+}
+
+.stars-twinkle circle {
+    animation: starGlow 4s infinite ease-in-out alternate;
+    will-change: opacity;
+    transition: fill-opacity 140ms linear;
+}
+
+.stars-twinkle circle:nth-child(2n) {
+    animation-delay: 0.5s;
+}
+
+.stars-twinkle circle:nth-child(3n) {
+    animation-delay: 1.2s;
+}
+
+.stars-twinkle circle:nth-child(5n) {
+    animation-delay: 2.7s;
+}
+
+.ambient-stars-path {
+    animation: starGlow 5.5s infinite ease-in-out alternate;
+    will-change: opacity;
+}
+
+.ambient-stars-path-2 {
+    animation-delay: 1.2s;
+}
+
+.ambient-stars-path-3 {
+    animation-delay: 2.4s;
+}
+
+@keyframes twinkle {
+    0% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Clouds and Birds */
+.sky-silhouette-overlay {
+    --sky-silhouette-gap: 0px;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 1;
+}
+
+.sky-silhouette-track {
+    position: absolute;
+    top: 4%;
+    left: 0;
+    transform-origin: top left;
+    transform: scale(6.5);
+}
+
+.sky-silhouette-track-inner {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: skySilhouetteDrift 225s linear infinite;
+}
+
+.sky-silhouette-svg-wrapper {
+    flex-shrink: 0;
+}
+
+.sky-silhouette-svg-wrapper + .sky-silhouette-svg-wrapper {
+    margin-left: var(--sky-silhouette-gap);
+}
+
+.sky-silhouette-svg {
+    display: block;
+    width: auto;
+    height: 1520px;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.sky-silhouette-clouds .sky-silhouette-svg path[stroke] {
+    display: none;
+}
+
+.sky-cloud {
+    opacity: 0;
+    animation: skyCloudDropIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--cloud-drop-delay, 0ms);
+    transform-box: fill-box;
+    transform-origin: center;
+    will-change: transform;
+}
+
+.sky-silhouette-overlay:not(.cloud-drop-ready) .sky-cloud {
+    animation: none !important;
+    opacity: 0 !important;
+    transform: translateY(-70px) !important;
+}
+
+.cloud-drop-complete .sky-cloud {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    will-change: auto;
+}
+
+@keyframes skySilhouetteDrift {
+    from {
+        transform: translateX(calc(-1 * var(--sky-loop-distance, 0px)));
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes skyCloudDropIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-70px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Entrances */
+.animate-entrance-top {
+    animation: entranceSlideDown 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+.animate-entrance-bottom {
+    animation: entranceSlideUp 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+/* Delays */
+.delay-0 {
+    animation-delay: 0ms;
+}
+
+.delay-100 {
+    animation-delay: 100ms;
+}
+
+.delay-300 {
+    animation-delay: 300ms;
+}
+
+.delay-600 {
+    animation-delay: 600ms;
+}
+
+.delay-700 {
+    animation-delay: 700ms;
+}
+
+.delay-900 {
+    animation-delay: 900ms;
+}
+
+.delay-1000 {
+    animation-delay: 1000ms;
+}
+
+.delay-1200 {
+    animation-delay: 1200ms;
+}
+
+.delay-1400 {
+    animation-delay: 1400ms;
+}
+
+.delay-1500 {
+    animation-delay: 1500ms;
+}
+
+@keyframes entranceSlideDown {
+    0% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: var(--final-opacity, 1);
+    }
+}
+
+@keyframes entranceSlideUp {
+    0% {
+        transform: translateY(150px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.airplane-fly {
+    position: absolute;
+    top: 45%;
+    left: -12%;
+    animation: flyAcross 38s linear infinite;
+    will-change: transform;
+}
+
+@keyframes flyAcross {
+    0% {
+        transform: translate3d(0, 12px, 0) rotate(8deg);
+    }
+
+    15% {
+        transform: translate3d(22vw, -8px, 0) rotate(6deg);
+    }
+
+    50% {
+        transform: translate3d(54vw, -30px, 0) rotate(4deg);
+    }
+
+    85% {
+        transform: translate3d(92vw, -48px, 0) rotate(2deg);
+    }
+
+    100% {
+        transform: translate3d(118vw, -60px, 0) rotate(1deg);
+    }
+}
+
+.airplane-light {
+    animation: blink 1s infinite alternate;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Light animations */
+.light-flicker {
+    animation: lightFlicker 4s infinite alternate ease-in-out;
+}
+
+@keyframes lightFlicker {
+    0% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.light-horror {
+    animation: lightHorror 8s infinite linear;
+}
+
+@keyframes lightHorror {
+
+    0%,
+    10% {
+        opacity: 0;
+    }
+
+    11% {
+        opacity: 1;
+    }
+
+    12% {
+        opacity: 0;
+    }
+
+    13% {
+        opacity: 1;
+    }
+
+    14% {
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 0.3;
+    }
+
+    16% {
+        opacity: 0;
+    }
+
+    25% {
+        opacity: 0;
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    35% {
+        opacity: 0;
+    }
+
+    36% {
+        opacity: 1;
+    }
+
+    37% {
+        opacity: 0;
+    }
+
+    45% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    60% {
+        opacity: 0;
+    }
+
+    85% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* TV Effect */
+.tv-effect {
+    animation: tvFlicker 6s infinite alternate steps(10);
+    mix-blend-mode: overlay;
+}
+
+@keyframes tvFlicker {
+    0% {
+        opacity: 0.3;
+        fill: rgba(200, 220, 255, 0.4);
+    }
+
+    100% {
+        opacity: 0.9;
+        fill: rgba(255, 255, 255, 0.8);
+    }
+}
+
+/* Opacity Variables */
+.sky-silhouette-overlay.animate-entrance-top {
+    --final-opacity: 0.92;
+}
+
+.stars-twinkle.animate-entrance-top {
+    --final-opacity: 0.8;
+}
+
+/* Shooting Stars */
+.shooting-stars-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Keep shooting stars above the cloud overlay without affecting small stars. */
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.shooting-star-group {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transform: rotate(35deg);
+    filter: url(#starGlow);
+}
+
+.shooting-star-svg {
+    width: 120px;
+    height: 2px;
+}
+
+.shooting-star-head {
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+    position: absolute;
+    right: -1px;
+}
+
+.star-1 {
+    top: 10%;
+    left: 20%;
+    animation: shootStarEffect 8s linear infinite;
+    animation-delay: 2s;
+}
+
+.star-2 {
+    top: 5%;
+    left: 50%;
+    animation: shootStarEffect 12s linear infinite;
+    animation-delay: 5s;
+}
+
+.star-3 {
+    top: 15%;
+    left: 80%;
+    animation: shootStarEffect 10s linear infinite;
+    animation-delay: 1s;
+}
+
+@keyframes shootStarEffect {
+    0% {
+        transform: translate(-100px, -100px) rotate(35deg) scaleX(0.1);
+        opacity: 0;
+    }
+
+    5% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(35deg) scaleX(1);
+    }
+
+    15% {
+        transform: translate(300px, 210px) rotate(35deg) scaleX(1);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translate(300px, 210px) rotate(35deg) scaleX(1);
+        opacity: 0;
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .sky-layer {
+        height: 420px;
+    }
+
+    .sky-silhouette-track {
+        top: 14%;
+    }
+
+    .sky-silhouette-svg {
+        height: 1400px;
+    }
+
+    .star:nth-child(n+5),
+    .shooting-stars-container div:nth-child(n+3),
+    .airplane-layer {
+        display: none !important;
+    }
+
+    .airplane-svg {
+        width: 36px;
+        height: 36px;
+    }
+
+    .sky-layer .airplane-svg {
+        width: 36px;
+        height: 36px;
+    }
+
+    .stars-twinkle circle:nth-child(3n) {
+        display: none;
+    }
+
+    .city-layer {
+        height: 55%;
+        min-height: 0;
+        margin-top: -20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sky-layer {
+        height: 320px;
+    }
+
+    .star:nth-child(n+3),
+    .shooting-stars-container {
+        display: none !important;
+    }
+
+    .delay-0,
+    .delay-300 {
+        opacity: 0.5 !important;
+    }
+
+    .airplane-svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .sky-layer .airplane-svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .sky-silhouette-track {
+        top: 12%;
+    }
+
+    .sky-silhouette-svg {
+        height: 1100px;
+    }
+
+    .city-layer {
+        height: 60%;
+        min-height: 0;
+        margin-top: -16px;
+    }
+}
+

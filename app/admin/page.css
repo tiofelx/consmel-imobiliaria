@@ -1,0 +1,98 @@
+/* Admin Dashboard Page Styles */
+
+/* ============================================
+   STATS CARDS - Modern Design
+   ============================================ */
+.stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    flex: 0 1 280px;
+    max-width: 320px;
+    min-width: 260px;
+    background: var(--admin-card-bg);
+    padding: 28px;
+    border-radius: var(--admin-radius-lg);
+    border: 1px solid var(--admin-border);
+    box-shadow: var(--admin-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 25px rgba(249, 115, 22, 0.15), var(--admin-shadow-xl);
+}
+
+.stat-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.stat-title {
+    font-size: 0.9rem;
+    color: var(--admin-text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--admin-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--admin-transition);
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--admin-text-primary);
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.stat-change {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 0.875rem;
+}
+
+.text-success {
+    color: var(--admin-success);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--admin-success-bg);
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+.text-danger {
+    color: var(--admin-danger);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--admin-danger-bg);
+    padding: 2px 8px;
+    border-radius: 20px;
+}
