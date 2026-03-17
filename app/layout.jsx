@@ -28,6 +28,13 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }"
+          }}
+        />
+      </head>
       <body className={inter.className} suppressHydrationWarning={true}>
         {children}
       </body>

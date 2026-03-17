@@ -1,6 +1,7 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
+import ScrollResetOnReload from '../components/ScrollResetOnReload';
 import { verifySession } from '@/lib/auth';
 
 export default async function PublicLayout({ children }) {
@@ -9,6 +10,7 @@ export default async function PublicLayout({ children }) {
 
   return (
     <>
+      <ScrollResetOnReload />
       <Header user={user} />
       <main>{children}</main>
       <Footer />

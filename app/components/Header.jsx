@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation';
 export default function Header({ user }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerOpacity, setHeaderOpacity] = useState(1);
-  const [isHeaderVisible, setIsHeaderVisible] = useState(false);
+  const [loadOpacity, setLoadOpacity] = useState(0);
   const [headerStyle, setHeaderStyle] = useState('solid'); // 'solid' | 'translucent'
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
@@ -21,12 +21,40 @@ export default function Header({ user }) {
   const isHome = pathname === '/';
 
   useEffect(() => {
-    const fadeInTimer = window.setTimeout(() => {
-      setIsHeaderVisible(true);
-    }, 70);
+    if (!isHome) {
+      setLoadOpacity(1);
+      return;
+    }
 
-    return () => window.clearTimeout(fadeInTimer);
-  }, []);
+    let frameId;
+    const fadeDelayMs = 850;
+    const fadeDurationMs = 1400;
+
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+    const fadeInTimer = window.setTimeout(() => {
+      const start = performance.now();
+
+      const step = (now) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / fadeDurationMs, 1);
+        setLoadOpacity(easeOutCubic(progress));
+
+        if (progress < 1) {
+          frameId = window.requestAnimationFrame(step);
+        }
+      };
+
+      frameId = window.requestAnimationFrame(step);
+    }, fadeDelayMs);
+
+    return () => {
+      window.clearTimeout(fadeInTimer);
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [isHome]);
 
   // Scroll-based opacity and style effect
   useEffect(() => {
@@ -35,7 +63,7 @@ export default function Header({ user }) {
     opacityRef.current = 1;
     renderedOpacityRef.current = 1;
 
-    if (initialScrollY > 24) {
+    if (initialScrollY > 80) {
       headerStyleRef.current = 'translucent';
       setHeaderStyle('translucent');
     } else {
@@ -73,28 +101,24 @@ export default function Header({ user }) {
 
       const isScrollingUp = scrollDelta < 0;
 
-      // At top of page - solid header, full opacity
-      if (currentScrollY <= 14) {
+      // At very top - lock fully visible solid header
+      if (currentScrollY <= 2) {
         updateHeaderStyle('solid');
         updateOpacity(1);
       }
       // Scrolling UP - increase opacity gradually with translucent style
       else if (isScrollingUp) {
-        if (currentScrollY >= 30) {
+        if (currentScrollY >= 120) {
           updateHeaderStyle('translucent');
         }
         // Increase opacity based on scroll distance
-        const opacityIncrease = Math.abs(scrollDelta) / 220;
+        const opacityIncrease = Math.abs(scrollDelta) / 420;
         updateOpacity(opacityRef.current + opacityIncrease);
       }
       // Scrolling DOWN - decrease opacity gradually
       else {
-        // Keep current style (solid if near top, translucent if was scrolling up before)
-        if (opacityRef.current >= 0.92 && currentScrollY < 36) {
-          updateHeaderStyle('solid');
-        }
         // Decrease opacity based on scroll distance
-        const opacityDecrease = Math.abs(scrollDelta) / 260;
+        const opacityDecrease = Math.abs(scrollDelta) / 300;
         updateOpacity(opacityRef.current - opacityDecrease);
       }
 
@@ -117,7 +141,7 @@ export default function Header({ user }) {
   };
 
   // Determine if header should be interactive (clickable)
-  const effectiveOpacity = isHeaderVisible ? headerOpacity : 0;
+  const effectiveOpacity = headerOpacity * loadOpacity;
   const isClickable = effectiveOpacity > 0.1;
 
   // Determine header class based on style state
