@@ -15,6 +15,8 @@ export default function Header({ user }) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
   const opacityRef = useRef(1);
+  const renderedOpacityRef = useRef(1);
+  const headerStyleRef = useRef('solid');
   const pathname = usePathname();
   const isHome = pathname === '/';
 
@@ -31,6 +33,32 @@ export default function Header({ user }) {
     const initialScrollY = window.scrollY;
     lastScrollY.current = initialScrollY;
     opacityRef.current = 1;
+    renderedOpacityRef.current = 1;
+
+    if (initialScrollY > 24) {
+      headerStyleRef.current = 'translucent';
+      setHeaderStyle('translucent');
+    } else {
+      headerStyleRef.current = 'solid';
+      setHeaderStyle('solid');
+    }
+
+    const updateHeaderStyle = (nextStyle) => {
+      if (headerStyleRef.current !== nextStyle) {
+        headerStyleRef.current = nextStyle;
+        setHeaderStyle(nextStyle);
+      }
+    };
+
+    const updateOpacity = (nextOpacity) => {
+      const clamped = Math.max(0, Math.min(1, nextOpacity));
+      opacityRef.current = clamped;
+
+      if (Math.abs(clamped - renderedOpacityRef.current) >= 0.01) {
+        renderedOpacityRef.current = clamped;
+        setHeaderOpacity(clamped);
+      }
+    };
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -46,29 +74,28 @@ export default function Header({ user }) {
       const isScrollingUp = scrollDelta < 0;
 
       // At top of page - solid header, full opacity
-      if (currentScrollY <= 20) {
-        setHeaderStyle('solid');
-        opacityRef.current = 1;
-        setHeaderOpacity(1);
+      if (currentScrollY <= 14) {
+        updateHeaderStyle('solid');
+        updateOpacity(1);
       }
       // Scrolling UP - increase opacity gradually with translucent style
       else if (isScrollingUp) {
-        setHeaderStyle('translucent');
+        if (currentScrollY >= 30) {
+          updateHeaderStyle('translucent');
+        }
         // Increase opacity based on scroll distance
         const opacityIncrease = Math.abs(scrollDelta) / 220;
-        opacityRef.current = Math.min(1, opacityRef.current + opacityIncrease);
-        setHeaderOpacity(opacityRef.current);
+        updateOpacity(opacityRef.current + opacityIncrease);
       }
       // Scrolling DOWN - decrease opacity gradually
       else {
         // Keep current style (solid if near top, translucent if was scrolling up before)
-        if (opacityRef.current >= 0.9 && currentScrollY < 100) {
-          setHeaderStyle('solid');
+        if (opacityRef.current >= 0.92 && currentScrollY < 36) {
+          updateHeaderStyle('solid');
         }
         // Decrease opacity based on scroll distance
         const opacityDecrease = Math.abs(scrollDelta) / 260;
-        opacityRef.current = Math.max(0, opacityRef.current - opacityDecrease);
-        setHeaderOpacity(opacityRef.current);
+        updateOpacity(opacityRef.current - opacityDecrease);
       }
 
       lastScrollY.current = currentScrollY;
