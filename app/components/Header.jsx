@@ -9,57 +9,30 @@ import { usePathname } from 'next/navigation';
 
 export default function Header({ user }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [headerOpacity, setHeaderOpacity] = useState(1);
   const [headerStyle, setHeaderStyle] = useState('solid'); // 'solid' | 'translucent'
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
-  const opacityRef = useRef(1);
   const pathname = usePathname();
   const isHome = pathname === '/';
 
-  // Scroll-based opacity and style effect
+  // Scroll-based style effect
   useEffect(() => {
     const initialScrollY = window.scrollY;
     lastScrollY.current = initialScrollY;
-    opacityRef.current = 1;
+
+    // Prevent class/style jump when page restores scroll position on reload.
+    if (initialScrollY <= 20) {
+      setHeaderStyle('solid');
+    } else {
+      setHeaderStyle('translucent');
+    }
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      const previousScrollY = lastScrollY.current;
-      const scrollDelta = currentScrollY - previousScrollY;
-
-      // Ignore micro-jitter from momentum/restored scrolling.
-      if (Math.abs(scrollDelta) < 2) {
-        lastScrollY.current = currentScrollY;
-        return;
-      }
-
-      const isScrollingUp = scrollDelta < 0;
-
-      // At top of page - solid header, full opacity
       if (currentScrollY <= 20) {
         setHeaderStyle('solid');
-        opacityRef.current = 1;
-        setHeaderOpacity(1);
-      }
-      // Scrolling UP - increase opacity gradually with translucent style
-      else if (isScrollingUp) {
+      } else {
         setHeaderStyle('translucent');
-        // Increase opacity based on scroll distance
-        const opacityIncrease = Math.abs(scrollDelta) / 100; // Adjust speed here
-        opacityRef.current = Math.min(1, opacityRef.current + opacityIncrease);
-        setHeaderOpacity(opacityRef.current);
-      }
-      // Scrolling DOWN - decrease opacity gradually
-      else {
-        // Keep current style (solid if near top, translucent if was scrolling up before)
-        if (opacityRef.current >= 0.9 && currentScrollY < 100) {
-          setHeaderStyle('solid');
-        }
-        // Decrease opacity based on scroll distance
-        const opacityDecrease = Math.abs(scrollDelta) / 150; // Adjust speed here
-        opacityRef.current = Math.max(0, opacityRef.current - opacityDecrease);
-        setHeaderOpacity(opacityRef.current);
       }
 
       lastScrollY.current = currentScrollY;
@@ -80,9 +53,6 @@ export default function Header({ user }) {
     window.location.href = '/';
   };
 
-  // Determine if header should be interactive (clickable)
-  const isClickable = headerOpacity > 0.1;
-
   // Determine header class based on style state
   const getHeaderClass = () => {
     if (!isHome) return 'header-solid';
@@ -92,10 +62,7 @@ export default function Header({ user }) {
   return (
     <header
       className={`header ${getHeaderClass()}`}
-      style={{
-        opacity: headerOpacity,
-        pointerEvents: isClickable ? 'auto' : 'none'
-      }}
+      style={{ opacity: 1, pointerEvents: 'auto' }}
     >
       <div className="container header-container">
         {/* Logo */}
