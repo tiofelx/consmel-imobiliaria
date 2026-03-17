@@ -50,20 +50,17 @@
   /* Increased side padding for balance */
   max-width: 100%;
   margin: 0;
-  height: 70px;
-  min-height: 70px;
+  height: 90px;
 }
 
 /* Logo Styles */
 .header-logo {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   text-decoration: none;
   transition: all var(--transition-base);
   /* Remove negative margins to fit cleanly in fixed height */
   margin: 0;
-  flex: 0 0 auto;
 }
 
 .header-logo:hover {
@@ -72,13 +69,9 @@
 }
 
 .logo-image {
-  width: 194px;
-  height: 70px;
-  max-width: none;
+  width: auto;
+  height: 115px;
   object-fit: contain;
-  aspect-ratio: 320 / 115;
-  display: block;
-  flex-shrink: 0;
 }
 
 .mobile-admin-greeting {
@@ -93,10 +86,8 @@
 
 @media (max-width: 768px) {
   .logo-image {
-    width: 194px;
+    width: auto;
     height: 70px;
-    max-width: 194px;
-    aspect-ratio: 320 / 115;
   }
 
   .header-container {
@@ -339,16 +330,8 @@
 /* Desktop (1024px and up) */
 @media (min-width: 1024px) {
   .header-container {
-    height: 90px;
-    min-height: 90px;
     padding-top: var(--space-5);
     padding-bottom: var(--space-5);
-  }
-
-  .logo-image {
-    width: 320px;
-    height: 115px;
-    max-width: 320px;
   }
 
   .nav-link {
