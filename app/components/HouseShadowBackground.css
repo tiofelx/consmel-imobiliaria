@@ -33,7 +33,7 @@
             #e85d2c 68%,
             #ff7a52 100%);
     opacity: 0;
-    animation: gradientFadeIn 1.8s ease-out 0.2s both;
+    animation: gradientFadeIn 1.4s ease-out both;
 }
 
 @keyframes gradientFadeIn {
