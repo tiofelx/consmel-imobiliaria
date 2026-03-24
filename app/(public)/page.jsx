@@ -13,7 +13,9 @@ import SmartSearchFilter from '../components/SmartSearchFilter';
 import { searchProperties } from '@/lib/properties';
 import './page.css';
 
-const heroFallbackGradient = 'linear-gradient(to bottom, rgba(12, 18, 28, 0.1) 0%, rgba(10, 16, 26, 0.18) 42%, rgba(8, 13, 22, 0.3) 70%, rgba(6, 11, 18, 0.42) 100%), linear-gradient(to bottom, #1e3a5f 0%, #355078 16%, #6d5f74 32%, #b45e49 48%, #e85d2c 68%, #ff7a52 100%)';
+// Dark base color only — the full gradient lives in HouseShadowBackground
+// to avoid a bright orange flash before animations start.
+const heroFallbackColor = '#0f1e30';
 
 export default function Home() {
   // State for properties and loading
@@ -94,8 +96,7 @@ export default function Home() {
         <div
           className="hero-background"
           style={{
-            backgroundColor: '#0f1e30',
-            backgroundImage: heroFallbackGradient,
+            backgroundColor: heroFallbackColor,
             position: 'absolute',
             top: 0,
             right: 0,
