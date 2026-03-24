@@ -781,11 +781,11 @@ p {
 }
 
 .animate-search-filter-entrance {
-  animation: pageEntrance 2.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: pageEntrance 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
   will-change: transform, opacity;
   opacity: 0;
-  animation-delay: 1.8s;
-  /* Sync with foreground building rise completion */
+  animation-delay: 0.8s;
+  /* Appears while buildings are still rising (riseUp: 0.3s delay + 2s) */
 }
 
 .animate-slide-in-up {
