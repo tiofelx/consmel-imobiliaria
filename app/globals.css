@@ -657,7 +657,7 @@ p {
 @keyframes pageEntrance {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(60px);
   }
 
   to {
@@ -781,11 +781,11 @@ p {
 }
 
 .animate-search-filter-entrance {
-  animation: pageEntrance 2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: pageEntrance 2.2s cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: transform, opacity;
   opacity: 0;
-  animation-delay: 0.8s;
-  /* Sync with foreground building rise (Layer 3/4) */
+  animation-delay: 1.8s;
+  /* Sync with foreground building rise completion */
 }
 
 .animate-slide-in-up {

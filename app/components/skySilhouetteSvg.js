@@ -86,7 +86,7 @@ export const skyCloudsSvgMarkup = (() => {
             if (isImmediateCloudChild) {
                 cloudIndex += 1;
                 const cloudDelay = 200 + ((cloudIndex - 1) % 10) * 110;
-                const cloudAttrs = `id="sky-cloud-${cloudIndex}" class="sky-cloud sky-cloud-${cloudIndex}" style="--cloud-drop-delay: ${cloudDelay}ms; opacity: 0; transform: translateY(-70px);" `;
+                const cloudAttrs = `id="sky-cloud-${cloudIndex}" class="sky-cloud sky-cloud-${cloudIndex}" style="--cloud-drop-delay: ${cloudDelay}ms;" `;
 
                 if (trimmedLine.startsWith('<g')) {
                     nextLine = trimmedLine.startsWith('<g>')

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ import SmartSearchFilter from '../components/SmartSearchFilter';
 import { searchProperties } from '@/lib/properties';
 import './page.css';
 
-const heroFallbackGradient = 'linear-gradient(to bottom, #1e3a5f 0%, #33506f 14%, #6b4a44 34%, #9b4f35 52%, #c15b32 68%, #d06a37 100%)';
+const heroFallbackGradient = 'linear-gradient(to bottom, rgba(12, 18, 28, 0.1) 0%, rgba(10, 16, 26, 0.18) 42%, rgba(8, 13, 22, 0.3) 70%, rgba(6, 11, 18, 0.42) 100%), linear-gradient(to bottom, #1e3a5f 0%, #355078 16%, #6d5f74 32%, #b45e49 48%, #e85d2c 68%, #ff7a52 100%)';
 
 export default function Home() {
   // State for properties and loading
@@ -86,18 +86,38 @@ export default function Home() {
         className="hero"
         style={{
           minHeight: '100svh',
-          backgroundColor: '#1f3654'
+          backgroundColor: '#0f1e30',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
         <div
           className="hero-background"
           style={{
-            backgroundColor: '#1f3654',
-            backgroundImage: heroFallbackGradient
+            backgroundColor: '#0f1e30',
+            backgroundImage: heroFallbackGradient,
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            zIndex: 0
           }}
         >
           <HouseShadowBackground />
-          <div className="hero-overlay"></div>
+          <div
+            className="hero-overlay"
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
+              background: 'rgba(30, 58, 95, 0.4)',
+              zIndex: 1,
+              pointerEvents: 'none'
+            }}
+          ></div>
         </div>
         <div className="container hero-content">
           {/* Hero text removed as requested */}
