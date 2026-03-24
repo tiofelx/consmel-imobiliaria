@@ -400,7 +400,7 @@
     position: absolute;
     top: 45%;
     left: -12%;
-    animation: flyAcross 46s linear infinite;
+    animation: flyAcross 64s linear infinite;
     will-change: transform;
 }
 
@@ -409,15 +409,15 @@
         transform: translate3d(0, 12px, 0) rotate(8deg);
     }
 
-    15% {
+    20% {
         transform: translate3d(22vw, -8px, 0) rotate(6deg);
     }
 
-    50% {
+    46% {
         transform: translate3d(54vw, -30px, 0) rotate(4deg);
     }
 
-    85% {
+    78% {
         transform: translate3d(92vw, -48px, 0) rotate(2deg);
     }
 
