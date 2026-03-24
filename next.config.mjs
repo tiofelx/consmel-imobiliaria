@@ -57,7 +57,6 @@ const nextConfig = {
     workerThreads: true,
     webpackBuildWorker: false,
   },
-  allowedDevOrigins: ['10.147.1.118'],
 };
 
 // Force rebuild comment - 2026-02-02
