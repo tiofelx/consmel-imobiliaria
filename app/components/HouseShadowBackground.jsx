@@ -2,7 +2,6 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import './HouseShadowBackground.css';
 import { skyCloudsSvgMarkup } from './skySilhouetteSvg';
 
-const BASE_SKYLINE_GRADIENT = 'linear-gradient(to bottom, rgba(12, 18, 28, 0.1) 0%, rgba(10, 16, 26, 0.18) 42%, rgba(8, 13, 22, 0.3) 70%, rgba(6, 11, 18, 0.42) 100%), linear-gradient(to bottom, #1e3a5f 0%, #355078 16%, #6d5f74 32%, #b45e49 48%, #e85d2c 68%, #ff7a52 100%)';
 
 const SMALL_STAR_VIEWBOX = {
     minX: 0,
@@ -419,10 +418,7 @@ const HouseShadowBackground = memo(() => {
     return (
         <div
             className="house-shadow-container"
-            style={{
-                backgroundColor: '#0f1e30',
-                backgroundImage: BASE_SKYLINE_GRADIENT
-            }}
+            style={{ backgroundColor: '#0f1e30' }}
         >
             <div className="sky-layer">
                 {/* Decorative Stars */}
