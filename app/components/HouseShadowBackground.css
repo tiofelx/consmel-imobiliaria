@@ -75,7 +75,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: clamp(300px, 33vw, 560px);
+    height: clamp(300px, 35vw, 680px);
     min-height: 450px;
     z-index: 2;
     pointer-events: none;
