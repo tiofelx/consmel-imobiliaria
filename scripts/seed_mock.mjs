@@ -1,4 +1,6 @@
-import prisma from '../lib/prisma.js';
+import { PrismaClient } from '../lib/generated/prisma/index.js';
+
+const prisma = new PrismaClient();
 
 async function main() {
     await prisma.property.create({
