@@ -13,11 +13,20 @@
 }
 
 /*
- * Flash prevention:
- *   ::before = gradient, always visible (no opacity animation).
- *              Top color (#1e3a5f) matches hero background — zero contrast on load.
- *   ::after  = full-height cover (#1e3a5f), masks warm gradient colors at the
- *              bottom while buildings rise, then fades out in sync with riseUp.
+ * Flash prevention (FOUC-safe):
+ *   ::before = sunset gradient, always at full opacity.
+ *   ::after  = SOLID #1e3a5f cover over the entire area.
+ *              Identical to the inline backgroundColor on first paint,
+ *              so CSS load produces zero visual change.
+ *              Fades out AFTER buildings have risen ~70%, revealing the
+ *              gradient only when buildings already cover the warm bottom.
+ *
+ * Timeline:
+ *   0.0s  HTML renders — inline bg #1e3a5f (solid blue)
+ *   0.0s  CSS loads — ::after solid #1e3a5f hides gradient → identical to above
+ *   0.3s  Buildings start rising (riseUp 2s, fast-start bezier)
+ *   1.0s  Cover starts fading (buildings already ~70% risen)
+ *   2.5s  Cover fully gone, gradient visible, buildings in place
  */
 .house-shadow-container::before {
     content: '';
@@ -38,24 +47,21 @@
             #b45e49 48%,
             #e85d2c 68%,
             #ff7a52 100%);
-    /* No opacity animation — gradient is always at full opacity.
-       Top matches #1e3a5f background, so no blue flash on load. */
 }
 
-/* Bottom cover: masks warm gradient colors until buildings cover the area */
+/* Solid cover: 100% opaque #1e3a5f — visually identical to first-paint bg.
+   Delayed fade-out ensures buildings are well risen before gradient shows. */
 .house-shadow-container::after {
     content: '';
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    /* Transparent at top (cool blue shows through), opaque #1e3a5f by 30%
-       to fully mask warm gradient colors (which start at ~32%) */
-    background: linear-gradient(to bottom, transparent 0%, #1e3a5f 30%);
-    animation: bottomCoverFade 2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
+    background: #1e3a5f;
+    animation: coverReveal 1.5s ease-out 1.0s both;
 }
 
-@keyframes bottomCoverFade {
+@keyframes coverReveal {
     0% { opacity: 1; }
     100% { opacity: 0; }
 }
