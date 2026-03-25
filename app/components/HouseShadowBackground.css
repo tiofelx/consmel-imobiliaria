@@ -13,9 +13,11 @@
 }
 
 /*
- * Single sunset gradient — colors pre-blended with the old hero-overlay
- * rgba(30,58,95,0.4) so visuals match previous look with zero flash.
- * Top matches the inline backgroundColor (#1e3a5f).
+ * Single sunset gradient using brand palette:
+ *   --color-secondary: #1e3a5f (dark blue)
+ *   --color-primary:   #e85d2c (coral/orange)
+ * Top matches inline backgroundColor (#1e3a5f) — zero flash on reload.
+ * Bottom stays dark/muted so the black silhouette blends naturally.
  */
 .house-shadow-container::before {
     content: '';
@@ -25,15 +27,16 @@
     pointer-events: none;
     background: linear-gradient(to bottom,
         #1e3a5f 0%,
-        #2b4568 14%,
-        #3d5070 26%,
-        #565868 38%,
-        #6e6063 48%,
-        #8a6a5c 58%,
-        #a47856 68%,
-        #bc8650 78%,
-        #d0934b 88%,
-        #da9a48 100%);
+        #1e3a5f 10%,
+        #213d60 20%,
+        #27415e 30%,
+        #30455a 40%,
+        #3b4754 50%,
+        #47494e 60%,
+        #524947 70%,
+        #5c4740 80%,
+        #64443b 90%,
+        #6b4138 100%);
 }
 
 .sky-layer {
