@@ -13,19 +13,17 @@
 }
 
 /*
- * Flash prevention (FOUC-safe):
+ * Flash prevention (JS-controlled):
  *   ::before = sunset gradient, always at full opacity.
- *   ::after  = SOLID #1e3a5f cover over the entire area.
- *              Identical to the inline backgroundColor on first paint,
- *              so CSS load produces zero visual change.
- *              Fades out AFTER buildings have risen ~70%, revealing the
- *              gradient only when buildings already cover the warm bottom.
+ *   ::after  = SOLID #1e3a5f cover, opacity:1 by default (no CSS animation).
+ *              JS adds .gradient-revealed class after 1s → triggers CSS transition.
+ *              No CSS animation = no replay artifacts on cached reloads.
  *
  * Timeline:
  *   0.0s  HTML renders — inline bg #1e3a5f (solid blue)
- *   0.0s  CSS loads — ::after solid #1e3a5f hides gradient → identical to above
+ *   0.0s  CSS loads — ::after solid #1e3a5f → identical to inline bg
  *   0.3s  Buildings start rising (riseUp 2s, fast-start bezier)
- *   1.0s  Cover starts fading (buildings already ~70% risen)
+ *   1.0s  JS adds .gradient-revealed → ::after transitions to opacity:0
  *   2.5s  Cover fully gone, gradient visible, buildings in place
  */
 .house-shadow-container::before {
@@ -49,8 +47,8 @@
             #ff7a52 100%);
 }
 
-/* Solid cover: 100% opaque #1e3a5f — visually identical to first-paint bg.
-   Delayed fade-out ensures buildings are well risen before gradient shows. */
+/* Solid cover: always opaque until JS triggers the reveal.
+   No CSS animation — immune to cached-reload replay artifacts. */
 .house-shadow-container::after {
     content: '';
     position: absolute;
@@ -58,12 +56,12 @@
     z-index: 0;
     pointer-events: none;
     background: #1e3a5f;
-    animation: coverReveal 1.5s ease-out 1.0s both;
+    opacity: 1;
+    transition: opacity 1.5s ease-out;
 }
 
-@keyframes coverReveal {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
+.house-shadow-container.gradient-revealed::after {
+    opacity: 0;
 }
 
 .sky-layer {
