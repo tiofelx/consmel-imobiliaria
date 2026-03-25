@@ -415,18 +415,9 @@ const HouseShadowBackground = memo(() => {
         };
     }, [cloudLoopDistance]);
 
-    const [gradientRevealed, setGradientRevealed] = useState(false);
-
-    useEffect(() => {
-        // Delay matches building riseUp: 0.3s delay + ~0.7s rise = ~1.0s
-        // By then buildings cover ~70% of the warm area
-        const timer = setTimeout(() => setGradientRevealed(true), 1000);
-        return () => clearTimeout(timer);
-    }, []);
-
     return (
         <div
-            className={`house-shadow-container${gradientRevealed ? ' gradient-revealed' : ''}`}
+            className="house-shadow-container"
             style={{ backgroundColor: '#1e3a5f' }}
         >
             <div className="sky-layer">
