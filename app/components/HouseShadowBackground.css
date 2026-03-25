@@ -13,8 +13,9 @@
 }
 
 /*
- * Single sunset gradient — always visible, no animation, no transition.
- * Top matches the inline backgroundColor (#1e3a5f) for zero flash on load.
+ * Single sunset gradient — colors pre-blended with the old hero-overlay
+ * rgba(30,58,95,0.4) so visuals match previous look with zero flash.
+ * Top matches the inline backgroundColor (#1e3a5f).
  */
 .house-shadow-container::before {
     content: '';
@@ -24,15 +25,15 @@
     pointer-events: none;
     background: linear-gradient(to bottom,
         #1e3a5f 0%,
-        #2b4466 14%,
-        #3d4e6a 26%,
-        #544f63 38%,
-        #6c565b 48%,
-        #855c52 58%,
-        #9c6249 68%,
-        #b26841 78%,
-        #c46e3b 88%,
-        #cc7238 100%);
+        #264063 14%,
+        #314666 26%,
+        #3e4761 38%,
+        #4d4b5d 48%,
+        #5c4e57 58%,
+        #6a5252 68%,
+        #77564d 78%,
+        #825949 88%,
+        #865c48 100%);
 }
 
 .sky-layer {
