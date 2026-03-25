@@ -13,12 +13,11 @@
 }
 
 /*
- * Two-layer flash prevention:
- *   ::before = gradient, fades in smoothly via opacity (no hard edges)
- *   ::after  = bottom cover (#1e3a5f), hides warm gradient colors while
- *              buildings rise, then fades out in sync with building riseUp.
- * Result: cool top colors blend with bg (no blue flash), warm bottom colors
- * stay hidden behind the cover until buildings are in place (no orange flash).
+ * Flash prevention:
+ *   ::before = gradient, always visible (no opacity animation).
+ *              Top color (#1e3a5f) matches hero background — zero contrast on load.
+ *   ::after  = full-height cover (#1e3a5f), masks warm gradient colors at the
+ *              bottom while buildings rise, then fades out in sync with riseUp.
  */
 .house-shadow-container::before {
     content: '';
@@ -39,26 +38,20 @@
             #b45e49 48%,
             #e85d2c 68%,
             #ff7a52 100%);
-    opacity: 0;
-    animation: gradientFadeIn 2s ease-out 0.3s both;
-}
-
-@keyframes gradientFadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+    /* No opacity animation — gradient is always at full opacity.
+       Top matches #1e3a5f background, so no blue flash on load. */
 }
 
 /* Bottom cover: masks warm gradient colors until buildings cover the area */
 .house-shadow-container::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 55%;
+    inset: 0;
     z-index: 0;
     pointer-events: none;
-    background: linear-gradient(to bottom, transparent 0%, #1e3a5f 40%);
+    /* Transparent at top (cool blue shows through), opaque #1e3a5f by 30%
+       to fully mask warm gradient colors (which start at ~32%) */
+    background: linear-gradient(to bottom, transparent 0%, #1e3a5f 30%);
     animation: bottomCoverFade 2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
 }
 
