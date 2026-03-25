@@ -106,19 +106,7 @@ export default function Home() {
           }}
         >
           <HouseShadowBackground />
-          <div
-            className="hero-overlay"
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0,
-              background: 'rgba(30, 58, 95, 0.4)',
-              zIndex: 1,
-              pointerEvents: 'none'
-            }}
-          ></div>
+          {/* hero-overlay removed — was adding blue tint over sunset gradient */}
         </div>
         <div className="container hero-content">
           {/* Hero text removed as requested */}
