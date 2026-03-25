@@ -13,10 +13,9 @@
 }
 
 /*
- * Gradient always visible — no cover, no animation, no flash.
- * All colors in the cool blue → muted mauve spectrum.
- * No bright warm tones = no perceptible flash on any reload.
- * The subtle twilight warmth is only visible behind building silhouettes.
+ * Solid background — identical to the inline backgroundColor.
+ * No gradient here = zero perceptible change on any reload.
+ * Warm twilight tones live on .city-layer instead, rising WITH the buildings.
  */
 .house-shadow-container::before {
     content: '';
@@ -24,20 +23,7 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background:
-        linear-gradient(to bottom,
-            rgba(12, 18, 28, 0.1) 0%,
-            rgba(10, 16, 26, 0.18) 42%,
-            rgba(8, 13, 22, 0.3) 70%,
-            rgba(6, 11, 18, 0.42) 100%),
-        linear-gradient(to bottom,
-            #1e3a5f 0%,
-            #2b4468 20%,
-            #3d4d6e 40%,
-            #504f6a 55%,
-            #5e5568 70%,
-            #6b5a67 85%,
-            #735f68 100%);
+    background: #1e3a5f;
 }
 
 .sky-layer {
@@ -98,6 +84,12 @@
     height: 42px;
 }
 
+/*
+ * Warm twilight gradient on the city-layer itself.
+ * Because .city-layer has the riseUp animation, these colors
+ * enter from below WITH the buildings — never visible as a flash.
+ * The gradient shows through the transparent SVG areas above the skyline.
+ */
 .city-layer {
     position: absolute;
     bottom: 0;
@@ -107,6 +99,13 @@
     min-height: 450px;
     z-index: 2;
     pointer-events: none;
+    background: linear-gradient(to bottom,
+        #2b4468 0%,
+        #3d4d6e 12%,
+        #504f6a 25%,
+        #5e5568 35%,
+        #3d4d6e 42%,
+        transparent 52%);
 }
 
 .city-transition-buffer {
