@@ -105,21 +105,7 @@
 }
 
 .city-transition-buffer {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: clamp(260px, 30vw, 460px);
-    min-height: 380px;
-    z-index: 1;
-    pointer-events: none;
-    background: linear-gradient(to bottom,
-            rgba(0, 0, 0, 0) 0%,
-            rgba(0, 0, 0, 0.14) 30%,
-            rgba(0, 0, 0, 0.3) 54%,
-            rgba(0, 0, 0, 0.54) 74%,
-            rgba(0, 0, 0, 0.74) 100%);
+    display: none;
 }
 
 .city-layer svg {
