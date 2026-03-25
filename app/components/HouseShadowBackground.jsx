@@ -535,16 +535,16 @@ const HouseShadowBackground = memo(() => {
                 <svg viewBox="0 0 1440 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice">
                     <defs>
                         <linearGradient id="skylineGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stopColor="#1a2d42" />
-                            <stop offset="100%" stopColor="#152538" />
+                            <stop offset="0%" stopColor="#1c324e" />
+                            <stop offset="100%" stopColor="#192d48" />
                         </linearGradient>
                         <linearGradient id="skylineGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stopColor="#142436" />
-                            <stop offset="100%" stopColor="#0f1c2a" />
+                            <stop offset="0%" stopColor="#182d46" />
+                            <stop offset="100%" stopColor="#15283f" />
                         </linearGradient>
                         <linearGradient id="skylineGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stopColor="#0c1820" />
-                            <stop offset="100%" stopColor="#080f15" />
+                            <stop offset="0%" stopColor="#132639" />
+                            <stop offset="100%" stopColor="#112033" />
                         </linearGradient>
                         <linearGradient id="fogGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                             <stop offset="0%" stopColor="rgba(30,58,95,0)" />
@@ -644,9 +644,9 @@ const HouseShadowBackground = memo(() => {
                         <rect x="1292" y="295" width="12" height="14" rx="1" />
                     </g>
                     <g className="animate-entrance-bottom delay-900">
-                        <path d="M0,500 L0,395 L30,395 L30,370 L60,370 L60,395 L100,395 L100,375 L140,375 L140,395 L175,395 L175,365 L205,365 L205,395 L250,395 L250,370 L285,370 L285,395 L325,395 L325,360 L355,360 L355,395 L400,395 L400,375 L435,375 L435,395 L475,395 L475,355 L505,355 L505,395 L550,395 L550,372 L585,372 L585,395 L625,395 L625,360 L655,360 L655,395 L700,395 L700,375 L735,375 L735,395 L775,395 L775,363 L805,363 L805,395 L850,395 L850,375 L885,375 L885,395 L925,395 L925,357 L955,357 L955,395 L1000,395 L1000,375 L1035,375 L1035,395 L1075,395 L1075,363 L1105,363 L1105,395 L1150,395 L1150,375 L1185,375 L1185,395 L1225,395 L1225,360 L1255,360 L1255,395 L1300,395 L1300,375 L1335,375 L1335,395 L1375,395 L1375,365 L1405,365 L1405,395 L1440,395 L1440,500 Z" fill="#0a1218" />
+                        <path d="M0,500 L0,395 L30,395 L30,370 L60,370 L60,395 L100,395 L100,375 L140,375 L140,395 L175,395 L175,365 L205,365 L205,395 L250,395 L250,370 L285,370 L285,395 L325,395 L325,360 L355,360 L355,395 L400,395 L400,375 L435,375 L435,395 L475,395 L475,355 L505,355 L505,395 L550,395 L550,372 L585,372 L585,395 L625,395 L625,360 L655,360 L655,395 L700,395 L700,375 L735,375 L735,395 L775,395 L775,363 L805,363 L805,395 L850,395 L850,375 L885,375 L885,395 L925,395 L925,357 L955,357 L955,395 L1000,395 L1000,375 L1035,375 L1035,395 L1075,395 L1075,363 L1105,363 L1105,395 L1150,395 L1150,375 L1185,375 L1185,395 L1225,395 L1225,360 L1255,360 L1255,395 L1300,395 L1300,375 L1335,375 L1335,395 L1375,395 L1375,365 L1405,365 L1405,395 L1440,395 L1440,500 Z" fill="#122234" />
                     </g>
-                    <g fill="#070d12" className="animate-entrance-bottom delay-1000">
+                    <g fill="#101f31" className="animate-entrance-bottom delay-1000">
                         <ellipse cx="82" cy="378" rx="20" ry="28" />
                         <rect x="79" y="395" width="6" height="65" />
                         <ellipse cx="225" cy="372" rx="18" ry="32" />
@@ -668,7 +668,7 @@ const HouseShadowBackground = memo(() => {
                         <ellipse cx="1420" cy="382" rx="18" ry="20" />
                         <rect x="1417" y="395" width="6" height="65" />
                     </g>
-                    <g fill="#080f15" className="animate-entrance-bottom delay-900">
+                    <g fill="#112033" className="animate-entrance-bottom delay-900">
                         <rect x="38" y="360" width="8" height="15" />
                         <rect x="183" y="355" width="8" height="15" />
                         <rect x="333" y="350" width="8" height="15" />
@@ -699,8 +699,8 @@ const HouseShadowBackground = memo(() => {
                             { cx: 1390, yHead: 378, yPole: 382, pHeight: 78, delay: '0.9s' }
                         ].map((light, i) => (
                             <g key={i}>
-                                <rect x={light.cx - 1.5} y={light.yPole} width="3" height={light.pHeight} fill="#070d12" />
-                                <path d={`M${light.cx - 8},${light.yHead + 4} C${light.cx - 8},${light.yHead - 2} ${light.cx + 8},${light.yHead - 2} ${light.cx + 8},${light.yHead + 4} Z`} fill="#070d12" />
+                                <rect x={light.cx - 1.5} y={light.yPole} width="3" height={light.pHeight} fill="#101f31" />
+                                <path d={`M${light.cx - 8},${light.yHead + 4} C${light.cx - 8},${light.yHead - 2} ${light.cx + 8},${light.yHead - 2} ${light.cx + 8},${light.yHead + 4} Z`} fill="#101f31" />
                                 <ellipse cx={light.cx} cy={light.yHead + 4} rx="5" ry="2" fill="#ffeaa7" filter="url(#starGlow)" className={light.flickerClass || 'light-flicker'} style={{ animationDelay: light.delay }} />
                                 <ellipse cx={light.cx} cy={light.yHead + 4} rx="3" ry="1.2" fill="#ffffff" className={light.flickerClass || 'light-flicker'} style={{ animationDelay: light.delay }} />
                                 <path d={`M${light.cx - 4},${light.yHead + 5} L${light.cx - 30},500 L${light.cx + 30},500 L${light.cx + 4},${light.yHead + 5} Z`} fill="url(#lightBeamGradient)" className={light.flickerClass || 'light-flicker'} style={{ animationDelay: light.delay, opacity: 0.8, mixBlendMode: 'normal' }} />
@@ -708,7 +708,7 @@ const HouseShadowBackground = memo(() => {
                         ))}
                     </g>
                     <rect x="0" y="420" width="1440" height="80" fill="url(#fogGradient)" />
-                    <rect x="0" y="460" width="1440" height="40" fill="#050a0e" />
+                    <rect x="0" y="460" width="1440" height="40" fill="#0f1d2e" />
                 </svg>
             </div>
         </div>
