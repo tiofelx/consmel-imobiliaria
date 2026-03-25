@@ -13,14 +13,12 @@
 }
 
 /*
- * Gradient reveals TOP-DOWN via clip-path to prevent flash artifacts.
- * Why clip-path instead of opacity:
- *   - opacity fades the ENTIRE gradient uniformly, exposing warm bottom
- *     colors (#ff7a52, #e85d2c) before the buildings rise to cover them → orange flash
- *   - clip-path: inset() reveals from top to bottom — cool colors (#1e3a5f)
- *     appear first (matching the fallback bg), warm colors only appear
- *     when the buildings have already risen to cover the bottom area
- * Same cubic-bezier and timing as the building riseUp animation for sync.
+ * Two-layer flash prevention:
+ *   ::before = gradient, fades in smoothly via opacity (no hard edges)
+ *   ::after  = bottom cover (#1e3a5f), hides warm gradient colors while
+ *              buildings rise, then fades out in sync with building riseUp.
+ * Result: cool top colors blend with bg (no blue flash), warm bottom colors
+ * stay hidden behind the cover until buildings are in place (no orange flash).
  */
 .house-shadow-container::before {
     content: '';
@@ -41,13 +39,32 @@
             #b45e49 48%,
             #e85d2c 68%,
             #ff7a52 100%);
-    clip-path: inset(0 0 100% 0);
-    animation: gradientReveal 2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
+    opacity: 0;
+    animation: gradientFadeIn 2s ease-out 0.3s both;
 }
 
-@keyframes gradientReveal {
-    0% { clip-path: inset(0 0 100% 0); }
-    100% { clip-path: inset(0 0 0% 0); }
+@keyframes gradientFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Bottom cover: masks warm gradient colors until buildings cover the area */
+.house-shadow-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 55%;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent 0%, #1e3a5f 40%);
+    animation: bottomCoverFade 2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
+}
+
+@keyframes bottomCoverFade {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
 .sky-layer {
