@@ -32,7 +32,13 @@
             #b45e49 48%,
             #e85d2c 68%,
             #ff7a52 100%);
-    opacity: 1;
+    opacity: 0;
+    animation: gradientFadeIn 2s ease-out 0.3s both;
+}
+
+@keyframes gradientFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 .sky-layer {
