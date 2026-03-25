@@ -13,9 +13,8 @@
 }
 
 /*
- * Solid background — identical to the inline backgroundColor.
- * No gradient here = zero perceptible change on any reload.
- * Warm twilight tones live on .city-layer instead, rising WITH the buildings.
+ * Single sunset gradient — always visible, no animation, no transition.
+ * Top matches the inline backgroundColor (#1e3a5f) for zero flash on load.
  */
 .house-shadow-container::before {
     content: '';
@@ -23,7 +22,17 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background: #1e3a5f;
+    background: linear-gradient(to bottom,
+        #1e3a5f 0%,
+        #2b4466 14%,
+        #3d4e6a 26%,
+        #544f63 38%,
+        #6c565b 48%,
+        #855c52 58%,
+        #9c6249 68%,
+        #b26841 78%,
+        #c46e3b 88%,
+        #cc7238 100%);
 }
 
 .sky-layer {
@@ -84,12 +93,6 @@
     height: 42px;
 }
 
-/*
- * Warm twilight gradient on the city-layer itself.
- * Because .city-layer has the riseUp animation, these colors
- * enter from below WITH the buildings — never visible as a flash.
- * The gradient shows through the transparent SVG areas above the skyline.
- */
 .city-layer {
     position: absolute;
     bottom: 0;
@@ -99,13 +102,6 @@
     min-height: 450px;
     z-index: 2;
     pointer-events: none;
-    background: linear-gradient(to bottom,
-        #2b4468 0%,
-        #3d4d6e 12%,
-        #504f6a 25%,
-        #5e5568 35%,
-        #3d4d6e 42%,
-        transparent 52%);
 }
 
 .city-transition-buffer {
