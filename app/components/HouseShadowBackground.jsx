@@ -418,7 +418,7 @@ const HouseShadowBackground = memo(() => {
     return (
         <div
             className="house-shadow-container"
-            style={{ backgroundColor: '#0f1e30' }}
+            style={{ backgroundColor: '#1e3a5f' }}
         >
             <div className="sky-layer">
                 {/* Decorative Stars */}

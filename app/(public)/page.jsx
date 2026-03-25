@@ -13,9 +13,9 @@ import SmartSearchFilter from '../components/SmartSearchFilter';
 import { searchProperties } from '@/lib/properties';
 import './page.css';
 
-// Dark base color only — the full gradient lives in HouseShadowBackground
-// to avoid a bright orange flash before animations start.
-const heroFallbackColor = '#0f1e30';
+// Matches the gradient top color in HouseShadowBackground so there is
+// zero contrast between first paint and CSS-loaded state — no flash.
+const heroFallbackColor = '#1e3a5f';
 
 export default function Home() {
   // State for properties and loading
@@ -88,7 +88,7 @@ export default function Home() {
         className="hero"
         style={{
           minHeight: '100svh',
-          backgroundColor: '#0f1e30',
+          backgroundColor: '#1e3a5f',
           position: 'relative',
           overflow: 'hidden'
         }}
