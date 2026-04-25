@@ -71,6 +71,7 @@ model Property {
 
   // Mídia
   images PropertyImage[]
+  videos String[] // URLs de vídeos hospedados no Vercel Blob (drone, tour, etc.)
 
   // Timestamps
   createdAt DateTime @default(now())

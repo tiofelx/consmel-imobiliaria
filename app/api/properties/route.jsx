@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
 import { safeLogError } from '@/lib/safe-log';
+import { uploadImageToBlob, UploadValidationError } from '@/lib/upload-blob';
 
 export const revalidate = 60;
 export const dynamic = 'force-dynamic';
@@ -36,6 +37,7 @@ function toPublicProperty(property) {
         location: `${property.neighborhood ? `${property.neighborhood}, ` : ''}${property.city || ''} - ${property.state || ''}`,
         image: property.images?.[0]?.url || null,
         images: property.images,
+        videos: property.videos || [],
         lat: toPublicCoordinate(property.latitude),
         lng: toPublicCoordinate(property.longitude),
         createdAt: property.createdAt,
@@ -113,70 +115,20 @@ export async function POST(request) {
             return parseFloat(cleaned) || null;
         };
 
-        // Extract and process images
-        const images = formData.getAll('images');
+        // Extract and upload images to Vercel Blob
+        const images = formData.getAll('images').filter((f) => f && typeof f.arrayBuffer === 'function');
         const savedImages = [];
 
-        // Validations
-        const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-
-        if (images && images.length > 0) {
-            const { writeFile, mkdir } = await import('fs/promises');
-            const path = await import('path');
-
-            // Ensure uploads directory exists
-            const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-            await mkdir(uploadDir, { recursive: true });
-
+        try {
             for (const file of images) {
-                if (file && typeof file.arrayBuffer === 'function') {
-                    // 1. Validate File Size
-                    if (file.size > MAX_FILE_SIZE) {
-                        return NextResponse.json(
-                            { error: `O arquivo ${file.name} ultrapassa o limite de 5MB.` },
-                            { status: 400 }
-                        );
-                    }
-
-                    // 2. Validate MIME Type
-                    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-                        return NextResponse.json(
-                            { error: `Tipo de arquivo não permitido para a imagem ${file.name}. Apenas JPEG, PNG ou WEBP são aceitos.` },
-                            { status: 400 }
-                        );
-                    }
-
-                    // Hardcode extension based on verified MIME type to prevent arbitrary execution
-                    let safeExtension = '.jpg';
-                    if (file.type === 'image/png') safeExtension = '.png';
-                    if (file.type === 'image/webp') safeExtension = '.webp';
-
-                    const buffer = Buffer.from(await file.arrayBuffer());
-
-                    // 3. Magic Bytes Validation
-                    const isJpg = buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF;
-                    const isPng = buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47;
-                    const isWebp = buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46 &&
-                        buffer[8] === 0x57 && buffer[9] === 0x45 && buffer[10] === 0x42 && buffer[11] === 0x50;
-
-                    if ((file.type === 'image/jpeg' && !isJpg) ||
-                        (file.type === 'image/png' && !isPng) ||
-                        (file.type === 'image/webp' && !isWebp)) {
-                        return NextResponse.json(
-                            { error: `O conteúdo do arquivo ${file.name} não corresponde a uma imagem válida.` },
-                            { status: 400 }
-                        );
-                    }
-
-                    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-                    const filename = `${uniqueSuffix}${safeExtension}`;
-                    const filepath = path.join(uploadDir, filename);
-
-                    await writeFile(filepath, buffer);
-                    savedImages.push(`/uploads/${filename}`);
-                }
+                const { url } = await uploadImageToBlob(file);
+                savedImages.push(url);
             }
+        } catch (uploadError) {
+            if (uploadError instanceof UploadValidationError) {
+                return NextResponse.json({ error: uploadError.message }, { status: uploadError.status });
+            }
+            throw uploadError;
         }
 
         // Generate 12-char random alphanumeric ID
@@ -191,6 +143,23 @@ export async function POST(request) {
                 }
             } catch {
                 return NextResponse.json({ error: 'Campo de características inválido.' }, { status: 400 });
+            }
+        }
+
+        // Vídeos chegam como array de URLs (já uploaded direto pro Blob via
+        // /api/properties/upload-token). Validamos que são URLs do nosso Blob.
+        let parsedVideos = [];
+        if (data.videos) {
+            try {
+                const candidate = JSON.parse(data.videos);
+                if (Array.isArray(candidate)) {
+                    parsedVideos = candidate
+                        .filter((item) => typeof item === 'string')
+                        .filter((url) => /^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\//i.test(url))
+                        .slice(0, 10);
+                }
+            } catch {
+                return NextResponse.json({ error: 'Campo de vídeos inválido.' }, { status: 400 });
             }
         }
 
@@ -227,6 +196,9 @@ export async function POST(request) {
                 neighborhood: data.neighborhood || null,
                 city: data.city || null,
                 state: data.state || null,
+
+                // Vídeos (URLs do Blob)
+                videos: parsedVideos,
 
                 // Images relation
                 images: {

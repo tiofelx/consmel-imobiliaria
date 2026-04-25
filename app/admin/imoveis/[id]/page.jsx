@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { use, useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { upload } from '@vercel/blob/client';
 import { fetchAddressByCep } from '@/lib/address';
 import FormStepper from '@/app/components/admin/FormStepper';
 import './page.css';
@@ -14,7 +15,8 @@ export default function EditProperty({ params }) {
 
   // State
   const [currentStep, setCurrentStep] = useState(1);
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState([]); // mídias: imagens E vídeos
+  const [existingVideoUrls, setExistingVideoUrls] = useState([]); // URLs de vídeos já salvos no DB
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -67,9 +69,19 @@ export default function EditProperty({ params }) {
           number: property.number || '',
           complement: property.complement || '',
         });
+        const items = [];
         if (property.images && property.images.length > 0) {
-          setImages(property.images.map(img => ({ id: img.id, preview: img.url })));
+          property.images.forEach((img) => {
+            items.push({ id: img.id, preview: img.url, type: 'image' });
+          });
         }
+        if (property.videos && property.videos.length > 0) {
+          property.videos.forEach((url, i) => {
+            items.push({ id: `video-${i}`, preview: url, type: 'video' });
+          });
+          setExistingVideoUrls(property.videos);
+        }
+        setImages(items);
         setLoading(false);
       })
       .catch(() => {
@@ -109,13 +121,15 @@ export default function EditProperty({ params }) {
     if (!files.length) return;
     setIsProcessing(true);
     await new Promise(resolve => setTimeout(resolve, 500));
-    const newImages = files.map(file => ({
+    const newItems = files.map(file => ({
       id: Math.random().toString(36).substr(2, 9),
       file,
-      preview: URL.createObjectURL(file)
+      preview: URL.createObjectURL(file),
+      type: file.type.startsWith('video/') ? 'video' : 'image',
     }));
-    setImages(prev => [...prev, ...newImages]);
+    setImages(prev => [...prev, ...newItems]);
     setIsProcessing(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const removeFile = (id) => {
@@ -125,21 +139,70 @@ export default function EditProperty({ params }) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const res = await fetch(`/api/properties/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          ...address,
-          cep: cep.replace(/\D/g, ''),
-        }),
-      });
+      // 1) Sobe vídeos novos direto pro Blob, junta com URLs de vídeos já salvos
+      const newVideoItems = images.filter((img) => img.file && img.type === 'video');
+      const uploadedVideoUrls = [];
+      for (const item of newVideoItems) {
+        const blob = await upload(item.file.name, item.file, {
+          access: 'public',
+          handleUploadUrl: '/api/properties/upload-token',
+        });
+        uploadedVideoUrls.push(blob.url);
+      }
+
+      const keptVideoUrls = images
+        .filter((img) => !img.file && img.type === 'video')
+        .map((img) => img.preview);
+      const finalVideos = [...keptVideoUrls, ...uploadedVideoUrls];
+
+      // 2) Imagens: separa novas (com img.file) das já salvas (URL do Blob)
+      const newImageFiles = images.filter((img) => img.file && img.type === 'image');
+      const keptImageUrls = images
+        .filter((img) => !img.file && img.type === 'image')
+        .map((img) => img.preview);
+
+      let res;
+      if (newImageFiles.length > 0) {
+        // Multipart pra subir imagens novas via Function
+        const data = new FormData();
+        Object.entries({ ...formData, ...address, cep: cep.replace(/\D/g, '') }).forEach(([key, value]) => {
+          data.append(key, value ?? '');
+        });
+
+        data.append('existingImageUrls', JSON.stringify(keptImageUrls));
+        data.append('videos', JSON.stringify(finalVideos));
+
+        newImageFiles.forEach((img) => {
+          data.append('images', img.file);
+        });
+
+        res = await fetch(`/api/properties/${id}`, {
+          method: 'PUT',
+          body: data,
+        });
+      } else {
+        // Sem imagens novas: caminho JSON
+        res = await fetch(`/api/properties/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...formData,
+            ...address,
+            cep: cep.replace(/\D/g, ''),
+            existingImageUrls: keptImageUrls,
+            videos: finalVideos,
+          }),
+        });
+      }
+
       if (res.ok) {
         router.push('/admin/imoveis');
       } else {
-        alert('Erro ao salvar alterações.');
+        const error = await res.json().catch(() => ({}));
+        alert('Erro ao salvar alterações: ' + (error.error || 'Tente novamente.'));
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert('Erro ao salvar alterações.');
     }
     setIsSaving(false);
@@ -348,8 +411,12 @@ export default function EditProperty({ params }) {
             {images.length > 0 && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px', marginTop: '24px' }}>
                 {images.map((item) => (
-                  <div key={item.id} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', aspectRatio: '1' }}>
-                    <Image src={item.preview} alt="Preview" fill unoptimized style={{ objectFit: 'cover' }} />
+                  <div key={item.id} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', aspectRatio: '1', background: '#f3f4f6' }}>
+                    {item.type === 'video' ? (
+                      <video src={item.preview} muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <Image src={item.preview} alt="Preview" fill unoptimized style={{ objectFit: 'cover' }} />
+                    )}
                     <button onClick={() => removeFile(item.id)} style={{ position: 'absolute', top: 6, right: 6, background: 'white', borderRadius: '50%', border: 'none', width: 24, height: 24, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444' }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>

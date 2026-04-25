@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { upload } from '@vercel/blob/client';
 import { addWatermark } from '@/lib/imageUtils';
 import { fetchAddressByCep } from '@/lib/address';
 import AdminHeader from '@/app/components/admin/AdminHeader';
@@ -123,24 +124,33 @@ export default function NewProperty() {
   const handleSubmit = async () => {
     setIsSaving(true);
     try {
-      const data = new FormData();
+      // 1) Vídeos sobem direto pro Vercel Blob (contornam o cap de 4.5MB
+      //    de payload das Functions). Recebem URL pública usável.
+      const videoItems = images.filter((item) => item.type === 'video');
+      const videoUrls = [];
+      for (const item of videoItems) {
+        const blob = await upload(item.file.name, item.file, {
+          access: 'public',
+          handleUploadUrl: '/api/properties/upload-token',
+        });
+        videoUrls.push(blob.url);
+      }
 
-      // Append text fields
+      // 2) Imagens vão por multipart pra Function (já com validação de
+      //    magic bytes + watermark aplicado no client).
+      const data = new FormData();
       Object.entries({ ...formData, ...address, cep: cep.replace(/\D/g, '') }).forEach(([key, value]) => {
         data.append(key, value || '');
       });
 
-      // Append features as JSON string
-      // data.append('features', JSON.stringify(formData.features || []));
-
-      // Append images
-      images.forEach((img) => {
+      images.filter((item) => item.type !== 'video').forEach((img) => {
         data.append('images', img.file);
       });
 
+      data.append('videos', JSON.stringify(videoUrls));
+
       const res = await fetch('/api/properties', {
         method: 'POST',
-        // do not set Content-Type header for FormData, browser does it automatically with boundary
         body: data,
       });
 
@@ -362,8 +372,12 @@ export default function NewProperty() {
             {images.length > 0 && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px', marginTop: '24px' }}>
                 {images.map((item) => (
-                  <div key={item.id} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', aspectRatio: '1' }}>
-                    <Image src={item.preview} alt="Preview" fill unoptimized style={{ objectFit: 'cover' }} />
+                  <div key={item.id} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', aspectRatio: '1', background: '#f3f4f6' }}>
+                    {item.type === 'video' ? (
+                      <video src={item.preview} muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <Image src={item.preview} alt="Preview" fill unoptimized style={{ objectFit: 'cover' }} />
+                    )}
                     <button onClick={() => removeFile(item.id)} style={{ position: 'absolute', top: 6, right: 6, background: 'white', borderRadius: '50%', border: 'none', width: 24, height: 24, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444' }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
