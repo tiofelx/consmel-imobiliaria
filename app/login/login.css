@@ -318,11 +318,7 @@
   box-shadow: 0 4px 12px rgba(232, 93, 47, 0.1);
 }
 
-.login-page .input-wrapper input:focus + svg {
-  color: #e85d2f;
-}
-
-.login-page .input-wrapper:focus-within svg {
+.login-page .input-wrapper:has(input:focus) > svg {
   color: #e85d2f;
 }
 
@@ -512,6 +508,31 @@
   flex-shrink: 0;
   width: 20px;
   height: 20px;
+}
+
+/* Primary social CTA (above the email form) */
+.social-login-primary {
+  margin-bottom: 4px;
+}
+
+.social-login-primary .social-btn {
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-width: 1.5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.social-login-primary .social-btn:hover {
+  border-color: #4285F4;
+  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.15);
+}
+
+.social-login-hint {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 0.82rem;
+  color: #777;
 }
 
 /* Form Footer */

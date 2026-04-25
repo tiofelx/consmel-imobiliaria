@@ -95,10 +95,20 @@ export async function POST(request) {
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({
             where: { email },
-            select: { id: true },
+            select: { id: true, password: true },
         });
 
         if (existingUser) {
+            // Conta criada via Google OAuth (sem senha) — orientar a entrar pelo Google
+            if (!existingUser.password) {
+                return NextResponse.json(
+                    {
+                        error: 'Esta conta foi criada com o Google. Clique em "Continuar com Google" para entrar.',
+                        isOAuthAccount: true,
+                    },
+                    { status: 409 }
+                );
+            }
             return NextResponse.json(
                 { error: 'Este e-mail já está cadastrado.' },
                 { status: 409 }
