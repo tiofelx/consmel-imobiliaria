@@ -14,8 +14,10 @@ const nextConfig = {
             value: 'max-age=63072000; includeSubDomains; preload'
           },
           {
+            // Header descontinuado e com bugs em navegadores antigos.
+            // Recomendação atual (OWASP): 0 + CSP forte.
             key: 'X-XSS-Protection',
-            value: '1; mode=block'
+            value: '0'
           },
           {
             key: 'X-Frame-Options',
@@ -31,7 +33,10 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; img-src 'self' data: blob: *.openstreetmap.org images.unsplash.com *.google.com *.googleapis.com *.gstatic.com; font-src 'self' data: fonts.gstatic.com; connect-src 'self' *.openstreetmap.org; frame-src 'self' https://*.google.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self';"
+            // unsafe-eval removido. unsafe-inline mantido por necessidade
+            // do Next.js (scripts inline para hidratação). Próximo passo:
+            // migrar para nonces via middleware para remover unsafe-inline.
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; img-src 'self' data: blob: *.openstreetmap.org images.unsplash.com *.google.com *.googleapis.com *.gstatic.com; font-src 'self' data: fonts.gstatic.com; connect-src 'self' *.openstreetmap.org; frame-src 'self' https://*.google.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self';"
           },
           {
             key: 'Permissions-Policy',

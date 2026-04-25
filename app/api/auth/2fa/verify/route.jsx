@@ -33,9 +33,9 @@ export async function POST(request) {
         // Decrypt secret
         const secret = decrypt(user.twoFactorSecret);
 
-        // Verify token with a secure window of 2 periods (1 min) 
-        // to handle slight PC-to-Phone time synchronization drifts
-        const { valid } = await verifyToken({ token, secret, window: 2 });
+        // window=1 (±30s) — durante o enrollment o usuário acabou de
+        // escanear o QR, drift é mínimo. Reduz superfície de brute-force.
+        const { valid } = await verifyToken({ token, secret, window: 1 });
 
         if (!valid) {
             return NextResponse.json({ error: 'Invalid token' }, { status: 400 });

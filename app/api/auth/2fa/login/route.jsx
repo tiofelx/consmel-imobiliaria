@@ -78,8 +78,10 @@ export async function POST(request) {
 
         let isValidResult;
         try {
-            // Mitigate drift but limit strictly to 3 windows (1.5 mins) instead of 10 to prevent large attack surfaces
-            isValidResult = await verifyToken({ token, secret, window: 3 });
+            // window=1 = aceita ±30s de drift. Reduz superfície de brute-force
+            // de 7 códigos válidos (window=3) para 3, mantendo tolerância
+            // razoável para dessincronização de relógio entre PC e celular.
+            isValidResult = await verifyToken({ token, secret, window: 1 });
         } catch (verErr) {
             throw verErr;
         }
