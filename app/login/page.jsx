@@ -487,13 +487,17 @@ function LoginForm() {
                                         >
                                             {showPassword ? (
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                                                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                                                </svg>
-                                            ) : (
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                                     <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                            ) : (
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M2 9 Q12 19 22 9"></path>
+                                                    <line x1="5" y1="13.7" x2="3.5" y2="16.5"></line>
+                                                    <line x1="9" y1="15.7" x2="8" y2="18.5"></line>
+                                                    <line x1="12" y1="16.2" x2="12" y2="19"></line>
+                                                    <line x1="15" y1="15.7" x2="16" y2="18.5"></line>
+                                                    <line x1="19" y1="13.7" x2="20.5" y2="16.5"></line>
                                                 </svg>
                                             )}
                                         </button>
@@ -541,13 +545,17 @@ function LoginForm() {
                                             >
                                                 {showConfirmPassword ? (
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                                                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                                                    </svg>
-                                                ) : (
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                                         <circle cx="12" cy="12" r="3"></circle>
+                                                    </svg>
+                                                ) : (
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                        <path d="M2 9 Q12 19 22 9"></path>
+                                                        <line x1="5" y1="13.7" x2="3.5" y2="16.5"></line>
+                                                        <line x1="9" y1="15.7" x2="8" y2="18.5"></line>
+                                                        <line x1="12" y1="16.2" x2="12" y2="19"></line>
+                                                        <line x1="15" y1="15.7" x2="16" y2="18.5"></line>
+                                                        <line x1="19" y1="13.7" x2="20.5" y2="16.5"></line>
                                                     </svg>
                                                 )}
                                             </button>
