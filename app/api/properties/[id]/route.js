@@ -4,6 +4,7 @@ import { verifySession } from '@/lib/auth';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
 import { uploadImageToBlob, UploadValidationError } from '@/lib/upload-blob';
 import { safeLogError } from '@/lib/safe-log';
+import { geocodeAddress } from '@/lib/geocode';
 
 function toPublicCoordinate(value) {
     if (!Number.isFinite(value)) return null;
@@ -134,6 +135,31 @@ function buildUpdateDataFromObject(data) {
     return updateData;
 }
 
+// Geocoding via Nominatim quando o admin altera o endereço mas não envia
+// lat/lng explícitos — assim o pin no mapa de busca acompanha a edição.
+async function applyGeocodingIfNeeded(updateData) {
+    const hasManualCoords =
+        Number.isFinite(updateData.latitude) && Number.isFinite(updateData.longitude);
+    if (hasManualCoords) return;
+
+    const hasAddress =
+        updateData.street || updateData.neighborhood || updateData.city || updateData.cep;
+    if (!hasAddress) return;
+
+    const coords = await geocodeAddress({
+        street: updateData.street,
+        number: updateData.number,
+        neighborhood: updateData.neighborhood,
+        city: updateData.city,
+        state: updateData.state,
+        cep: updateData.cep,
+    });
+    if (coords) {
+        updateData.latitude = coords.latitude;
+        updateData.longitude = coords.longitude;
+    }
+}
+
 // PUT /api/properties/[id]
 // Aceita JSON (somente metadados) OU multipart/form-data quando há
 // imagens novas para enviar. No multipart, o cliente envia:
@@ -162,6 +188,7 @@ export async function PUT(request, { params }) {
         if (contentType.includes('application/json')) {
             const data = await request.json();
             const updateData = buildUpdateDataFromObject(data);
+            await applyGeocodingIfNeeded(updateData);
 
             const hasImageReconciliation = Array.isArray(data.existingImageUrls);
 
@@ -261,6 +288,7 @@ export async function PUT(request, { params }) {
         }
 
         const updateData = buildUpdateDataFromObject(dataFromForm);
+        await applyGeocodingIfNeeded(updateData);
 
         // Reconcilia images dentro de uma transação:
         // - apaga todos os PropertyImage cuja url NÃO está em keepUrls

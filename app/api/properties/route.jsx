@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
 import { safeLogError } from '@/lib/safe-log';
 import { uploadImageToBlob, UploadValidationError } from '@/lib/upload-blob';
+import { geocodeAddress } from '@/lib/geocode';
 
 export const revalidate = 60;
 export const dynamic = 'force-dynamic';
@@ -163,6 +164,18 @@ export async function POST(request) {
             }
         }
 
+        // Geocode address (Nominatim) so the imóvel aparece como pin no mapa
+        // de busca. Falha silenciosa: se não der pra resolver, salva sem
+        // coordenadas — o cadastro continua valendo.
+        const coords = await geocodeAddress({
+            street: data.street,
+            number: data.number,
+            neighborhood: data.neighborhood,
+            city: data.city,
+            state: data.state,
+            cep: data.cep,
+        });
+
         // Create Property in DB
         const property = await prisma.property.create({
             data: {
@@ -196,6 +209,9 @@ export async function POST(request) {
                 neighborhood: data.neighborhood || null,
                 city: data.city || null,
                 state: data.state || null,
+
+                latitude: coords?.latitude ?? null,
+                longitude: coords?.longitude ?? null,
 
                 // Vídeos (URLs do Blob)
                 videos: parsedVideos,
