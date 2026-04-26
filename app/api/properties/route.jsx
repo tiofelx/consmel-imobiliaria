@@ -91,7 +91,8 @@ export async function POST(request) {
         const data = {};
         const keys = [
             'title', 'description', 'transactionType', 'category',
-            'cep', 'street', 'number', 'complement', 'neighborhood', 'city', 'state', 'features'
+            'cep', 'street', 'number', 'complement', 'neighborhood', 'city', 'state', 'features',
+            'latitude', 'longitude'
         ];
 
         keys.forEach(key => {
@@ -164,17 +165,25 @@ export async function POST(request) {
             }
         }
 
-        // Geocode address (Nominatim) so the imóvel aparece como pin no mapa
-        // de busca. Falha silenciosa: se não der pra resolver, salva sem
-        // coordenadas — o cadastro continua valendo.
-        const coords = await geocodeAddress({
-            street: data.street,
-            number: data.number,
-            neighborhood: data.neighborhood,
-            city: data.city,
-            state: data.state,
-            cep: data.cep,
-        });
+        // Coordenadas: prioriza o que o admin definiu manualmente no mapa
+        // (campos latitude/longitude do form). Se não vierem, cai no geocoding
+        // automático via Nominatim. Falha silenciosa: salva sem coordenadas
+        // se ambos falharem.
+        let coords = null;
+        const manualLat = parseFloat(data.latitude);
+        const manualLng = parseFloat(data.longitude);
+        if (Number.isFinite(manualLat) && Number.isFinite(manualLng)) {
+            coords = { latitude: manualLat, longitude: manualLng };
+        } else {
+            coords = await geocodeAddress({
+                street: data.street,
+                number: data.number,
+                neighborhood: data.neighborhood,
+                city: data.city,
+                state: data.state,
+                cep: data.cep,
+            });
+        }
 
         // Create Property in DB
         const property = await prisma.property.create({

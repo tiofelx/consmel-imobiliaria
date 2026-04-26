@@ -1,0 +1,98 @@
+.map-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #f9fafb;
+}
+
+.map-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.map-picker-title {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.map-picker-help {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+  max-width: 480px;
+}
+
+.map-picker-btn {
+  background: #ea580c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.map-picker-btn:hover:not(:disabled) {
+  background: #c2410c;
+}
+
+.map-picker-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.map-picker-frame {
+  width: 100%;
+  height: 360px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  background: #e5e7eb;
+}
+
+.map-picker-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.map-picker-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.map-picker-status strong {
+  color: #111827;
+  font-variant-numeric: tabular-nums;
+}
+
+.map-picker-feedback {
+  color: #6b7280;
+}
+
+.map-picker-status.status-miss .map-picker-feedback,
+.map-picker-status.status-error .map-picker-feedback {
+  color: #b91c1c;
+}
+
+.map-picker-status.status-ok .map-picker-feedback {
+  color: #047857;
+}

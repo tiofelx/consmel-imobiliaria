@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { upload } from '@vercel/blob/client';
 import { fetchAddressByCep } from '@/lib/address';
 import FormStepper from '@/app/components/admin/FormStepper';
+import AddressMapPicker from '@/app/components/admin/AddressMapPicker';
 import './page.css';
 import AdminHeader from '@/app/components/admin/AdminHeader';
 
@@ -36,6 +37,7 @@ export default function EditProperty({ params }) {
     street: '', neighborhood: '', city: '', state: '', number: '', complement: ''
   });
   const [isLoadingCep, setIsLoadingCep] = useState(false);
+  const [coords, setCoords] = useState(null); // { latitude, longitude } | null
 
   // Load property data
   useEffect(() => {
@@ -69,6 +71,9 @@ export default function EditProperty({ params }) {
           number: property.number || '',
           complement: property.complement || '',
         });
+        if (Number.isFinite(property.latitude) && Number.isFinite(property.longitude)) {
+          setCoords({ latitude: property.latitude, longitude: property.longitude });
+        }
         const items = [];
         if (property.images && property.images.length > 0) {
           property.images.forEach((img) => {
@@ -113,7 +118,32 @@ export default function EditProperty({ params }) {
     setAddress(prev => ({ ...prev, [field]: value }));
   };
 
-  const nextStep = () => setCurrentStep(prev => prev + 1);
+  const validateLocationStep = () => {
+    const required = [
+      ['cep', cep.replace(/\D/g, '')],
+      ['city', address.city],
+      ['state', address.state],
+      ['neighborhood', address.neighborhood],
+      ['street', address.street],
+      ['number', address.number],
+    ];
+    const missing = required.find(([, value]) => !value || !String(value).trim());
+    if (missing) {
+      const labels = { cep: 'CEP', city: 'Cidade', state: 'UF', neighborhood: 'Bairro', street: 'Logradouro', number: 'Número' };
+      alert(`Preencha o campo obrigatório: ${labels[missing[0]]}`);
+      return false;
+    }
+    if (!coords) {
+      alert('Defina a localização no mapa antes de prosseguir.');
+      return false;
+    }
+    return true;
+  };
+
+  const nextStep = () => {
+    if (currentStep === 2 && !validateLocationStep()) return;
+    setCurrentStep(prev => prev + 1);
+  };
   const prevStep = () => setCurrentStep(prev => prev - 1);
 
   const handleImageSelect = async (e) => {
@@ -169,6 +199,11 @@ export default function EditProperty({ params }) {
           data.append(key, value ?? '');
         });
 
+        if (coords) {
+          data.append('latitude', String(coords.latitude));
+          data.append('longitude', String(coords.longitude));
+        }
+
         data.append('existingImageUrls', JSON.stringify(keptImageUrls));
         data.append('videos', JSON.stringify(finalVideos));
 
@@ -189,6 +224,7 @@ export default function EditProperty({ params }) {
             ...formData,
             ...address,
             cep: cep.replace(/\D/g, ''),
+            ...(coords ? { latitude: coords.latitude, longitude: coords.longitude } : {}),
             existingImageUrls: keptImageUrls,
             videos: finalVideos,
           }),
@@ -282,37 +318,49 @@ export default function EditProperty({ params }) {
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
               <h4 className="form-section-title" style={{ marginTop: 0 }}>Endereço do Imóvel</h4>
             </div>
-            <div className="form-group" style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: '1fr 2fr 2fr', gap: '20px' }}>
+            <div className="form-group" style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: '1fr 2fr 0.6fr 2fr', gap: '20px' }}>
               <div className="form-group">
-                <label className="form-label">CEP</label>
+                <label className="form-label">CEP *</label>
                 <div className="input-wrapper">
-                  <input type="text" className="form-input" placeholder="00000-000" value={cep} onChange={handleCepChange} onBlur={handleCepBlur} maxLength={9} />
+                  <input type="text" className="form-input" placeholder="00000-000" value={cep} onChange={handleCepChange} onBlur={handleCepBlur} maxLength={9} required />
                   {isLoadingCep && <span style={{ position: 'absolute', right: '10px', top: '10px', fontSize: '12px', color: '#666' }}>Buscando...</span>}
                 </div>
               </div>
               <div className="form-group">
-                <label className="form-label">Cidade</label>
-                <input type="text" className="form-input" value={address.city} onChange={(e) => handleAddressChange('city', e.target.value)} />
+                <label className="form-label">Cidade *</label>
+                <input type="text" className="form-input" value={address.city} onChange={(e) => handleAddressChange('city', e.target.value)} required />
               </div>
               <div className="form-group">
-                <label className="form-label">Bairro</label>
-                <input type="text" className="form-input" value={address.neighborhood} onChange={(e) => handleAddressChange('neighborhood', e.target.value)} />
+                <label className="form-label">UF *</label>
+                <input type="text" className="form-input" value={address.state} onChange={(e) => handleAddressChange('state', e.target.value.toUpperCase().slice(0, 2))} maxLength={2} placeholder="SP" required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Bairro *</label>
+                <input type="text" className="form-input" value={address.neighborhood} onChange={(e) => handleAddressChange('neighborhood', e.target.value)} required />
               </div>
             </div>
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-              <label className="form-label">Logradouro</label>
+              <label className="form-label">Logradouro *</label>
               <div className="input-wrapper">
-                <input type="text" className="form-input" placeholder="Rua, Avenida, etc" value={address.street} onChange={(e) => handleAddressChange('street', e.target.value)} />
+                <input type="text" className="form-input" placeholder="Rua, Avenida, etc" value={address.street} onChange={(e) => handleAddressChange('street', e.target.value)} required />
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">Número</label>
-              <input type="text" className="form-input" value={address.number} onChange={(e) => handleAddressChange('number', e.target.value)} />
+              <label className="form-label">Número *</label>
+              <input type="text" className="form-input" value={address.number} onChange={(e) => handleAddressChange('number', e.target.value)} required />
             </div>
             <div className="form-group">
               <label className="form-label">Complemento</label>
               <input type="text" className="form-input" value={address.complement} onChange={(e) => handleAddressChange('complement', e.target.value)} />
+            </div>
+
+            <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '8px' }}>
+              <AddressMapPicker
+                address={{ ...address, cep: cep.replace(/\D/g, '') }}
+                value={coords}
+                onChange={setCoords}
+              />
             </div>
           </div>
         )}
