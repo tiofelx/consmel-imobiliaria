@@ -340,15 +340,15 @@ export default function NewProperty() {
               <div className="form-group">
                 <label className="form-label">Área Útil</label>
                 <div className="input-wrapper">
-                  <input type="number" className="form-input" placeholder="0" value={formData.usableArea} onChange={(e) => handleChange('usableArea', e.target.value)} />
-                  <span style={{ position: 'absolute', right: '16px', color: '#9ca3af' }}>m²</span>
+                  <input type="text" inputMode="decimal" className="form-input" placeholder="0" value={formData.usableArea} onChange={(e) => handleChange('usableArea', e.target.value)} />
+                  <span className="input-suffix">m²</span>
                 </div>
               </div>
               <div className="form-group">
                 <label className="form-label">Área Total</label>
                 <div className="input-wrapper">
-                  <input type="number" className="form-input" placeholder="0" value={formData.totalArea} onChange={(e) => handleChange('totalArea', e.target.value)} />
-                  <span style={{ position: 'absolute', right: '16px', color: '#9ca3af' }}>m²</span>
+                  <input type="text" inputMode="decimal" className="form-input" placeholder="0" value={formData.totalArea} onChange={(e) => handleChange('totalArea', e.target.value)} />
+                  <span className="input-suffix">m²</span>
                 </div>
               </div>
             </div>
@@ -366,24 +366,24 @@ export default function NewProperty() {
               <div className="form-group" style={{ flex: '0 1 300px' }}>
                 <label className="form-label">Preço</label>
                 <div className="input-wrapper">
-                  <input type="text" className="form-input" placeholder="0,00" value={formData.price} onChange={(e) => handleChange('price', e.target.value)} />
-                  <span style={{ position: 'absolute', right: '16px', color: '#9ca3af', fontWeight: 500 }}>R$</span>
+                  <span className="input-prefix">R$</span>
+                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.price} onChange={(e) => handleChange('price', e.target.value)} />
                 </div>
               </div>
 
               <div className="form-group" style={{ flex: '0 1 300px' }}>
                 <label className="form-label">Condomínio</label>
                 <div className="input-wrapper">
-                  <input type="text" className="form-input" placeholder="0,00" value={formData.condoFee} onChange={(e) => handleChange('condoFee', e.target.value)} />
-                  <span style={{ position: 'absolute', right: '16px', color: '#9ca3af', fontWeight: 500 }}>R$</span>
+                  <span className="input-prefix">R$</span>
+                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.condoFee} onChange={(e) => handleChange('condoFee', e.target.value)} />
                 </div>
               </div>
 
               <div className="form-group" style={{ flex: '0 1 300px' }}>
                 <label className="form-label">IPTU</label>
                 <div className="input-wrapper">
-                  <input type="text" className="form-input" placeholder="0,00" value={formData.iptu} onChange={(e) => handleChange('iptu', e.target.value)} />
-                  <span style={{ position: 'absolute', right: '16px', color: '#9ca3af', fontWeight: 500 }}>R$</span>
+                  <span className="input-prefix">R$</span>
+                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.iptu} onChange={(e) => handleChange('iptu', e.target.value)} />
                 </div>
               </div>
             </div>

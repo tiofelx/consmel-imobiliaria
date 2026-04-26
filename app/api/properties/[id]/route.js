@@ -11,6 +11,11 @@ function toPublicCoordinate(value) {
     return Number(value.toFixed(3));
 }
 
+function buildLocationLabel(property) {
+    const cityState = [property.city, property.state].filter(Boolean).join(' - ');
+    return [property.neighborhood, cityState].filter(Boolean).join(', ');
+}
+
 function toPublicProperty(property) {
     return {
         id: property.id,
@@ -33,7 +38,7 @@ function toPublicProperty(property) {
         neighborhood: property.neighborhood,
         city: property.city,
         state: property.state,
-        location: `${property.neighborhood ? `${property.neighborhood}, ` : ''}${property.city || ''} - ${property.state || ''}`,
+        location: buildLocationLabel(property),
         image: property.images?.[0]?.url || null,
         images: property.images,
         videos: property.videos || [],
@@ -85,6 +90,15 @@ function parseBrazilianCurrency(value) {
     return parseFloat(cleaned) || null;
 }
 
+// Aceita "1338,65" e "1338.65" pra área e similares
+function parseDecimal(value) {
+    if (value === null || value === undefined || value === '') return null;
+    if (typeof value === 'number') return value;
+    const cleaned = value.toString().replace(',', '.');
+    const parsed = parseFloat(cleaned);
+    return Number.isNaN(parsed) ? null : parsed;
+}
+
 const VERCEL_BLOB_URL_PATTERN = /^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\//i;
 
 function sanitizeVideoUrls(input) {
@@ -108,8 +122,8 @@ function buildUpdateDataFromObject(data) {
         suites: data.suites ? parseInt(data.suites) : null,
         bathrooms: data.bathrooms ? parseInt(data.bathrooms) : null,
         parkingSpaces: data.parkingSpaces ? parseInt(data.parkingSpaces) : null,
-        usableArea: data.usableArea ? parseFloat(data.usableArea) : null,
-        totalArea: data.totalArea ? parseFloat(data.totalArea) : null,
+        usableArea: parseDecimal(data.usableArea),
+        totalArea: parseDecimal(data.totalArea),
         features: Array.isArray(data.features) ? data.features : [],
         cep: data.cep || null,
         street: data.street || null,

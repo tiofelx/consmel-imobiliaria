@@ -13,6 +13,11 @@ function toPublicCoordinate(value) {
     return Number(value.toFixed(3));
 }
 
+function buildLocationLabel(property) {
+    const cityState = [property.city, property.state].filter(Boolean).join(' - ');
+    return [property.neighborhood, cityState].filter(Boolean).join(', ');
+}
+
 function toPublicProperty(property) {
     return {
         id: property.id,
@@ -35,7 +40,7 @@ function toPublicProperty(property) {
         neighborhood: property.neighborhood,
         city: property.city,
         state: property.state,
-        location: `${property.neighborhood ? `${property.neighborhood}, ` : ''}${property.city || ''} - ${property.state || ''}`,
+        location: buildLocationLabel(property),
         image: property.images?.[0]?.url || null,
         images: property.images,
         videos: property.videos || [],
@@ -100,11 +105,12 @@ export async function POST(request) {
             if (value) data[key] = value.toString();
         });
 
-        // Helper to parse numbers safely
+        // Helper to parse numbers safely. Aceita "1338,65" e "1338.65".
         const parseNum = (key, isFloat = false) => {
             const val = formData.get(key);
             if (!val) return null;
-            const parsed = isFloat ? parseFloat(val.toString()) : parseInt(val.toString());
+            const str = val.toString().replace(',', '.');
+            const parsed = isFloat ? parseFloat(str) : parseInt(str);
             return isNaN(parsed) ? null : parsed;
         };
 
