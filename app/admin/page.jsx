@@ -5,9 +5,15 @@ import prisma from '@/lib/prisma';
 
 // Helper functions
 const getGreeting = () => {
-  const hour = new Date().getHours();
+  const hour = Number(
+    new Intl.DateTimeFormat('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      hour: '2-digit',
+      hour12: false,
+    }).format(new Date())
+  );
   if (hour < 12) return 'Bom dia';
-  if (hour < 18) return 'Boa tarde';
+  if (hour < 19) return 'Boa tarde';
   return 'Boa noite';
 };
 
