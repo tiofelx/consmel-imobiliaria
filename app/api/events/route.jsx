@@ -29,6 +29,7 @@ export async function GET(request) {
             title: event.title,
             date: event.date.toISOString().split('T')[0], // "YYYY-MM-DD"
             time: event.time,
+            duration: event.duration ?? 60,
             type: event.type,
             description: event.description || '',
         }));
@@ -55,11 +56,16 @@ export async function POST(request) {
 
         const data = await request.json();
 
+        const duration = Number.isInteger(data.duration) && data.duration > 0
+            ? Math.min(data.duration, 24 * 60)
+            : 60;
+
         const event = await prisma.event.create({
             data: {
                 title: data.title,
                 date: new Date(data.date),
                 time: data.time,
+                duration,
                 type: data.type,
                 description: data.description || null,
             },
@@ -70,6 +76,7 @@ export async function POST(request) {
             title: event.title,
             date: event.date.toISOString().split('T')[0],
             time: event.time,
+            duration: event.duration,
             type: event.type,
             description: event.description || '',
         }, { status: 201 });

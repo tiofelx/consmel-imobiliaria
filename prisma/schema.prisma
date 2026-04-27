@@ -125,7 +125,8 @@ model Event {
   id          String   @id @default(cuid())
   title       String
   date        DateTime
-  time        String // "09:00"
+  time        String // "09:00" — start time
+  duration    Int      @default(60) // minutes
   type        String // "visit" | "meeting" | "call"
   description String?
 
