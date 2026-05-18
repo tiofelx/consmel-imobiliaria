@@ -16,6 +16,8 @@ export default function WhatsAppButton({ message, phone = '5517996076414' }) {
         className="whatsapp-mascot"
         width={120}
         height={120}
+        loading="eager"
+        priority
       />
       <div className="whatsapp-fab-wrapper">
         <a
