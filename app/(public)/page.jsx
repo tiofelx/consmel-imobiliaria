@@ -9,6 +9,7 @@ import PropertyCard from '../components/PropertyCard';
 import PropertyCardSkeleton from '../components/PropertyCardSkeleton';
 import SectionBanner from '../components/SectionBanner';
 import SmartSearchFilter from '../components/SmartSearchFilter';
+import LancamentoPopup from '../components/LancamentoPopup';
 
 import { searchProperties } from '@/lib/properties';
 import './page.css';
@@ -83,6 +84,8 @@ export default function Home() {
 
   return (
     <>
+      <LancamentoPopup />
+
       {/* Hero Section */}
       <section
         className="hero"

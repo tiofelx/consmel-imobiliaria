@@ -1,0 +1,252 @@
+/* ─────────────────────────────────────────────────
+   LancamentoPopup — "Pôr do Sol sobre a Lagoa"
+   ───────────────────────────────────────────────── */
+
+/* ── Overlay ── */
+.lp-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 12, 28, 0.88);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* ══════════════════════════════════════════════
+   BORDA ANIMADA (conic-gradient rotacionando)
+   ══════════════════════════════════════════════ */
+.lp-popup-border {
+    position: relative;
+    border-radius: 24px;
+    padding: 1.5px;
+    overflow: hidden;
+    max-width: 440px;
+    width: 100%;
+}
+
+/* Pseudo-element rotacionando — cria o gradiente na borda */
+.lp-popup-border::before {
+    content: '';
+    position: absolute;
+    inset: -110%;
+    background: conic-gradient(
+        from 0deg,
+        transparent             0deg   45deg,
+        rgba(232,  93, 44, 0.9) 65deg 105deg,
+        rgba(255, 255,255, 0.5) 120deg 133deg,
+        transparent             150deg 215deg,
+        rgba( 30,  58, 95, 0.6) 235deg 275deg,
+        rgba(255, 255,255, 0.2) 290deg 300deg,
+        transparent             318deg 360deg
+    );
+    animation: lpBorderSpin 4s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes lpBorderSpin { to { transform: rotate(360deg); } }
+
+/* ── Card ── */
+.lp-popup-card {
+    position: relative;
+    border-radius: 22px;
+    overflow: hidden;
+    isolation: isolate;
+    background: #17304f;
+    box-shadow:
+        0 40px 80px rgba(0,  0,  0, 0.70),
+        0 10px 28px rgba(0,  0,  0, 0.35),
+        0  0   0 1px rgba(255,255,255,0.04) inset;
+}
+
+/* ── Fechar ── */
+.lp-popup-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(0, 0, 0, 0.30);
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    backdrop-filter: blur(4px);
+    transition: background 0.15s ease-out, color 0.15s ease-out, transform 0.2s ease-out;
+}
+.lp-popup-close:hover  { background: rgba(255,255,255,0.15); color: white; transform: rotate(90deg); }
+.lp-popup-close:active { transform: rotate(90deg) scale(0.9); transition-duration: 0.08s; }
+
+
+/* ── Conteúdo abaixo da ilustração ── */
+.lp-popup-content {
+    padding: 20px 28px 26px;
+    /* Gradiente mesh sutil no fundo do conteúdo */
+    background:
+        radial-gradient(at 85% 10%, rgba(232,93,44,0.12)  0px, transparent 55%),
+        radial-gradient(at 10% 90%, rgba(14,165,233,0.08) 0px, transparent 50%),
+        #17304f;
+}
+
+/* ── Badge ── */
+.lp-popup-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(232,93,44,0.12);
+    border: 1px solid rgba(232,93,44,0.28);
+    color: #ffb49a;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 5px 13px 5px 11px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+}
+
+.lp-popup-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #e85d2c;
+    flex-shrink: 0;
+    animation: lpDotPulse 1.6s ease-in-out infinite;
+}
+@keyframes lpDotPulse {
+    0%, 100% { opacity: 1;   transform: scale(1);    }
+    50%       { opacity: 0.3; transform: scale(0.55); }
+}
+
+/* ── Headline — gradient text ── */
+.lp-popup-headline {
+    font-size: 1.62rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin: 0 0 14px;
+
+    /* vault: Gradientes.md — background-clip: text */
+    background: linear-gradient(150deg, #ffffff 0%, #ffd0b8 45%, #e85d2c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ── Sub ── */
+.lp-popup-sub {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.58);
+    line-height: 1.72;
+    margin: 0 0 14px;
+}
+
+/* ── Localização ── */
+.lp-popup-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255,255,255,0.32);
+    font-size: 0.73rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    margin-bottom: 22px;
+}
+
+/* ── Ações ── */
+.lp-popup-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+/* ══════════════════════════════════════════════
+   CTA — glow halo + shimmer sweep + press
+   ══════════════════════════════════════════════ */
+.lp-popup-cta {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #e85d2c;
+    color: white;
+    font-weight: 700;
+    font-size: 0.96rem;
+    padding: 13px 22px;
+    border-radius: 11px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    isolation: isolate;
+    transition: background 0.2s ease-out, color 0.2s, transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+/* Glow radial atrás do botão */
+.lp-popup-cta::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 20px;
+    background: radial-gradient(circle, rgba(232,93,44,0.6) 0%, transparent 65%);
+    opacity: 0;
+    filter: blur(12px);
+    transition: opacity 0.3s ease-out;
+    z-index: -1;
+}
+
+/* Shimmer diagonal */
+.lp-popup-cta::after {
+    content: '';
+    position: absolute;
+    top: -20%; left: -90%;
+    width: 55%; height: 140%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.22), transparent);
+    transform: skewX(-15deg);
+    transition: left 0.5s ease;
+    pointer-events: none;
+}
+
+.lp-popup-cta:hover {
+    background: #c74d1f;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(232,93,44,0.48), 0 4px 8px rgba(232,93,44,0.22);
+}
+.lp-popup-cta:hover::before { opacity: 1; }
+.lp-popup-cta:hover::after  { left: 130%; }
+
+.lp-popup-cta:active {
+    transform: scale(0.97);
+    box-shadow: 0 4px 10px rgba(232,93,44,0.28);
+    transition-duration: 0.08s;
+}
+
+.lp-popup-cta svg { transition: transform 0.2s ease-out; flex-shrink: 0; }
+.lp-popup-cta:hover svg { transform: translateX(3px); }
+
+/* ══════════════════════════════════════════════
+   prefers-reduced-motion
+   ══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    .lp-popup-border::before,
+    .lp-popup-badge-dot { animation: none; }
+
+    .lp-popup-close:hover  { transform: none; }
+    .lp-popup-cta::after   { display: none; }
+    .lp-popup-cta:hover svg { transform: none; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+    .lp-popup-landscape-svg { height: 140px; }
+    .lp-popup-content       { padding: 16px 20px 22px; }
+    .lp-popup-headline      { font-size: 1.35rem; }
+}

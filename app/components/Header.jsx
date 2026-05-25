@@ -17,14 +17,24 @@ export default function Header({ user }) {
   const opacityRef = useRef(1);
   const renderedOpacityRef = useRef(1);
   const headerStyleRef = useRef('solid');
+  const hasShownHeaderRef = useRef(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
 
   useEffect(() => {
     if (!isHome) {
       setLoadOpacity(1);
+      hasShownHeaderRef.current = true;
       return;
     }
+
+    // Navigating back to home after already being shown — skip animation
+    if (hasShownHeaderRef.current) {
+      setLoadOpacity(1);
+      return;
+    }
+
+    hasShownHeaderRef.current = true;
 
     let frameId;
     const fadeDelayMs = 850;

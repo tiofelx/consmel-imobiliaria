@@ -168,6 +168,21 @@ model BlockedIp {
   @@map("blocked_ips")
 }
 
+// ==========================================
+// Leads do Lançamento do Novo Lote
+// ==========================================
+model LancamentoLead {
+  id    String @id @default(cuid())
+  name  String
+  email String
+  phone String
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("lancamento_leads")
+}
+
 model SecurityEvent {
   id        String   @id @default(cuid())
   event     String

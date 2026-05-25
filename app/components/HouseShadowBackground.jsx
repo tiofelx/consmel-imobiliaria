@@ -513,7 +513,7 @@ const HouseShadowBackground = memo(() => {
                     </defs>
                 </svg>
 
-                <div className="airplane-layer animate-entrance-top delay-1200" aria-hidden="true">
+                <div className="airplane-layer" aria-hidden="true">
                     <div className="airplane-fly">
                         <svg className="airplane-svg" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                             <g transform="translate(12 12) scale(0.68)">
@@ -557,14 +557,14 @@ const HouseShadowBackground = memo(() => {
                     </defs>
                     {/* Cranes removed for cleaner silhouette */}
                     <g className="animate-entrance-bottom delay-0">
-                        <path d="M0,500 L0,200 L40,200 L40,130 L60,130 L60,200 L110,200 L110,90 L140,90 L140,200 L190,200 L190,50 L230,50 L230,200 L270,200 L270,120 L310,120 L310,200 L350,200 L350,70 L400,70 L400,200 L440,200 L440,145 L480,145 L480,200 L520,200 L520,45 L580,45 L580,200 L620,200 L620,110 L660,110 L660,200 L700,200 L700,70 L740,70 L740,200 L780,200 L780,100 L820,100 L820,200 L860,200 L860,35 L920,35 L920,200 L960,200 L960,120 L1000,120 L1000,200 L1040,200 L1040,70 L1080,70 L1080,200 L1120,200 L1120,100 L1160,100 L1160,200 L1200,200 L1200,45 L1260,45 L1260,200 L1300,200 L1300,110 L1340,110 L1340,200 L1380,200 L1380,80 L1420,80 L1420,200 L1440,200 L1440,500 Z" fill="url(#skylineGradient1)" opacity="1" />
+                        <path d="M0,500 L0,200 L40,200 L40,130 L70,130 L70,200 L110,200 L110,90 L150,90 L150,200 L190,200 L190,50 L240,50 L240,200 L270,200 L270,120 L310,120 L310,200 L350,200 L350,70 L400,70 L400,200 L440,200 L440,145 L480,145 L480,200 L520,200 L520,45 L580,45 L580,200 L620,200 L620,110 L660,110 L660,200 L700,200 L700,70 L740,70 L740,200 L780,200 L780,100 L820,100 L820,200 L860,200 L860,35 L920,35 L920,200 L960,200 L960,120 L1000,120 L1000,200 L1040,200 L1040,70 L1080,70 L1080,200 L1120,200 L1120,100 L1160,100 L1160,200 L1200,200 L1200,45 L1260,45 L1260,200 L1300,200 L1300,110 L1340,110 L1340,200 L1380,200 L1380,80 L1420,80 L1420,200 L1440,200 L1440,500 Z" fill="url(#skylineGradient1)" opacity="1" />
                     </g>
                     <g fill="rgba(255,200,100,0.04)" className="animate-entrance-bottom delay-0">
                         {/* x:190, y:50 */}
-                        <rect x="202" y="75" width="8" height="12" rx="1" />
-                        <rect x="215" y="75" width="8" height="12" rx="1" />
-                        <rect x="202" y="100" width="8" height="12" rx="1" />
-                        <rect x="215" y="100" width="8" height="12" rx="1" className="tv-effect" style={{ animationDelay: '4.5s' }} />
+                        <rect x="203" y="75" width="10" height="14" rx="1" />
+                        <rect x="218" y="75" width="10" height="14" rx="1" />
+                        <rect x="203" y="100" width="10" height="14" rx="1" />
+                        <rect x="218" y="100" width="10" height="14" rx="1" className="tv-effect" style={{ animationDelay: '4.5s' }} />
 
                         {/* x:350, y:70 */}
                         <rect x="362" y="90" width="8" height="12" rx="1" />
