@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import transporter from '@/lib/mailer';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
 import rateLimit from '@/lib/rate-limit';
@@ -67,21 +67,18 @@ export async function POST(request) {
 }
 
 async function notifyNewLead({ name, email, phone }) {
-    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.GMAIL_USER;
     const to = process.env.LANCAMENTO_NOTIFY_EMAIL || process.env.SECURITY_ALERT_EMAIL_TO;
-    const from = process.env.SECURITY_ALERT_EMAIL_FROM || 'Consmel <noreply@consmel.com.br>';
 
-    if (!apiKey || !to) return;
+    if (!from || !to) return;
 
-    const resend = new Resend(apiKey);
     const date = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
     const waLink = `https://wa.me/55${phone.replace(/\D/g, '')}`;
 
-    // Context7: usar Resend SDK com html (react-email não instalado)
-    await resend.emails.send({
-        from,
+    await transporter.sendMail({
+        from: `Consmel Imobiliária <${from}>`,
         to,
-        subject: '🏡 Novo Lead — Lançamento do Novo Lote · Consmel',
+        subject: 'Novo Lead — Lançamento do Novo Lote · Consmel',
         html: buildEmailHtml({ name, email, phone, waLink, date }),
     });
 }

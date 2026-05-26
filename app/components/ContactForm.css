@@ -121,6 +121,15 @@
   text-align: center;
 }
 
+.form-error {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f8d7da;
+  color: #721c24;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;

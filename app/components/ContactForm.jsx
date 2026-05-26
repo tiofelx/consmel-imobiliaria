@@ -19,6 +19,7 @@ export default function ContactForm({ propertyTitle }) {
   });
   const [status, setStatus] = useState('idle'); // idle, sending, success, error
 
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -27,42 +28,22 @@ export default function ContactForm({ propertyTitle }) {
     }));
   };
 
-  // Function to send via WhatsApp (opens WhatsApp with pre-filled message)
-  const sendWhatsApp = (data) => {
-    const message = encodeURIComponent(
+  const openWhatsApp = (data) => {
+    const text = encodeURIComponent(
       `*Novo contato do site*\n\n` +
       `*Nome:* ${data.name}\n` +
       `*E-mail:* ${data.email}\n` +
       `*Contato 1:* ${data.phone}\n` +
-      `*Contato 2:* ${data.phone2 || 'Não informado'}\n` +
+      (data.phone2 ? `*Contato 2:* ${data.phone2}\n` : '') +
       (propertyTitle ? `*Imóvel:* ${propertyTitle}\n` : '') +
-      `*Mensagem:* ${data.message}`
+      (data.message ? `*Mensagem:* ${data.message}` : '')
     );
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
-  };
-
-  // Function to send via Email (opens email client with pre-filled message)
-  const sendEmail = (data) => {
-    const subject = encodeURIComponent(
-      propertyTitle
-        ? `Interesse no imóvel: ${propertyTitle}`
-        : 'Novo contato do site Consmel'
-    );
-    const body = encodeURIComponent(
-      `Nome: ${data.name}\n` +
-      `E-mail: ${data.email}\n` +
-      `Contato 1: ${data.phone}\n` +
-      `Contato 2: ${data.phone2 || 'Não informado'}\n` +
-      (propertyTitle ? `Imóvel de interesse: ${propertyTitle}\n` : '') +
-      `\nMensagem:\n${data.message}`
-    );
-    window.open(`mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`, '_blank');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate at least one contact method is selected
     if (!formData.contactViaEmail && !formData.contactViaWhatsApp) {
       alert('Por favor, selecione pelo menos uma forma de contato (E-mail ou WhatsApp)');
       return;
@@ -70,49 +51,46 @@ export default function ContactForm({ propertyTitle }) {
 
     setStatus('sending');
 
-    // Save Lead to Database
     try {
-      await fetch('/api/clients', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          interest: propertyTitle ? `Interesse: ${propertyTitle}` : 'Contato Geral',
-          notes: formData.message,
-          status: 'Novo'
-        })
+          phone2: formData.phone2 || null,
+          message: formData.message || null,
+          propertyTitle: propertyTitle || null,
+          contactViaEmail: formData.contactViaEmail,
+          contactViaWhatsApp: formData.contactViaWhatsApp,
+        }),
       });
-    } catch (err) {
-      console.error('Failed to save lead', err);
+
+      if (!res.ok) throw new Error('Falha no envio');
+    } catch {
+      setStatus('error');
+      return;
     }
 
-    // Send to selected channels
+    if (formData.contactViaWhatsApp) {
+      openWhatsApp(formData);
+    }
+
+    setStatus('success');
+
     setTimeout(() => {
-      if (formData.contactViaEmail) {
-        sendEmail(formData);
-      }
-      if (formData.contactViaWhatsApp) {
-        sendWhatsApp(formData);
-      }
-
-      setStatus('success');
-
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          phone2: '',
-          message: '',
-          contactViaEmail: false,
-          contactViaWhatsApp: false
-        });
-        setStatus('idle');
-      }, 3000);
-    }, 500);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        phone2: '',
+        message: '',
+        contactViaEmail: false,
+        contactViaWhatsApp: false,
+      });
+      setStatus('idle');
+    }, 3000);
   };
 
   return (
@@ -223,6 +201,7 @@ export default function ContactForm({ propertyTitle }) {
         >
           {status === 'sending' ? 'Enviando...' :
             status === 'success' ? 'Enviado!' :
+            status === 'error' ? 'Tentar novamente' :
               'Enviar'}
         </button>
       </div>
@@ -230,6 +209,11 @@ export default function ContactForm({ propertyTitle }) {
       {status === 'success' && (
         <div className="form-success">
           Mensagem enviada!
+        </div>
+      )}
+      {status === 'error' && (
+        <div className="form-error">
+          Erro ao enviar. Tente novamente ou entre em contato pelo WhatsApp.
         </div>
       )}
     </form>
