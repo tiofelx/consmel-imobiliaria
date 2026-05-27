@@ -179,7 +179,7 @@ function buildEmailHtml({ name, email, phone, waLink, date }) {
           <tr>
             <td style="background:#f8f9fb;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center;">
               <p style="margin:0;color:#9ca3af;font-size:12px;line-height:1.6;">
-                Consmel Imobiliária · Sistema de Lançamento<br />
+                Consmel Imobiliária<br />
                 <a href="tel:+5517996076414" style="color:#9ca3af;">(17) 99607-6414</a>
               </p>
             </td>
