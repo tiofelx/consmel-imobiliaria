@@ -185,7 +185,8 @@ export default function Header({ user }) {
         {/* Desktop Navigation */}
         <nav className="nav-desktop">
           <Link href="/cadastro-imovel" className="nav-link">Cadastre seu Imóvel</Link>
-          <Link href="/servicos" className="nav-link">Serviços</Link>
+          <Link href="/despachante" className="nav-link">Despachante</Link>
+          {/* <Link href="/servicos" className="nav-link">Serviços</Link> */}
           <Link href="/sobre" className="nav-link">Sobre</Link>
 
           {user ? (
@@ -284,7 +285,8 @@ export default function Header({ user }) {
       {/* Mobile Navigation */}
       <nav className={`nav-mobile ${menuOpen ? 'open' : ''}`}>
         <Link href="/cadastro-imovel" className="nav-link-mobile" onClick={closeMenu}>Cadastre seu Imóvel</Link>
-        <Link href="/servicos" className="nav-link-mobile" onClick={closeMenu}>Serviços</Link>
+        <Link href="/despachante" className="nav-link-mobile" onClick={closeMenu}>Despachante</Link>
+        {/* <Link href="/servicos" className="nav-link-mobile" onClick={closeMenu}>Serviços</Link> */}
         <Link href="/sobre" className="nav-link-mobile" onClick={closeMenu}>Sobre</Link>
 
         {user ? (
