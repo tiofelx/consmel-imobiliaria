@@ -53,7 +53,6 @@ export default function Footer() {
             <ul className="footer-links">
               <li><Link href="/imoveis?tipo=venda">Compra de Imóveis</Link></li>
               <li><Link href="/imoveis?tipo=aluguel">Aluguel de Imóveis</Link></li>
-              <li><Link href="/despachante">Despachante Imobiliário</Link></li>
               {showConsultoria && <li><Link href="/contato">Consultoria</Link></li>}
             </ul>
           </div>
