@@ -1,0 +1,202 @@
+/* ── Problema ── */
+.desp-problema-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: start;
+}
+
+.desp-problema-texto h2 {
+    margin-bottom: var(--space-5);
+}
+
+.desp-problema-texto p {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-5);
+}
+
+.desp-problema-texto .btn {
+    margin-top: var(--space-3);
+}
+
+.desp-problema-impedimentos {
+    background: var(--color-primary-subtle);
+    padding: var(--space-8);
+    border-radius: var(--radius-xl);
+    border-left: 4px solid var(--color-primary);
+}
+
+.desp-problema-impedimentos h3 {
+    color: var(--color-primary);
+    margin-bottom: var(--space-4);
+    font-size: var(--font-size-xl);
+}
+
+.desp-lista-impedimentos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.desp-lista-impedimentos li {
+    padding-left: var(--space-6);
+    position: relative;
+    color: var(--text-secondary);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+}
+
+.desp-lista-impedimentos li::before {
+    content: '✗';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+}
+
+/* ── Serviços ── */
+.desp-subtitulo {
+    color: var(--text-secondary);
+    font-size: var(--font-size-lg);
+    max-width: 560px;
+    margin-inline: auto;
+    margin-bottom: var(--space-10);
+}
+
+.desp-servicos-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.desp-servico-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.desp-servico-item:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.desp-servico-icone {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-primary-subtle);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ── Etapas ── */
+.desp-etapa-item {
+    padding: var(--space-8);
+    border-left: 3px solid var(--color-gray-200);
+    transition: border-color var(--transition-base);
+}
+
+.desp-etapa-item:hover {
+    border-left-color: var(--color-primary);
+}
+
+.desp-etapa-num {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-extrabold);
+    font-family: var(--font-family-display);
+    color: var(--color-primary);
+    opacity: 0.4;
+}
+
+.desp-etapa-item h3 {
+    margin-bottom: var(--space-3);
+}
+
+.desp-etapa-item p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ── Dor / Risco ── */
+.desp-dor-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    align-items: start;
+}
+
+.desp-dor-grid h2 {
+    margin-bottom: var(--space-5);
+}
+
+.desp-dor-grid p {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+}
+
+.desp-dor-riscos {
+    background: var(--bg-primary);
+    padding: var(--space-8);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.desp-dor-riscos h3 {
+    margin-bottom: var(--space-5);
+    font-size: var(--font-size-xl);
+}
+
+.desp-lista-riscos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.desp-lista-riscos li {
+    padding-left: var(--space-6);
+    position: relative;
+    color: var(--text-secondary);
+    line-height: var(--line-height-relaxed);
+}
+
+.desp-lista-riscos li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+}
+
+/* ── Responsive ── */
+@media (min-width: 768px) {
+    .desp-problema-grid {
+        grid-template-columns: 1.5fr 1fr;
+    }
+
+    .desp-servicos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .desp-dor-grid {
+        grid-template-columns: 1.4fr 1fr;
+    }
+}
