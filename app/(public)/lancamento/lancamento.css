@@ -696,6 +696,7 @@
 
 .btn-lp-maps:hover {
     background: #c74d1f;
+    color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(232, 93, 44, 0.40);
 }
@@ -996,12 +997,16 @@
 
     .lp-aspiracional-quote { padding-left: 18px; }
     .lp-proximidades-grid { grid-template-columns: 1fr; max-width: 300px; }
+    .lp-proximidades-grid .lp-proximidade-item:nth-child(2),
+    .lp-proximidades-grid .lp-proximidade-item:nth-child(4) {
+        transform: translateY(0);
+    }
 
     .lp-hero-headline { letter-spacing: -0.5px; }
 }
 
 @media (max-width: 480px) {
-    .lp-hero-content { padding-top: 88px; padding-bottom: 80px; }
+    .lp-hero-content { padding-top: 88px; padding-bottom: 140px; }
     .lp-hero-headline { font-size: 2rem; }
 
     .btn-lp-primary { width: 100%; justify-content: center; }
