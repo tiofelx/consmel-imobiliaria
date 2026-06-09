@@ -97,9 +97,27 @@ async function notifyContact({ name, email, phone, phone2, message, propertyTitl
     });
 }
 
+function esc(s) {
+    return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function buildEmailHtml({ name, email, phone, phone2, message, propertyTitle, viaList, date }) {
-    const mailtoLink = `mailto:${email}`;
+    const mailtoLink = `mailto:${encodeURIComponent(email)}`;
     const waLink = `https://wa.me/55${phone.replace(/\D/g, '')}`;
+
+    const safeName = esc(name);
+    const safeEmail = esc(email);
+    const safePhone = esc(phone);
+    const safePhone2 = esc(phone2);
+    const safeMessage = esc(message);
+    const safePropertyTitle = esc(propertyTitle);
+    const safeViaList = esc(viaList);
+    const safeDate = esc(date);
 
     return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -123,7 +141,7 @@ function buildEmailHtml({ name, email, phone, phone2, message, propertyTitle, vi
               <h1 style="margin:0;color:white;font-size:22px;font-weight:800;line-height:1.3;">
                 Novo Contato pelo Site
               </h1>
-              ${propertyTitle ? `<p style="margin:8px 0 0;color:#ff9068;font-size:13px;font-weight:600;">Interesse: ${propertyTitle}</p>` : ''}
+              ${propertyTitle ? `<p style="margin:8px 0 0;color:#ff9068;font-size:13px;font-weight:600;">Interesse: ${safePropertyTitle}</p>` : ''}
             </td>
           </tr>
 
@@ -139,29 +157,29 @@ function buildEmailHtml({ name, email, phone, phone2, message, propertyTitle, vi
               <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f9fb;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;">
                 <tr><td style="padding:16px 20px;border-bottom:1px solid #e5e7eb;">
                   <p style="margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;">Nome</p>
-                  <p style="margin:0;font-size:16px;font-weight:700;color:#111827;">${name}</p>
+                  <p style="margin:0;font-size:16px;font-weight:700;color:#111827;">${safeName}</p>
                 </td></tr>
                 <tr><td style="padding:16px 20px;border-bottom:1px solid #e5e7eb;">
                   <p style="margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;">E-mail</p>
                   <p style="margin:0;font-size:15px;font-weight:600;">
-                    <a href="${mailtoLink}" style="color:#1e3a5f;text-decoration:none;">${email}</a>
+                    <a href="${mailtoLink}" style="color:#1e3a5f;text-decoration:none;">${safeEmail}</a>
                   </p>
                 </td></tr>
                 <tr><td style="padding:16px 20px;border-bottom:1px solid #e5e7eb;">
                   <p style="margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;">Contato 1</p>
-                  <p style="margin:0;font-size:15px;font-weight:600;color:#1e3a5f;">${phone}</p>
+                  <p style="margin:0;font-size:15px;font-weight:600;color:#1e3a5f;">${safePhone}</p>
                 </td></tr>
                 ${phone2 ? `<tr><td style="padding:16px 20px;border-bottom:1px solid #e5e7eb;">
                   <p style="margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;">Contato 2</p>
-                  <p style="margin:0;font-size:15px;font-weight:600;color:#1e3a5f;">${phone2}</p>
+                  <p style="margin:0;font-size:15px;font-weight:600;color:#1e3a5f;">${safePhone2}</p>
                 </td></tr>` : ''}
                 <tr><td style="padding:16px 20px;border-bottom:1px solid #e5e7eb;">
                   <p style="margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;">Quer retorno via</p>
-                  <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">${viaList}</p>
+                  <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">${safeViaList}</p>
                 </td></tr>
                 ${message ? `<tr><td style="padding:16px 20px;">
                   <p style="margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;">Mensagem</p>
-                  <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;">${message}</p>
+                  <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;">${safeMessage}</p>
                 </td></tr>` : ''}
               </table>
 
@@ -169,7 +187,7 @@ function buildEmailHtml({ name, email, phone, phone2, message, propertyTitle, vi
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;">
                 <tr>
                   <td align="center" style="padding-bottom:12px;">
-                    <a href="${waLink}"
+                    <a href="${esc(waLink)}"
                        style="display:inline-block;background:#25d366;color:white;font-weight:700;font-size:15px;padding:14px 32px;border-radius:10px;text-decoration:none;">
                       Responder pelo WhatsApp
                     </a>
@@ -192,7 +210,7 @@ function buildEmailHtml({ name, email, phone, phone2, message, propertyTitle, vi
           <tr>
             <td style="background:#f8f9fb;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center;">
               <p style="margin:0;color:#9ca3af;font-size:12px;line-height:1.6;">
-                Consmel Imobiliária · ${date}
+                Consmel Imobiliária · ${safeDate}
               </p>
             </td>
           </tr>

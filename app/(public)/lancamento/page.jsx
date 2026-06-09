@@ -162,13 +162,57 @@ export default function LancamentoPage() {
         }
     }
 
+    const videoRef = useRef(null);
+
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        const FADE_S = 0.65;
+        let fading = false;
+
+        const onTimeUpdate = () => {
+            if (!fading && video.duration && video.currentTime >= video.duration - FADE_S) {
+                fading = true;
+                video.classList.add('lp-hero-video--fading');
+            }
+        };
+
+        const onEnded = () => {
+            video.currentTime = 0;
+            video.play();
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                video.classList.remove('lp-hero-video--fading');
+                fading = false;
+            }));
+        };
+
+        video.addEventListener('timeupdate', onTimeUpdate);
+        video.addEventListener('ended', onEnded);
+        return () => {
+            video.removeEventListener('timeupdate', onTimeUpdate);
+            video.removeEventListener('ended', onEnded);
+        };
+    }, []);
+
     return (
         <main className="lancamento-page">
             <div className="lp-curtain" aria-hidden="true" />
 
             {/* ── SEÇÃO 1: HERO ── */}
             <section className="lp-hero">
-                <div className="lp-hero-bg" aria-hidden="true" />
+                <div className="lp-hero-bg" aria-hidden="true">
+                    <video
+                        ref={videoRef}
+                        className="lp-hero-video"
+                        autoPlay
+                        muted
+                        playsInline
+                        preload="auto"
+                    >
+                        <source src="/videos/lote-lagoa.mp4" type="video/mp4" />
+                    </video>
+                </div>
                 <div className="lp-hero-glow" aria-hidden="true" />
                 <div className="lp-hero-wave" aria-hidden="true" />
 

@@ -243,6 +243,11 @@
   .footer-brand {
     flex-direction: column;
     text-align: center;
+    align-items: center;
+  }
+
+  .footer-logo {
+    margin-left: 0;
   }
 
   .footer-contact {
