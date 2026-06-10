@@ -24,7 +24,7 @@ export async function POST(request) {
             );
         }
 
-        if (!checkRateLimit(ip)) {
+        if (!(await checkRateLimit(ip))) {
             logSecurityAttempt('rate-limit-2fa', { ip, userAgent, route: '/api/auth/2fa/login', reason: 'Too many invalid 2FA attempts', severity: 'critical' });
             await blockIpAndAlert(ip, 'Fouça bruta detectada no 2FA', '2fa-login', { userAgent });
             return NextResponse.json(
@@ -36,7 +36,7 @@ export async function POST(request) {
         const { token } = await request.json();
 
         if (!token) {
-            incrementRateLimit(ip);
+            await incrementRateLimit(ip);
             return NextResponse.json({ error: 'Código 2FA obrigatório.' }, { status: 400 });
         }
 
@@ -77,11 +77,11 @@ export async function POST(request) {
         }
 
         if (!isValidResult?.valid) {
-            incrementRateLimit(ip);
+            await incrementRateLimit(ip);
             return NextResponse.json({ error: 'Código 2FA incorreto.' }, { status: 401 });
         }
 
-        resetRateLimit(ip);
+        await resetRateLimit(ip);
         await createSession({
             userId: user.id,
             email: user.email,

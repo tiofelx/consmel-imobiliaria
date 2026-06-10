@@ -24,7 +24,7 @@ export async function POST(request) {
             );
         }
 
-        if (!checkRateLimit(ip)) {
+        if (!(await checkRateLimit(ip))) {
             logSecurityAttempt('rate-limit-login', { ip, userAgent, route: '/api/auth/login', reason: 'Too many failed login attempts', severity: 'critical' });
             await blockIpAndAlert(ip, 'Múltiplas tentativas de login falhas (Possível ataque de força bruta)', 'login', { userAgent });
             return NextResponse.json(
@@ -45,7 +45,7 @@ export async function POST(request) {
         const sqliPattern = /(\b(OR|AND|UNION|SELECT|DROP)\b)|([';*])/i;
         if (typeof email !== 'string' || sqliPattern.test(email)) {
             logSecurityAttempt('sqli-login-payload', { ip, userAgent, route: '/api/auth/login', reason: 'Detected SQLi/NoSQL payload in email field', severity: 'high' });
-            incrementRateLimit(ip);
+            await incrementRateLimit(ip);
             return NextResponse.json(
                 { error: 'Formato de e-mail inválido.' },
                 { status: 400 }
@@ -67,7 +67,7 @@ export async function POST(request) {
 
         if (!user) {
             await verifyPassword(password, '$2b$12$tOaocb5.XUNqtmhNYnSSduy18O7AIR8RpytvlpnoAv7YtLvraZ0Gu');
-            incrementRateLimit(ip);
+            await incrementRateLimit(ip);
             return NextResponse.json(
                 { error: 'Credenciais inválidas.' },
                 { status: 401 }
@@ -77,7 +77,7 @@ export async function POST(request) {
         const isValid = await verifyPassword(password, user.password);
 
         if (!isValid) {
-            incrementRateLimit(ip);
+            await incrementRateLimit(ip);
             return NextResponse.json(
                 { error: 'Credenciais inválidas.' },
                 { status: 401 }
@@ -96,7 +96,7 @@ export async function POST(request) {
             const { valid } = await verifyToken({ token, secret, window: 1 });
 
             if (!valid) {
-                incrementRateLimit(ip);
+                await incrementRateLimit(ip);
                 return NextResponse.json(
                     { error: 'Código 2FA inválido.' },
                     { status: 401 }
@@ -104,7 +104,7 @@ export async function POST(request) {
             }
         }
 
-        resetRateLimit(ip);
+        await resetRateLimit(ip);
 
         await createSession({
             userId: user.id,

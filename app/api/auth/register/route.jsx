@@ -23,7 +23,7 @@ export async function POST(request) {
         const ip = getClientIpFromHeaders(requestHeaders);
         const userAgent = getClientUserAgentFromHeaders(requestHeaders);
 
-        incrementRateLimit(ip);
+        await incrementRateLimit(ip);
 
         const isBlocked = await checkIpBlocked(ip);
         if (isBlocked) {
@@ -34,7 +34,7 @@ export async function POST(request) {
             );
         }
 
-        if (!checkRateLimit(ip)) {
+        if (!(await checkRateLimit(ip))) {
             logSecurityAttempt('rate-limit-register', { ip, userAgent, route: '/api/auth/register', reason: 'Too many registration attempts', severity: 'critical' });
             await blockIpAndAlert(ip, 'Múltiplas tentativas abusivas de acesso', 'register', { userAgent });
             return NextResponse.json(
