@@ -7,7 +7,7 @@ import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttem
 
 export const dynamic = 'force-dynamic';
 
-const limiter = rateLimit({ uniqueTokenPerInterval: 500, interval: 60000 }); // 1 min window
+const limiter = rateLimit({ uniqueTokenPerInterval: 500, interval: 60000 });
 
 const alertSchema = z.object({
     type: z.enum(["fraud", "suspicious_password", "ddd_mismatch", "location_mismatch"]).optional(),
@@ -20,7 +20,6 @@ const alertSchema = z.object({
     reasons: z.array(z.string()).optional()
 });
 
-// GET — Listar alertas
 export async function GET(request) {
     try {
         const session = await verifySession();
@@ -43,7 +42,6 @@ export async function GET(request) {
     }
 }
 
-// POST — Criar alerta (Interno do sistema, porém acessado via HTTP Client side actions)
 export async function POST(request) {
     try {
         const requestHeaders = request.headers;
@@ -52,7 +50,6 @@ export async function POST(request) {
         const resForHeaders = new NextResponse();
 
         try {
-            // max 10 alerts per minute per IP
             await limiter.check(resForHeaders, 10, `RATE_LIMIT_ALERTS_${ip}`);
         } catch {
             logSecurityAttempt('rate-limit-alerts', { ip, userAgent, route: '/api/alerts', reason: 'Alert endpoint abuse detected' });

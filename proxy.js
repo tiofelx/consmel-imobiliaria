@@ -18,16 +18,13 @@ async function verifySessionFromRequest(request) {
 }
 
 export async function proxy(request) {
-    // Only run on /admin routes
     if (request.nextUrl.pathname.startsWith('/admin')) {
         const session = await verifySessionFromRequest(request);
 
         if (!session) {
-            // Redirect to login if not authenticated
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        // Enforce RBAC: Only ADMINs can access /admin
         if (session.role !== 'ADMIN') {
             return NextResponse.redirect(new URL('/', request.url));
         }

@@ -3,7 +3,6 @@ import { verifySession } from '@/lib/auth';
 import './page.css';
 import prisma from '@/lib/prisma';
 
-// Helper functions
 const getGreeting = () => {
   const hour = Number(
     new Intl.DateTimeFormat('pt-BR', {

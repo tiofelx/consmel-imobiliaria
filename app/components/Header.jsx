@@ -11,7 +11,7 @@ export default function Header({ user }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerOpacity, setHeaderOpacity] = useState(1);
   const [loadOpacity, setLoadOpacity] = useState(0);
-  const [headerStyle, setHeaderStyle] = useState('solid'); // 'solid' | 'translucent'
+  const [headerStyle, setHeaderStyle] = useState('solid');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
   const opacityRef = useRef(1);
@@ -28,7 +28,6 @@ export default function Header({ user }) {
       return;
     }
 
-    // Navigating back to home after already being shown — skip animation
     if (hasShownHeaderRef.current) {
       setLoadOpacity(1);
       return;
@@ -66,7 +65,6 @@ export default function Header({ user }) {
     };
   }, [isHome]);
 
-  // Scroll-based opacity and style effect
   useEffect(() => {
     const initialScrollY = window.scrollY;
     lastScrollY.current = initialScrollY;
@@ -103,7 +101,6 @@ export default function Header({ user }) {
       const previousScrollY = lastScrollY.current;
       const scrollDelta = currentScrollY - previousScrollY;
 
-      // Ignore micro-jitter from momentum/restored scrolling.
       if (Math.abs(scrollDelta) < 3) {
         lastScrollY.current = currentScrollY;
         return;
@@ -111,23 +108,18 @@ export default function Header({ user }) {
 
       const isScrollingUp = scrollDelta < 0;
 
-      // At very top - lock fully visible solid header
       if (currentScrollY <= 2) {
         updateHeaderStyle('solid');
         updateOpacity(1);
       }
-      // Scrolling UP - increase opacity gradually with translucent style
       else if (isScrollingUp) {
         if (currentScrollY >= 120) {
           updateHeaderStyle('translucent');
         }
-        // Increase opacity based on scroll distance
         const opacityIncrease = Math.abs(scrollDelta) / 420;
         updateOpacity(opacityRef.current + opacityIncrease);
       }
-      // Scrolling DOWN - decrease opacity gradually
       else {
-        // Decrease opacity based on scroll distance
         const opacityDecrease = Math.abs(scrollDelta) / 300;
         updateOpacity(opacityRef.current - opacityDecrease);
       }
@@ -150,11 +142,9 @@ export default function Header({ user }) {
     window.location.href = '/';
   };
 
-  // Determine if header should be interactive (clickable)
   const effectiveOpacity = headerOpacity * loadOpacity;
   const isClickable = effectiveOpacity > 0.1;
 
-  // Determine header class based on style state
   const getHeaderClass = () => {
     if (!isHome) return 'header-solid';
     return headerStyle === 'solid' ? 'header-solid-home' : 'header-transparent';
@@ -169,7 +159,6 @@ export default function Header({ user }) {
       }}
     >
       <div className="container header-container">
-        {/* Logo */}
         <Link href="/" className="header-logo">
           <Image
             src="/images/logo.png"
@@ -182,11 +171,9 @@ export default function Header({ user }) {
           />
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="nav-desktop">
           <Link href="/cadastro-imovel" className="nav-link">Cadastre seu Imóvel</Link>
           <Link href="/despachante" className="nav-link">Despachante</Link>
-          {/* <Link href="/servicos" className="nav-link">Serviços</Link> */}
           <Link href="/sobre" className="nav-link">Sobre</Link>
 
           {user ? (
@@ -264,7 +251,6 @@ export default function Header({ user }) {
           )}
         </nav>
 
-        {/* Mobile controls */}
         <div className="mobile-controls">
           {user?.role === 'ADMIN' && (
             <div className="mobile-admin-greeting">
@@ -282,11 +268,9 @@ export default function Header({ user }) {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
       <nav className={`nav-mobile ${menuOpen ? 'open' : ''}`}>
         <Link href="/cadastro-imovel" className="nav-link-mobile" onClick={closeMenu}>Cadastre seu Imóvel</Link>
         <Link href="/despachante" className="nav-link-mobile" onClick={closeMenu}>Despachante</Link>
-        {/* <Link href="/servicos" className="nav-link-mobile" onClick={closeMenu}>Serviços</Link> */}
         <Link href="/sobre" className="nav-link-mobile" onClick={closeMenu}>Sobre</Link>
 
         {user ? (

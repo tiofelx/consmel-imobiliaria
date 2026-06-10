@@ -8,7 +8,6 @@ import prisma from "@/lib/prisma";
 import "./property.css";
 import "./suggestions.css";
 
-// Helper function to fetch property from database
 async function getProperty(id) {
   const dbProperty = await prisma.property.findUnique({
     where: { id },
@@ -52,7 +51,6 @@ export default async function PropertyDetail({ params }) {
     notFound();
   }
 
-  // Fetch related properties
   const dbRelated = await prisma.property.findMany({
     where: {
       category: property.category,
@@ -83,7 +81,6 @@ export default async function PropertyDetail({ params }) {
 
   return (
     <div className="property-page-wrapper">
-      {/* Property Gallery (Contained) */}
       <section className="property-gallery-section" style={{ backgroundColor: 'white' }}>
         <div className="container gallery-container">
           <ImageGallery
@@ -94,7 +91,6 @@ export default async function PropertyDetail({ params }) {
         </div>
       </section>
 
-      {/* Header: Title & Price */}
       <section className="property-header-section">
         <div className="container" style={{ textAlign: 'center' }}>
           <h1 style={{
@@ -125,7 +121,6 @@ export default async function PropertyDetail({ params }) {
         </div>
       </section>
 
-      {/* Videos Section — só renderiza se a property tem vídeos */}
       {property.videos && property.videos.length > 0 && (
         <section className="property-videos-section" style={{ padding: '32px 0', backgroundColor: 'white' }}>
           <div className="container">
@@ -175,15 +170,12 @@ export default async function PropertyDetail({ params }) {
         </section>
       )}
 
-      {/* Main Content: Details + Sidebar */}
       <section style={{ padding: '24px 0', backgroundColor: '#f9f9f9' }}>
         <div className="container">
           <div className="property-page-layout">
 
-            {/* LEFT COLUMN */}
             <div className="property-main-content">
 
-              {/* Details Card */}
               <div className="details-card" style={{ marginBottom: '24px' }}>
                 <h3 style={{
                   fontSize: '1rem',
@@ -215,7 +207,6 @@ export default async function PropertyDetail({ params }) {
                 </div>
               </div>
 
-              {/* Value Prop Card */}
               <div className="value-prop-card">
                 <h3 style={{
                   fontSize: '1rem',
@@ -236,7 +227,6 @@ export default async function PropertyDetail({ params }) {
 
             </div>
 
-            {/* RIGHT COLUMN: Form */}
             <div className="property-sidebar-wrapper">
               <div className="property-sidebar-sticky">
                 <ContactForm propertyTitle={property.title} />
@@ -247,7 +237,6 @@ export default async function PropertyDetail({ params }) {
         </div>
       </section>
 
-      {/* Suggestions Section */}
       <section style={{ padding: '48px 0', backgroundColor: 'white' }}>
         <div className="container">
           <h2 style={{ fontSize: '1.5rem', fontWeight: '400', marginBottom: '24px', color: '#333' }}>

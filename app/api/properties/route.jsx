@@ -51,7 +51,6 @@ function toPublicProperty(property) {
     };
 }
 
-// GET /api/properties — List all properties
 export async function GET() {
     const startedAt = Date.now();
     try {
@@ -79,7 +78,6 @@ export async function GET() {
     }
 }
 
-// POST /api/properties — Create a new property
 export async function POST(request) {
     try {
         const session = await verifySession();
@@ -92,7 +90,6 @@ export async function POST(request) {
 
         const formData = await request.formData();
 
-        // Extract basic data
         const data = {};
         const keys = [
             'title', 'description', 'transactionType', 'category',
@@ -105,7 +102,6 @@ export async function POST(request) {
             if (value) data[key] = value.toString();
         });
 
-        // Helper to parse numbers safely. Aceita "1338,65" e "1338.65".
         const parseNum = (key, isFloat = false) => {
             const val = formData.get(key);
             if (!val) return null;
@@ -123,7 +119,6 @@ export async function POST(request) {
             return parseFloat(cleaned) || null;
         };
 
-        // Extract and upload images to Vercel Blob
         const images = formData.getAll('images').filter((f) => f && typeof f.arrayBuffer === 'function');
         const savedImages = [];
 
@@ -139,7 +134,6 @@ export async function POST(request) {
             throw uploadError;
         }
 
-        // Generate 12-char random alphanumeric ID
         const customId = Array.from({ length: 12 }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.charAt(Math.floor(Math.random() * 36))).join('');
 
         let parsedFeatures = [];
@@ -154,8 +148,6 @@ export async function POST(request) {
             }
         }
 
-        // Vídeos chegam como array de URLs (já uploaded direto pro Blob via
-        // /api/properties/upload-token). Validamos que são URLs do nosso Blob.
         let parsedVideos = [];
         if (data.videos) {
             try {
@@ -171,10 +163,6 @@ export async function POST(request) {
             }
         }
 
-        // Coordenadas: prioriza o que o admin definiu manualmente no mapa
-        // (campos latitude/longitude do form). Se não vierem, cai no geocoding
-        // automático via Nominatim. Falha silenciosa: salva sem coordenadas
-        // se ambos falharem.
         let coords = null;
         const manualLat = parseFloat(data.latitude);
         const manualLng = parseFloat(data.longitude);
@@ -191,7 +179,6 @@ export async function POST(request) {
             });
         }
 
-        // Create Property in DB
         const property = await prisma.property.create({
             data: {
                 id: customId,
@@ -200,12 +187,10 @@ export async function POST(request) {
                 transactionType: data.transactionType || 'Venda',
                 category: data.category || 'Casa',
 
-                // Values
                 price: parseBrazilianCurrency('price') || 0,
                 condoFee: parseBrazilianCurrency('condoFee'),
                 iptu: parseBrazilianCurrency('iptu'),
 
-                // Features
                 bedrooms: parseNum('bedrooms'),
                 suites: parseNum('suites'),
                 bathrooms: parseNum('bathrooms'),
@@ -213,10 +198,8 @@ export async function POST(request) {
                 usableArea: parseNum('usableArea', true),
                 totalArea: parseNum('totalArea', true),
 
-                // Features List
                 features: parsedFeatures,
 
-                // Address
                 cep: data.cep || null,
                 street: data.street || null,
                 number: data.number || null,
@@ -228,10 +211,8 @@ export async function POST(request) {
                 latitude: coords?.latitude ?? null,
                 longitude: coords?.longitude ?? null,
 
-                // Vídeos (URLs do Blob)
                 videos: parsedVideos,
 
-                // Images relation
                 images: {
                     create: savedImages.map((url, index) => ({
                         url,

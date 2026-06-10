@@ -14,16 +14,14 @@ export default function EditProperty({ params }) {
   const { id } = use(params);
   const router = useRouter();
 
-  // State
   const [currentStep, setCurrentStep] = useState(1);
-  const [images, setImages] = useState([]); // mídias: imagens E vídeos
-  const [existingVideoUrls, setExistingVideoUrls] = useState([]); // URLs de vídeos já salvos no DB
+  const [images, setImages] = useState([]);
+  const [existingVideoUrls, setExistingVideoUrls] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const fileInputRef = useRef(null);
 
-  // Form data
   const [formData, setFormData] = useState({
     title: '', description: '', transactionType: 'Venda', category: '',
     price: '', condoFee: '', iptu: '',
@@ -31,15 +29,13 @@ export default function EditProperty({ params }) {
     usableArea: '', totalArea: '',
   });
 
-  // Address State
   const [cep, setCep] = useState('');
   const [address, setAddress] = useState({
     street: '', neighborhood: '', city: '', state: '', number: '', complement: ''
   });
   const [isLoadingCep, setIsLoadingCep] = useState(false);
-  const [coords, setCoords] = useState(null); // { latitude, longitude } | null
+  const [coords, setCoords] = useState(null);
 
-  // Load property data
   useEffect(() => {
     fetch(`/api/properties/${id}`)
       .then(res => {
@@ -169,7 +165,6 @@ export default function EditProperty({ params }) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // 1) Sobe vídeos novos direto pro Blob, junta com URLs de vídeos já salvos
       const newVideoItems = images.filter((img) => img.file && img.type === 'video');
       const uploadedVideoUrls = [];
       for (const item of newVideoItems) {
@@ -185,7 +180,6 @@ export default function EditProperty({ params }) {
         .map((img) => img.preview);
       const finalVideos = [...keptVideoUrls, ...uploadedVideoUrls];
 
-      // 2) Imagens: separa novas (com img.file) das já salvas (URL do Blob)
       const newImageFiles = images.filter((img) => img.file && img.type === 'image');
       const keptImageUrls = images
         .filter((img) => !img.file && img.type === 'image')
@@ -193,7 +187,6 @@ export default function EditProperty({ params }) {
 
       let res;
       if (newImageFiles.length > 0) {
-        // Multipart pra subir imagens novas via Function
         const data = new FormData();
         Object.entries({ ...formData, ...address, cep: cep.replace(/\D/g, '') }).forEach(([key, value]) => {
           data.append(key, value ?? '');
@@ -216,7 +209,6 @@ export default function EditProperty({ params }) {
           body: data,
         });
       } else {
-        // Sem imagens novas: caminho JSON
         res = await fetch(`/api/properties/${id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -279,7 +271,6 @@ export default function EditProperty({ params }) {
           currentStep={currentStep}
         />
 
-        {/* Step 1: Basic Info */}
         {currentStep === 1 && (
           <div className="form-grid">
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
@@ -312,7 +303,6 @@ export default function EditProperty({ params }) {
           </div>
         )}
 
-        {/* Step 2: Location */}
         {currentStep === 2 && (
           <div className="form-grid">
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
@@ -365,7 +355,6 @@ export default function EditProperty({ params }) {
           </div>
         )}
 
-        {/* Step 3: Features */}
         {currentStep === 3 && (
           <div className="form-grid">
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
@@ -406,7 +395,6 @@ export default function EditProperty({ params }) {
           </div>
         )}
 
-        {/* Step 4: Investment */}
         {currentStep === 4 && (
           <div className="form-grid">
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
@@ -438,7 +426,6 @@ export default function EditProperty({ params }) {
           </div>
         )}
 
-        {/* Step 5: Media */}
         {currentStep === 5 && (
           <div>
             <h4 className="form-section-title" style={{ marginTop: 0 }}>Fotos e Vídeos</h4>
@@ -475,7 +462,6 @@ export default function EditProperty({ params }) {
           </div>
         )}
 
-        {/* Footer Actions */}
         <div className="form-actions">
           {currentStep > 1 ? (
             <button onClick={prevStep} className="nav-btn prev-btn">Voltar</button>

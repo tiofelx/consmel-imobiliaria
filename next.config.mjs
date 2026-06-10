@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Remove o header `X-Powered-By: Next.js` (fingerprint de framework).
+  poweredByHeader: false,
   async headers() {
     return [
       {

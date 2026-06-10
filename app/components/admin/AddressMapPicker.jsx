@@ -12,7 +12,7 @@ const AddressMapPickerLeaflet = dynamic(() => import('./AddressMapPickerLeaflet'
 const DEFAULT_CENTER = { latitude: -20.5065555, longitude: -48.9160555 };
 
 export default function AddressMapPicker({ address, value, onChange }) {
-  const [status, setStatus] = useState('idle'); // idle | loading | ok | miss | error
+  const [status, setStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState('');
 
   const handleAutoLocate = async () => {
@@ -50,7 +50,6 @@ export default function AddressMapPicker({ address, value, onChange }) {
 
   const center = value || DEFAULT_CENTER;
 
-  // Limpa a mensagem de erro/miss assim que o usuário arrasta o pin manualmente.
   useEffect(() => {
     if (value && (status === 'miss' || status === 'error')) {
       setStatus('ok');

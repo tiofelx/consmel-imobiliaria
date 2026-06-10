@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import './solicitacoes.css';
 
-// Contact configuration - always send to both
 const CONTACT_EMAIL = 'imobiliariaconsmel@gmail.com';
 const WHATSAPP_NUMBER = '5517996076414';
 
@@ -29,7 +28,6 @@ export default function Solicitacoes() {
     }));
   };
 
-  // Function to send via WhatsApp
   const sendWhatsApp = (data) => {
     const message = encodeURIComponent(
       `*Nova Solicitação - Site Consmel*\n\n` +
@@ -46,7 +44,6 @@ export default function Solicitacoes() {
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
   };
 
-  // Function to send via Email
   const sendEmail = (data) => {
     const subject = encodeURIComponent('Nova Solicitação - Site Consmel');
     const body = encodeURIComponent(
@@ -67,7 +64,6 @@ export default function Solicitacoes() {
     e.preventDefault();
     setStatus('sending');
 
-    // Send to BOTH email and WhatsApp simultaneously
     setTimeout(() => {
       sendEmail(formData);
       sendWhatsApp(formData);
@@ -93,7 +89,6 @@ export default function Solicitacoes() {
 
   return (
     <>
-      {/* Hero Section */}
       <section className="page-hero">
         <div className="container">
           <h1 className="animate-slide-in-up">Solicitações</h1>
@@ -103,7 +98,6 @@ export default function Solicitacoes() {
         </div>
       </section>
 
-      {/* Form Section */}
       <section className="section" style={{ paddingTop: 'var(--space-6)' }}>
         <div className="container">
           <div className="request-container animate-page-entrance">

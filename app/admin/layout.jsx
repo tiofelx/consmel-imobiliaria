@@ -15,7 +15,6 @@ export default async function AdminLayout({ children }) {
   return (
     <div className="admin-container">
       <GlobalHackerAlerts />
-      {/* Full Width Admin Header */}
       <header className="admin-header">
         <div className="admin-mobile-menu-anchor">
           <AdminMobileMenu>
@@ -40,15 +39,6 @@ export default async function AdminLayout({ children }) {
             <div className="admin-avatar">
               {userName.charAt(0).toUpperCase()}
             </div>
-            {/* 
-            <Image
-              src="/favicon.png"
-              alt="Admin"
-              width={42}
-              height={42}
-              className="admin-avatar-img"
-            />
-            */}
 
           </div>
           <LogoutButton />
@@ -56,12 +46,9 @@ export default async function AdminLayout({ children }) {
       </header>
 
       <div className="admin-body">
-        {/* Sidebar */}
         <AdminSidebar />
 
-        {/* Main Content Area */}
         <main className="admin-main">
-          {/* Content */}
           <div className="admin-content">
             {children}
           </div>

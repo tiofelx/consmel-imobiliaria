@@ -2,7 +2,6 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import './HouseShadowBackground.css';
 import { skyCloudsSvgMarkup } from './skySilhouetteSvg';
 
-
 const SMALL_STAR_VIEWBOX = {
     minX: 0,
     maxX: 1440,
@@ -421,7 +420,6 @@ const HouseShadowBackground = memo(() => {
             style={{ backgroundColor: '#1e3a5f' }}
         >
             <div className="sky-layer">
-                {/* Decorative Stars */}
                 <div className="star" style={{ top: '6%', left: '12%', width: '2px', height: '2px', animationDelay: '0s' }}></div>
                 <div className="star" style={{ top: '10%', left: '28%', width: '3px', height: '3px', animationDelay: '0.5s' }}></div>
                 <div className="star" style={{ top: '4%', left: '45%', width: '2px', height: '2px', animationDelay: '1s' }}></div>
@@ -432,7 +430,6 @@ const HouseShadowBackground = memo(() => {
                 <div className="star" style={{ top: '20%', left: '5%', width: '2px', height: '2px', animationDelay: '3.5s' }}></div>
                 <div className="star" style={{ top: '16%', left: '52%', width: '2px', height: '2px', animationDelay: '4s' }}></div>
 
-                {/* Shooting Stars */}
                 <div className="shooting-stars-container">
                     {[...Array(5)].map((_, i) => (
                         <div key={i} className={`shooting-star-group star-${i + 1}`}>
@@ -555,53 +552,43 @@ const HouseShadowBackground = memo(() => {
                             <stop offset="100%" stopColor="rgba(255, 220, 150, 0)" />
                         </linearGradient>
                     </defs>
-                    {/* Cranes removed for cleaner silhouette */}
                     <g className="animate-entrance-bottom delay-0">
                         <path d="M0,500 L0,200 L40,200 L40,130 L70,130 L70,200 L110,200 L110,90 L150,90 L150,200 L190,200 L190,50 L240,50 L240,200 L270,200 L270,120 L310,120 L310,200 L350,200 L350,70 L400,70 L400,200 L440,200 L440,145 L480,145 L480,200 L520,200 L520,45 L580,45 L580,200 L620,200 L620,110 L660,110 L660,200 L700,200 L700,70 L740,70 L740,200 L780,200 L780,100 L820,100 L820,200 L860,200 L860,35 L920,35 L920,200 L960,200 L960,120 L1000,120 L1000,200 L1040,200 L1040,70 L1080,70 L1080,200 L1120,200 L1120,100 L1160,100 L1160,200 L1200,200 L1200,45 L1260,45 L1260,200 L1300,200 L1300,110 L1340,110 L1340,200 L1380,200 L1380,80 L1420,80 L1420,200 L1440,200 L1440,500 Z" fill="url(#skylineGradient1)" opacity="1" />
                     </g>
                     <g fill="rgba(255,200,100,0.04)" className="animate-entrance-bottom delay-0">
-                        {/* x:190, y:50 */}
                         <rect x="203" y="75" width="10" height="14" rx="1" />
                         <rect x="218" y="75" width="10" height="14" rx="1" />
                         <rect x="203" y="100" width="10" height="14" rx="1" />
                         <rect x="218" y="100" width="10" height="14" rx="1" className="tv-effect" style={{ animationDelay: '4.5s' }} />
 
-                        {/* x:350, y:70 */}
                         <rect x="362" y="90" width="8" height="12" rx="1" />
                         <rect x="378" y="90" width="8" height="12" rx="1" />
 
-                        {/* x:520, y:45 */}
                         <rect x="535" y="70" width="10" height="14" rx="1" />
                         <rect x="555" y="70" width="10" height="14" rx="1" />
                         <rect x="535" y="95" width="10" height="14" rx="1" className="tv-effect" style={{ animationDelay: '2.1s' }} />
                         <rect x="555" y="95" width="10" height="14" rx="1" />
 
-                        {/* x:700, y:70 */}
                         <rect x="712" y="95" width="8" height="12" rx="1" />
                         <rect x="725" y="95" width="8" height="12" rx="1" />
 
-                        {/* x:860, y:35 */}
                         <rect x="878" y="60" width="10" height="16" rx="1" />
                         <rect x="898" y="60" width="10" height="16" rx="1" />
                         <rect x="878" y="87" width="10" height="16" rx="1" />
                         <rect x="898" y="87" width="10" height="16" rx="1" className="tv-effect" style={{ animationDelay: '1.8s' }} />
                         <rect x="878" y="114" width="10" height="16" rx="1" />
 
-                        {/* x:1040, y:70 */}
                         <rect x="1052" y="95" width="8" height="12" rx="1" />
                         <rect x="1065" y="95" width="8" height="12" rx="1" />
 
-                        {/* x:1200, y:45 */}
                         <rect x="1218" y="70" width="10" height="14" rx="1" />
                         <rect x="1238" y="70" width="10" height="14" rx="1" />
                         <rect x="1218" y="95" width="10" height="14" rx="1" />
                         <rect x="1238" y="95" width="10" height="14" rx="1" className="tv-effect" style={{ animationDelay: '3.2s' }} />
 
-                        {/* x:1380, y:80 */}
                         <rect x="1392" y="105" width="8" height="12" rx="1" />
                         <rect x="1405" y="105" width="8" height="12" rx="1" />
                     </g>
-                    {/* Rooftop details removed */}
                     <g className="animate-entrance-bottom delay-300">
                         <path d="M0,500 L0,260 L45,260 L45,195 L95,195 L95,260 L140,260 L140,165 L185,165 L185,260 L220,260 L220,135 L295,135 L295,260 L330,260 L330,180 L400,180 L400,260 L440,260 L440,150 L510,150 L510,260 L550,260 L550,200 L610,200 L610,260 L650,260 L650,125 L720,125 L720,260 L760,260 L760,175 L820,175 L820,260 L860,260 L860,155 L920,155 L920,260 L960,260 L960,175 L1030,175 L1030,260 L1070,260 L1070,160 L1130,160 L1130,260 L1170,260 L1170,130 L1250,130 L1250,260 L1290,260 L1290,180 L1350,180 L1350,260 L1390,260 L1390,165 L1450,165 L1450,500 Z" fill="url(#skylineGradient2)" opacity="1" />
                     </g>
@@ -718,6 +705,4 @@ const HouseShadowBackground = memo(() => {
 HouseShadowBackground.displayName = 'HouseShadowBackground';
 
 export default HouseShadowBackground;
-
-
 

@@ -6,8 +6,6 @@ import Image from "next/image";
 import { validateEmail, validatePhone, maskPhone, validateLocation, detectFraud } from '@/lib/validations';
 import "./cadastre.css";
 
-
-// Contact configuration - always send to both
 const CONTACT_EMAIL = 'imobiliariaconsmel@gmail.com';
 const WHATSAPP_NUMBER = '5517996076414';
 
@@ -34,13 +32,11 @@ export default function CadastreImovel() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Auto-mask phone fields
     if (name === 'contato1' || name === 'contato2') {
       setFormData((prev) => ({ ...prev, [name]: maskPhone(value) }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
-    // Clear error on edit
     if (fieldErrors[name]) {
       setFieldErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -53,7 +49,6 @@ export default function CadastreImovel() {
     }, 4000);
   };
 
-  // Validation Logic
   const validateStep = (step) => {
     const errors = {};
 
@@ -100,7 +95,6 @@ export default function CadastreImovel() {
     setCurrentStep((prev) => prev - 1);
   };
 
-  // Function to send via WhatsApp
   const sendWhatsApp = (data) => {
     const message = encodeURIComponent(
       `*Novo Cadastro de Imóvel - Site Consmel*\n\n` +
@@ -120,7 +114,6 @@ export default function CadastreImovel() {
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
   };
 
-  // Function to send via Email
   const sendEmail = (data) => {
     const subject = encodeURIComponent('Novo Cadastro de Imóvel - Site Consmel');
     const body = encodeURIComponent(
@@ -143,7 +136,6 @@ export default function CadastreImovel() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prevent submission if not on the last step
     if (currentStep < 3) {
       nextStep();
       return;
@@ -151,7 +143,6 @@ export default function CadastreImovel() {
 
     setStatus("sending");
 
-    // --- Fraud Detection ---
     const fraud = detectFraud({
       name: formData.nome,
       email: formData.email,
@@ -175,10 +166,9 @@ export default function CadastreImovel() {
             reasons: fraud.reasons,
           }),
         });
-      } catch { /* alert creation failed silently */ }
+      } catch {}
     }
 
-    // Format details for notes
     const details = `
       Proprietário: ${formData.nome}
       Contato 1: ${formData.contato1}
@@ -206,7 +196,6 @@ export default function CadastreImovel() {
       console.error('Failed to save lead', err);
     }
 
-    // Send to BOTH email and WhatsApp simultaneously
     setTimeout(() => {
       sendEmail(formData);
       sendWhatsApp(formData);
@@ -222,7 +211,6 @@ export default function CadastreImovel() {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      // Allow Enter in textarea
       if (e.target.tagName.toLowerCase() === 'textarea') return;
 
       e.preventDefault();
@@ -237,11 +225,9 @@ export default function CadastreImovel() {
     <main className="cadastre-page">
       <div className="cadastre-container">
 
-        {/* Form Container - Centered */}
         <div className="cadastre-form-container">
           <div className="form-wrapper animate-page-entrance">
 
-            {/* Step Indicator with Labels */}
             <div className="step-indicator">
               <div className={`step-item ${currentStep === 1 ? 'active' : currentStep > 1 ? 'completed' : ''}`}>
                 <div className="step-circle">
@@ -299,7 +285,6 @@ export default function CadastreImovel() {
             <form className="property-register-form" onKeyDown={handleKeyDown}>
               <div className="form-grid">
 
-                {/* STEP 1: PROPRIETÁRIO */}
                 {currentStep === 1 && (
                   <>
                     <div className="form-group span-full animate-feature-entrance">
@@ -379,7 +364,6 @@ export default function CadastreImovel() {
                   </>
                 )}
 
-                {/* STEP 2: SOBRE O IMÓVEL */}
                 {currentStep === 2 && (
                   <>
                     <div className="form-group span-md-2 animate-feature-entrance">
@@ -438,7 +422,6 @@ export default function CadastreImovel() {
                   </>
                 )}
 
-                {/* STEP 3: DETALHES */}
                 {currentStep === 3 && (
                   <>
                     <div className="form-group span-md-1 animate-feature-entrance">
@@ -537,7 +520,6 @@ export default function CadastreImovel() {
         </div>
       </div>
 
-      {/* Custom Toast Notification - Unified */}
       <div className={`toast-notification ${toast.type} ${toast.visible ? 'show' : ''}`}>
         <div className="toast-content">
           {toast.type === "success" ? (

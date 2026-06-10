@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
-// import Image from 'next/image'; // Kept commented out just in case
-// import MagmaBackground from '../components/MagmaBackground';
 import HouseShadowBackground from '../components/HouseShadowBackground';
 import PropertyCard from '../components/PropertyCard';
 import PropertyCardSkeleton from '../components/PropertyCardSkeleton';
@@ -14,16 +12,12 @@ import LancamentoPopup from '../components/LancamentoPopup';
 import { searchProperties } from '@/lib/properties';
 import './page.css';
 
-// Matches the gradient top color in HouseShadowBackground so there is
-// zero contrast between first paint and CSS-loaded state — no flash.
 const heroFallbackColor = '#1e3a5f';
 
 export default function Home() {
-  // State for properties and loading
   const [properties, setProperties] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch properties from API
   useEffect(() => {
     async function fetchProperties() {
       try {
@@ -41,7 +35,6 @@ export default function Home() {
     fetchProperties();
   }, []);
 
-  // activeFilters state
   const [activeFilters, setActiveFilters] = useState({
     transactionType: '',
     propertyType: '',
@@ -50,33 +43,27 @@ export default function Home() {
     priceRange: ''
   });
 
-  // Handle filter changes
   const handleFilterChange = useCallback((filters) => {
     setActiveFilters(filters);
   }, []);
 
-  // Apply filters
   const filteredProperties = useMemo(() => {
     if (!activeFilters.transactionType && !activeFilters.propertyType &&
       !activeFilters.city && !activeFilters.neighborhood && !activeFilters.priceRange) {
       return properties;
     }
-    // Pass properties state to searchProperties
     return searchProperties(properties, activeFilters);
   }, [activeFilters, properties]);
 
-  // Featured properties
   const featuredProperties = useMemo(() => {
     return filteredProperties.slice(0, 6);
   }, [filteredProperties]);
 
-  // Rental properties
   const rentalProperties = useMemo(() => {
     const rentalFilters = { ...activeFilters, transactionType: 'aluguel' };
     return searchProperties(properties, rentalFilters).slice(0, 6);
   }, [activeFilters, properties]);
 
-  // Sale properties
   const saleProperties = useMemo(() => {
     const saleFilters = { ...activeFilters, transactionType: 'venda' };
     return searchProperties(properties, saleFilters).slice(0, 6);
@@ -86,7 +73,6 @@ export default function Home() {
     <>
       <LancamentoPopup />
 
-      {/* Hero Section */}
       <section
         className="hero"
         style={{
@@ -109,19 +95,15 @@ export default function Home() {
           }}
         >
           <HouseShadowBackground />
-          {/* hero-overlay removed — was adding blue tint over sunset gradient */}
         </div>
         <div className="container hero-content">
-          {/* Hero text removed as requested */}
 
-          {/* Advanced Search Filter */}
           <div className="hero-search animate-search-filter-entrance">
             <SmartSearchFilter onFilterChange={handleFilterChange} properties={filteredProperties} />
           </div>
         </div>
       </section>
 
-      {/* Featured Properties */}
       <section className="featured-properties section bg-secondary">
         <div className="container">
           <div className="section-header">
@@ -131,7 +113,6 @@ export default function Home() {
 
           <div className="properties-grid">
             {isLoading ? (
-              // Add skeleton loader placeholders to maintain height for CLS prevention
               Array.from({ length: 6 }).map((_, idx) => (
                 <PropertyCardSkeleton key={idx} />
               ))
@@ -152,7 +133,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Rental Properties */}
       <SectionBanner
         title="Imóveis para Alugar"
         backgroundImage="/images/recepcao.png"
@@ -184,7 +164,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sale Properties */}
       <SectionBanner
         title="Imóveis para Comprar"
         backgroundImage="/images/recepcao-2.png"
@@ -215,7 +194,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Why Choose Us */}
       <section className="why-choose section bg-secondary">
         <div className="container">
           <div className="section-header">
@@ -270,9 +248,7 @@ export default function Home() {
         </div>
       </section>
 
-
     </>
   );
 }
-
 

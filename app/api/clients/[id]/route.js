@@ -3,7 +3,6 @@ import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
 import { parsePositiveIntId, getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
 
-// GET /api/clients/[id]
 export async function GET(request, { params }) {
     try {
         const session = await verifySession();
@@ -37,7 +36,6 @@ export async function GET(request, { params }) {
     }
 }
 
-// PUT /api/clients/[id]
 export async function PUT(request, { params }) {
     try {
         const session = await verifySession();
@@ -78,7 +76,6 @@ export async function PUT(request, { params }) {
     }
 }
 
-// DELETE /api/clients/[id]
 export async function DELETE(request, { params }) {
     try {
         const session = await verifySession();

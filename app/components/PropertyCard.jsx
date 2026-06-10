@@ -40,7 +40,6 @@ export default function PropertyCard({ property }) {
           <span className="view-details">Ver Detalhes</span>
         </div>
 
-        {/* Watermark Overlay */}
         <div style={{
           position: 'absolute',
           top: '50%',

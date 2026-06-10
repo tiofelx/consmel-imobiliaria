@@ -10,12 +10,10 @@ export default function GlobalHackerAlerts() {
     const lastSyncRef = useRef(null);
 
     useEffect(() => {
-        // Initial sync time point to avoid showing past alerts on mount
         lastSyncRef.current = new Date().toISOString();
 
         const fetchAlerts = async () => {
             try {
-                // Only ask for alerts newer than our last sync point
                 const url = new URL('/api/admin/alerts/live', window.location.origin);
                 if (lastSyncRef.current) {
                     url.searchParams.append('since', lastSyncRef.current);
@@ -26,23 +24,19 @@ export default function GlobalHackerAlerts() {
                     const data = await res.json();
                     if (data.alerts && data.alerts.length > 0) {
                         setAlerts(prev => {
-                            // Prevent duplicates if network is slow
                             const newAlerts = data.alerts.filter(a => !prev.some(p => p.id === a.id));
                             return [...prev, ...newAlerts];
                         });
                     }
                 }
 
-                // Update sync time without triggering re-render
                 lastSyncRef.current = new Date().toISOString();
             } catch (err) {
-                // Ignore connection errors silently to not annoy admins
             }
         };
 
         fetchAlerts();
 
-        // Poll every 1 second
         const intervalId = setInterval(fetchAlerts, ALERT_POLL_INTERVAL_MS);
 
         return () => clearInterval(intervalId);

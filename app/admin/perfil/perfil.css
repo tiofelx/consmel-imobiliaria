@@ -57,7 +57,6 @@
     font-weight: 500;
 }
 
-/* 2FA Section */
 .two-factor-content {
     display: flex;
     flex-direction: column;

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import './ContactForm.css';
 
-// Contact configuration
 const CONTACT_EMAIL = 'imobiliariaconsmel@gmail.com';
 const WHATSAPP_NUMBER = '5517996076414';
 
@@ -17,8 +16,7 @@ export default function ContactForm({ propertyTitle }) {
     contactViaEmail: false,
     contactViaWhatsApp: false
   });
-  const [status, setStatus] = useState('idle'); // idle, sending, success, error
-
+  const [status, setStatus] = useState('idle');
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

@@ -49,7 +49,6 @@ function toPublicProperty(property) {
     };
 }
 
-// GET /api/properties/[id]
 export async function GET(request, { params }) {
     try {
         const { id } = await params;
@@ -90,7 +89,6 @@ function parseBrazilianCurrency(value) {
     return parseFloat(cleaned) || null;
 }
 
-// Aceita "1338,65" e "1338.65" pra área e similares
 function parseDecimal(value) {
     if (value === null || value === undefined || value === '') return null;
     if (typeof value === 'number') return value;
@@ -149,8 +147,6 @@ function buildUpdateDataFromObject(data) {
     return updateData;
 }
 
-// Geocoding via Nominatim quando o admin altera o endereço mas não envia
-// lat/lng explícitos — assim o pin no mapa de busca acompanha a edição.
 async function applyGeocodingIfNeeded(updateData) {
     const hasManualCoords =
         Number.isFinite(updateData.latitude) && Number.isFinite(updateData.longitude);
@@ -174,13 +170,6 @@ async function applyGeocodingIfNeeded(updateData) {
     }
 }
 
-// PUT /api/properties/[id]
-// Aceita JSON (somente metadados) OU multipart/form-data quando há
-// imagens novas para enviar. No multipart, o cliente envia:
-//   - campos de texto da propriedade
-//   - existingImageUrls: JSON array com URLs das imagens já salvas que
-//     devem ser mantidas (qualquer outra é deletada)
-//   - images: arquivos novos para subir ao Blob
 export async function PUT(request, { params }) {
     try {
         const session = await verifySession();
@@ -197,8 +186,6 @@ export async function PUT(request, { params }) {
         const { id } = await params;
         const contentType = request.headers.get('content-type') || '';
 
-        // Caminho 1 — JSON (sem upload de arquivos novos, mas pode reconciliar
-        // remoções se existingImageUrls estiver presente)
         if (contentType.includes('application/json')) {
             const data = await request.json();
             const updateData = buildUpdateDataFromObject(data);
@@ -234,7 +221,6 @@ export async function PUT(request, { params }) {
             return NextResponse.json(property);
         }
 
-        // Caminho 2 — multipart com imagens
         if (!contentType.includes('multipart/form-data')) {
             return NextResponse.json(
                 { error: 'Content-Type deve ser application/json ou multipart/form-data.' },
@@ -270,7 +256,6 @@ export async function PUT(request, { params }) {
             }
         }
 
-        // Lista de URLs já existentes que o cliente quer manter
         let keepUrls = [];
         const existingRaw = formData.get('existingImageUrls');
         if (typeof existingRaw === 'string' && existingRaw.length > 0) {
@@ -286,8 +271,6 @@ export async function PUT(request, { params }) {
 
         const newFiles = formData.getAll('images').filter((f) => f && typeof f.arrayBuffer === 'function');
 
-        // Sobe arquivos novos primeiro — se algum falhar a validação, o DB
-        // ainda não foi tocado e nada é perdido.
         const newUrls = [];
         try {
             for (const file of newFiles) {
@@ -304,10 +287,6 @@ export async function PUT(request, { params }) {
         const updateData = buildUpdateDataFromObject(dataFromForm);
         await applyGeocodingIfNeeded(updateData);
 
-        // Reconcilia images dentro de uma transação:
-        // - apaga todos os PropertyImage cuja url NÃO está em keepUrls
-        // - cria novos para newUrls
-        // - mantém ordem: existing (na ordem fornecida) + novos
         const property = await prisma.$transaction(async (tx) => {
             await tx.propertyImage.deleteMany({
                 where: {
@@ -316,7 +295,6 @@ export async function PUT(request, { params }) {
                 },
             });
 
-            // Atualiza order dos existentes para refletir o array recebido
             for (let i = 0; i < keepUrls.length; i += 1) {
                 await tx.propertyImage.updateMany({
                     where: { propertyId: id, url: keepUrls[i] },
@@ -324,7 +302,6 @@ export async function PUT(request, { params }) {
                 });
             }
 
-            // Cria os novos com order continuando a sequência
             const startOrder = keepUrls.length;
             for (let i = 0; i < newUrls.length; i += 1) {
                 await tx.propertyImage.create({
@@ -346,7 +323,6 @@ export async function PUT(request, { params }) {
     }
 }
 
-// DELETE /api/properties/[id]
 export async function DELETE(request, { params }) {
     try {
         const session = await verifySession();

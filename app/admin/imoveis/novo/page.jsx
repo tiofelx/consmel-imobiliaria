@@ -19,7 +19,6 @@ export default function NewProperty() {
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Form data
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -36,7 +35,6 @@ export default function NewProperty() {
     totalArea: '',
   });
 
-  // Address State
   const [cep, setCep] = useState('');
   const [address, setAddress] = useState({
     street: '',
@@ -47,7 +45,7 @@ export default function NewProperty() {
     complement: ''
   });
   const [isLoadingCep, setIsLoadingCep] = useState(false);
-  const [coords, setCoords] = useState(null); // { latitude, longitude } | null
+  const [coords, setCoords] = useState(null);
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -151,8 +149,6 @@ export default function NewProperty() {
   const handleSubmit = async () => {
     setIsSaving(true);
     try {
-      // 1) Vídeos sobem direto pro Vercel Blob (contornam o cap de 4.5MB
-      //    de payload das Functions). Recebem URL pública usável.
       const videoItems = images.filter((item) => item.type === 'video');
       const videoUrls = [];
       for (const item of videoItems) {
@@ -163,8 +159,6 @@ export default function NewProperty() {
         videoUrls.push(blob.url);
       }
 
-      // 2) Imagens vão por multipart pra Function (já com validação de
-      //    magic bytes + watermark aplicado no client).
       const data = new FormData();
       Object.entries({ ...formData, ...address, cep: cep.replace(/\D/g, '') }).forEach(([key, value]) => {
         data.append(key, value || '');
@@ -211,7 +205,6 @@ export default function NewProperty() {
 
       <div className="admin-stepper-container admin-stepper-form">
 
-        {/* Stepper Header */}
         <FormStepper
           steps={[
             { label: 'Sobre' },
@@ -223,7 +216,6 @@ export default function NewProperty() {
           currentStep={currentStep}
         />
 
-        {/* Step 1: Basic Info */}
         {currentStep === 1 && (
           <div className="form-grid">
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
@@ -258,7 +250,6 @@ export default function NewProperty() {
           </div>
         )}
 
-        {/* Step 2: Location */}
         {currentStep === 2 && (
           <div className="form-grid">
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
@@ -313,7 +304,6 @@ export default function NewProperty() {
             </div>
           </div>
         )}
-        {/* Step 3: Features */}
         {currentStep === 3 && (
           <div className="form-grid">
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
@@ -355,7 +345,6 @@ export default function NewProperty() {
           </div>
         )}
 
-        {/* Step 4: Investment */}
         {currentStep === 4 && (
           <div className="form-grid">
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
@@ -390,7 +379,6 @@ export default function NewProperty() {
           </div>
         )}
 
-        {/* Step 5: Media */}
         {currentStep === 5 && (
           <div>
             <h4 className="form-section-title" style={{ marginTop: 0 }}>Fotos e Vídeos</h4>
@@ -432,7 +420,6 @@ export default function NewProperty() {
           </div>
         )}
 
-        {/* Footer Actions */}
         <div className="form-actions">
           {currentStep > 1 ? (
             <button onClick={prevStep} className="nav-btn prev-btn">Voltar</button>

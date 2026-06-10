@@ -9,7 +9,6 @@ function isValidEventId(id) {
     return typeof id === 'string' && CUID_RE.test(id);
 }
 
-// PUT /api/events/[id]
 export async function PUT(request, { params }) {
     try {
         const session = await verifySession();
@@ -61,7 +60,6 @@ export async function PUT(request, { params }) {
     }
 }
 
-// DELETE /api/events/[id]
 export async function DELETE(request, { params }) {
     try {
         const session = await verifySession();

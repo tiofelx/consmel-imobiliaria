@@ -1,9 +1,8 @@
-/* Suggestion Cards */
 .suggestion-card {
   background: white;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow request */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   height: 100%;
   display: flex;
@@ -84,9 +83,8 @@
   margin-top: 16px;
 }
 
-/* Ensure items have consistent width but don't stretch too wide */
 .suggestions-grid > * {
-  flex: 0 1 320px; /* Base width */
+  flex: 0 1 320px;
   min-width: 280px;
   max-width: 350px;
   width: 100%;

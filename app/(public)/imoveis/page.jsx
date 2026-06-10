@@ -12,7 +12,6 @@ export default async function Imoveis({ searchParams }) {
   const params = await searchParams;
   const tipo = params?.tipo?.toLowerCase();
 
-  // Optimized Database Query
   const dbProperties = await prisma.property.findMany({
     where: tipo ? {
       transactionType: {
@@ -23,7 +22,7 @@ export default async function Imoveis({ searchParams }) {
     include: {
       images: {
         orderBy: { order: 'asc' },
-        take: 1 // Only need the first image for the card
+        take: 1
       }
     },
     orderBy: { createdAt: 'desc' },
@@ -39,9 +38,8 @@ export default async function Imoveis({ searchParams }) {
     lng: p.longitude,
   }));
 
-  const filtered = properties; // Already filtered by DB
+  const filtered = properties;
 
-  // Determine Hero Class based on filter
   const getHeroClass = () => {
     const tipo = params?.tipo?.toLowerCase();
     if (tipo === 'venda') return 'hero-venda';
@@ -51,7 +49,6 @@ export default async function Imoveis({ searchParams }) {
 
   return (
     <>
-      {/* Hero Section */}
       <section className={`page-hero-dynamic ${getHeroClass()}`}>
         <div className="container">
           <h1 className="animate-slide-in-up">Nossos Imóveis</h1>
@@ -64,7 +61,6 @@ export default async function Imoveis({ searchParams }) {
         </div>
       </section>
 
-      {/* Filters Section */}
       <section className="filters-section section-sm">
         <div className="container">
           <div className="filters-bar">
@@ -90,7 +86,6 @@ export default async function Imoveis({ searchParams }) {
         </div>
       </section>
 
-      {/* Properties Grid */}
       <section className="section">
         <div className="container">
           <div className="results-header">

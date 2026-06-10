@@ -2,12 +2,11 @@
   max-width: 800px;
   margin: 0 auto;
   background: var(--bg-primary);
-  padding: var(--space-6); /* Reduced padding */
+  padding: var(--space-6);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-lg);
 }
 
-/* Unified Form Grid - Ultra Compact */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -22,7 +21,6 @@
   text-align: center;
 }
 
-/* Compact Inputs and Labels */
 .request-form .form-group label {
   font-size: 0.85rem;
   margin-bottom: 2px;
@@ -35,7 +33,6 @@
   font-size: 0.9rem;
 }
 
-/* Container Padding */
 .request-container {
   padding: var(--space-5);
 }

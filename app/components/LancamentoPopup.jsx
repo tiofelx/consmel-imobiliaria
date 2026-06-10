@@ -37,7 +37,6 @@ export default function LancamentoPopup() {
             <div className={cls('lp-popup-border')}>
                 <article className={cls('lp-popup-card')}>
 
-                    {/* Fechar */}
                     <button className="lp-popup-close" onClick={handleClose} aria-label="Fechar">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -46,7 +45,6 @@ export default function LancamentoPopup() {
                         </svg>
                     </button>
 
-                    {/* ── Conteúdo ── */}
                     <div className="lp-popup-content">
 
                         <div className="lp-popup-badge">

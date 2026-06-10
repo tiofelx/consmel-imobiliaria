@@ -7,7 +7,7 @@ import '../admin.css';
 export default function AlertasPage() {
     const [alerts, setAlerts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('all'); // 'all' | 'pending' | 'resolved'
+    const [filter, setFilter] = useState('all');
 
     useEffect(() => {
         fetchAlerts();
@@ -83,7 +83,6 @@ export default function AlertasPage() {
 
     return (
         <div className="admin-content">
-            {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <div>
                     <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', margin: 0 }}>
@@ -95,7 +94,6 @@ export default function AlertasPage() {
                 </div>
             </div>
 
-            {/* Filter Tabs */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
                 {[
                     { key: 'all', label: `Todos (${alerts.length})` },
@@ -122,7 +120,6 @@ export default function AlertasPage() {
                 ))}
             </div>
 
-            {/* Alert Cards */}
             {filtered.length === 0 ? (
                 <div style={{
                     textAlign: 'center', padding: '60px 20px', color: '#9ca3af',
@@ -145,7 +142,6 @@ export default function AlertasPage() {
                                 transition: 'all 0.3s ease',
                             }}
                         >
-                            {/* Alert Header */}
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <span style={{ fontSize: '1.2rem' }}>{severityIcon(alert.severity)}</span>
@@ -179,7 +175,6 @@ export default function AlertasPage() {
                                 )}
                             </div>
 
-                            {/* Alert Details */}
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '8px', marginBottom: '10px' }}>
                                 {alert.name && (
                                     <div style={{ fontSize: '0.85rem' }}>
@@ -207,7 +202,6 @@ export default function AlertasPage() {
                                 )}
                             </div>
 
-                            {/* Reasons */}
                             {alert.reasons && alert.reasons.length > 0 && (
                                 <div style={{
                                     background: alert.severity === 'high' ? '#fef2f2' : '#fffbeb',

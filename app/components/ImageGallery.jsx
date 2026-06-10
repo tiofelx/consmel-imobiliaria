@@ -23,7 +23,6 @@ export default function ImageGallery({ images, title, isHero, roomLabels }) {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  // Keyboard navigation
   useEffect(() => {
     if (!hasImages) {
       return undefined;
@@ -40,7 +39,6 @@ export default function ImageGallery({ images, title, isHero, roomLabels }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [hasImages, isModalOpen, handlePrev, handleNext]);
 
-  // Prevent scroll when modal is open
   useEffect(() => {
     if (!hasImages) {
       return undefined;
@@ -58,14 +56,11 @@ export default function ImageGallery({ images, title, isHero, roomLabels }) {
 
   if (!hasImages) return null;
 
-  // Get the room label for current image if provided
   const currentLabel = roomLabels ? roomLabels[selectedIndex] : null;
 
   return (
     <div className={`image-gallery ${isHero ? 'hero' : ''}`}>
-      {/* Main Large Image */}
       <div className="gallery-main" onClick={openModal} title="Clique para ampliar">
-        {/* Blurred Background Image for portrait/aspect-ratio differences */}
         <div style={{
           position: 'absolute',
           top: -20, right: -20, bottom: -20, left: -20,
@@ -87,7 +82,6 @@ export default function ImageGallery({ images, title, isHero, roomLabels }) {
           style={{ zIndex: 2 }}
         />
 
-        {/* Expand Icon Overlay */}
         <div className="expand-overlay">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
@@ -95,7 +89,6 @@ export default function ImageGallery({ images, title, isHero, roomLabels }) {
           <span>Toque para ampliar</span>
         </div>
 
-        {/* Watermark Overlay */}
         <div className="watermark-overlay">
           <Image
             src="/watermark.png"
@@ -111,7 +104,6 @@ export default function ImageGallery({ images, title, isHero, roomLabels }) {
           />
         </div>
 
-        {/* Room Label Badge */}
         {currentLabel && (
           <div className="room-label-badge">
             {currentLabel}
@@ -146,7 +138,6 @@ export default function ImageGallery({ images, title, isHero, roomLabels }) {
         )}
       </div>
 
-      {/* Thumbnails */}
       {imageCount > 1 && (
         <div className="gallery-thumbnails">
           {images.map((img, index) => (
@@ -169,7 +160,6 @@ export default function ImageGallery({ images, title, isHero, roomLabels }) {
         </div>
       )}
 
-      {/* Lightbox Modal */}
       {isModalOpen && (
         <div className="lightbox-modal-overlay" onClick={closeModal}>
           <button className="lightbox-modal-close" onClick={closeModal} aria-label="Fechar">
@@ -191,7 +181,6 @@ export default function ImageGallery({ images, title, isHero, roomLabels }) {
                 priority
               />
               
-              {/* Watermark Overlay for Modal */}
               <div className="watermark-overlay modal-watermark">
                 <Image
                   src="/watermark.png"

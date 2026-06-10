@@ -1,37 +1,16 @@
-/* ============================================
-   CONSMEL DESIGN SYSTEM
-   Modern Real Estate Website Styling
-   ============================================ */
-
-/* Font loading is handled in app/layout.jsx via next/font */
-
-/* ============================================
-   CSS CUSTOM PROPERTIES (DESIGN TOKENS)
-   ============================================ */
-
 :root {
-  /* Consmel Brand Colors - From Official Logo */
   --color-primary: #e85d2c;
-  /* Coral/Orange - main brand color */
   --color-primary-light: #ff7a52;
-  /* Lighter coral for hover states */
   --color-primary-dark: #c74d1f;
-  /* Darker coral for active states */
   --color-primary-subtle: #fff3ef;
-  /* Very light coral for backgrounds */
 
   --color-secondary: #1e3a5f;
-  /* Dark blue from logo */
   --color-secondary-light: #2d5080;
-  /* Lighter blue */
   --color-secondary-dark: #152a45;
-  /* Darker blue */
 
   --color-accent: #e85d2c;
-  /* Same as primary for consistency */
   --color-accent-light: #ff7a52;
 
-  /* Neutral Colors */
   --color-white: #ffffff;
   --color-black: #0a0a0a;
   --color-gray-50: #f9fafb;
@@ -45,13 +24,11 @@
   --color-gray-800: #1f2937;
   --color-gray-900: #111827;
 
-  /* Semantic Colors */
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
   --color-info: #3b82f6;
 
-  /* Background & Text */
   --bg-primary: #ffffff;
   --bg-secondary: #f9fafb;
   --bg-tertiary: #f3f4f6;
@@ -60,7 +37,6 @@
   --text-tertiary: #6b7280;
   --text-inverse: #ffffff;
 
-  /* Border Colors */
   --border-light: #e5e7eb;
   --border-medium: #d1d5db;
   --border-dark: #9ca3af;
@@ -69,25 +45,15 @@
   --font-family-display: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
   --font-size-xs: 0.75rem;
-  /* 12px */
   --font-size-sm: 0.875rem;
-  /* 14px */
   --font-size-base: 1rem;
-  /* 16px */
   --font-size-lg: 1.125rem;
-  /* 18px */
   --font-size-xl: 1.25rem;
-  /* 20px */
   --font-size-2xl: 1.5rem;
-  /* 24px */
   --font-size-3xl: 1.875rem;
-  /* 30px */
   --font-size-4xl: 2.25rem;
-  /* 36px */
   --font-size-5xl: 3rem;
-  /* 48px */
   --font-size-6xl: 3.75rem;
-  /* 60px */
 
   --font-weight-light: 300;
   --font-weight-normal: 400;
@@ -100,46 +66,26 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
 
-  /* Spacing Scale */
   --space-1: 0.25rem;
-  /* 4px */
   --space-2: 0.5rem;
-  /* 8px */
   --space-3: 0.75rem;
-  /* 12px */
   --space-4: 1rem;
-  /* 16px */
   --space-5: 1.25rem;
-  /* 20px */
   --space-6: 1.5rem;
-  /* 24px */
   --space-8: 2rem;
-  /* 32px */
   --space-10: 2.5rem;
-  /* 40px */
   --space-12: 3rem;
-  /* 48px */
   --space-16: 4rem;
-  /* 64px */
   --space-20: 5rem;
-  /* 80px */
   --space-24: 6rem;
-  /* 96px */
 
-  /* Border Radius */
   --radius-sm: 0.25rem;
-  /* 4px */
   --radius-md: 0.5rem;
-  /* 8px */
   --radius-lg: 0.75rem;
-  /* 12px */
   --radius-xl: 1rem;
-  /* 16px */
   --radius-2xl: 1.5rem;
-  /* 24px */
   --radius-full: 9999px;
 
-  /* Shadows */
   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-sm:
     0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
@@ -151,19 +97,16 @@
     0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
-  /* Transitions */
   --transition-fast: 150ms ease-in-out;
   --transition-base: 250ms ease-in-out;
   --transition-slow: 350ms ease-in-out;
 
-  /* Layout */
   --max-width-sm: 640px;
   --max-width-md: 768px;
   --max-width-lg: 1024px;
   --max-width-xl: 1280px;
   --max-width-2xl: 1536px;
 
-  /* Z-Index Scale */
   --z-dropdown: 100;
   --z-sticky: 200;
   --z-fixed: 300;
@@ -173,10 +116,6 @@
   --z-tooltip: 700;
 }
 
-/* ============================================
-   RESET & BASE STYLES
-   ============================================ */
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -184,7 +123,6 @@
 }
 
 html {
-  /* scroll-behavior: smooth; Removed to prevent scroll jumping/animation on page reload */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -229,10 +167,6 @@ select {
   font-size: inherit;
   color: inherit;
 }
-
-/* ============================================
-   TYPOGRAPHY
-   ============================================ */
 
 h1,
 h2,
@@ -298,10 +232,6 @@ p {
   font-size: var(--font-size-xs);
 }
 
-/* ============================================
-   LAYOUT UTILITIES
-   ============================================ */
-
 .container {
   width: 100%;
   max-width: var(--max-width-xl);
@@ -326,7 +256,6 @@ p {
 .section {
   padding-top: var(--space-16);
   padding-bottom: 120px;
-  /* Increased global spacing per feedback */
 }
 
 .section-lg {
@@ -338,10 +267,6 @@ p {
   padding-top: var(--space-12);
   padding-bottom: var(--space-12);
 }
-
-/* ============================================
-   BUTTON STYLES
-   ============================================ */
 
 .btn {
   display: inline-flex;
@@ -375,7 +300,6 @@ p {
 .btn-secondary {
   background: var(--color-secondary);
   color: var(--text-inverse);
-  /* Changed from primary to inverse (white) for better contrast */
   box-shadow: var(--shadow-sm);
 }
 
@@ -416,7 +340,6 @@ p {
   font-size: var(--font-size-sm);
 }
 
-/* WhatsApp Button */
 .btn-whatsapp {
   background: #25d366;
   color: var(--text-inverse);
@@ -425,10 +348,6 @@ p {
 .btn-whatsapp:hover {
   background: #1da851;
 }
-
-/* ============================================
-   CARD STYLES
-   ============================================ */
 
 .card {
   background: var(--bg-primary);
@@ -464,10 +383,6 @@ p {
   color: var(--text-secondary);
   margin-bottom: var(--space-4);
 }
-
-/* ============================================
-   FORM STYLES
-   ============================================ */
 
 .form-group {
   margin-bottom: var(--space-5);
@@ -513,10 +428,6 @@ p {
   margin-top: var(--space-2);
 }
 
-/* ============================================
-   GRID SYSTEM
-   ============================================ */
-
 .grid {
   display: grid;
   gap: var(--space-6);
@@ -555,10 +466,6 @@ p {
     grid-template-columns: repeat(4, 1fr);
   }
 }
-
-/* ============================================
-   UTILITY CLASSES
-   ============================================ */
 
 .flex {
   display: flex;
@@ -640,10 +547,6 @@ p {
   box-shadow: var(--shadow-lg);
 }
 
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -666,7 +569,6 @@ p {
   }
 }
 
-/* Page Headers (Hero) - Shared across About, Contact, Services */
 .page-hero {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   color: var(--text-inverse);
@@ -773,7 +675,6 @@ p {
 .animate-page-entrance {
   animation: pageEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: transform, opacity;
-  /* Removed opacity: 0 to prevent blank page if animation fails/stalls */
 }
 
 .animate-feature-entrance {
@@ -785,7 +686,6 @@ p {
   will-change: transform, opacity;
   opacity: 0;
   animation-delay: 0.8s;
-  /* Appears while buildings are still rising (riseUp: 0.3s delay + 2s) */
 }
 
 .animate-slide-in-up {
@@ -809,13 +709,6 @@ p {
   opacity: 1;
 }
 
-/* Reduced motion disabled */
-
-/* ============================================
-   RESPONSIVE BREAKPOINTS
-   ============================================ */
-
-/* Force Animations Globally (Fix for Mobile/Tablet disappearing issues) */
 .animate-slide-in-up {
   animation-name: slideInUp !important;
   -webkit-animation-name: slideInUp !important;
@@ -828,7 +721,6 @@ p {
   -webkit-animation-name: scaleIn !important;
 }
 
-/* Force Pulse on FAB */
 .whatsapp-fab {
   animation-name: shadowPulse !important;
   -webkit-animation-name: shadowPulse !important;
@@ -861,18 +753,3 @@ p {
   }
 }
 
-
-/* Mobile/Tablet overrides (Deleted) */
-/* } - specific fix */
-
-/* Reduced motion for accessibility - DISABLED for consistency */
-/* @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-} */

@@ -9,7 +9,6 @@ export const metadata = {
 export default function Contato() {
   return (
     <>
-      {/* Hero Section */}
       <section className="page-hero">
         <div className="container">
           <h1 className="animate-slide-in-up">Entre em Contato</h1>
@@ -19,16 +18,13 @@ export default function Contato() {
         </div>
       </section>
 
-      {/* Contact Section */}
       <section className="section">
         <div className="container">
           <div className="contact-grid animate-page-entrance">
-            {/* Contact Form */}
             <div>
               <ContactForm />
             </div>
 
-            {/* Contact Info */}
             <div className="contact-info">
               <h3>Informações de Contato</h3>
               <p>
@@ -59,8 +55,6 @@ export default function Contato() {
                   <a href="tel:+5517996076414">(17) 99607-6414</a>
                 </div>
               </div>
-
-
 
               <div className="info-card">
                 <div className="info-icon">

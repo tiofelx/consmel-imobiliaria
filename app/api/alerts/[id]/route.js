@@ -3,7 +3,6 @@ import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
 import { parsePositiveIntId, getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
 
-// PUT — Marcar alerta como resolvido
 export async function PUT(request, { params }) {
     try {
         const session = await verifySession();

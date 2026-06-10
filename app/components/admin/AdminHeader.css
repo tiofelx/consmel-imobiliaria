@@ -1,9 +1,3 @@
-/* ==========================================================================
-   AdminHeader.css
-   Estilização isolada e segura para o cabeçalho das seções do painel administrativo
-   ========================================================================== */
-
-/* --- raiz/container do header --- */
 .section-header {
     margin-bottom: 32px;
     display: flex;
@@ -17,13 +11,11 @@
     text-align: left;
 }
 
-/* --- bloco interno flexível --- */
 .section-header .header-content {
     flex: 1;
     text-align: left;
 }
 
-/* --- tipografia (títulos) --- */
 .section-header .header-content h2 {
     font-size: 1.8rem;
     font-weight: 800;
@@ -37,7 +29,6 @@
     -webkit-text-fill-color: transparent;
 }
 
-/* --- tipografia (subtítulos) --- */
 .section-header .header-content p {
     color: var(--admin-text-secondary, #64748b);
     font-size: 1rem;
@@ -45,7 +36,6 @@
     margin: 0;
 }
 
-/* --- links (backlink e breadcrumb) --- */
 .section-header .header-content a {
     transition: color 0.2s ease;
 }
@@ -56,7 +46,6 @@
     outline: none;
 }
 
-/* --- responsividade para o header admin --- */
 @media (max-width: 768px) {
     .section-header {
         flex-direction: column;

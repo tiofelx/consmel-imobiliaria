@@ -9,7 +9,6 @@ export const metadata = {
 export default function Servicos() {
   return (
     <>
-      {/* Hero Section */}
       <section className="page-hero">
         <div className="container">
           <h1 className="animate-slide-in-up">Serviços Online</h1>
@@ -19,11 +18,9 @@ export default function Servicos() {
         </div>
       </section>
 
-      {/* Services Grid */}
       <section className="section">
         <div className="container">
           <div className="services-grid animate-page-entrance">
-            {/* Boleto */}
             <Link href="/servicos/boleto" className="service-card">
               <div className="service-icon">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -37,7 +34,6 @@ export default function Servicos() {
               <p>Emita a 2ª via do seu boleto</p>
             </Link>
 
-            {/* Extrato */}
             <Link href="/servicos/extrato" className="service-card">
               <div className="service-icon">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -52,7 +48,6 @@ export default function Servicos() {
               <p>Consulte seu extrato de pagamentos</p>
             </Link>
 
-            {/* Informe de Renda */}
             <Link href="/servicos/informe-renda" className="service-card">
               <div className="service-icon">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -65,7 +60,6 @@ export default function Servicos() {
               <p>Solicite seu informe de rendimentos</p>
             </Link>
 
-            {/* Solicitações */}
             <Link href="/solicitacoes" className="service-card">
               <div className="service-icon">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

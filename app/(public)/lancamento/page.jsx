@@ -75,16 +75,9 @@ export default function LancamentoPage() {
     const [status, setStatus] = useState('idle');
     const [errorMsg, setErrorMsg] = useState('');
 
-    /* ── Scroll Reveal — IntersectionObserver
-       Vault ref: Motion Design e Animação UX.md
-       - threshold: 0.12 → revela com 12% visível
-       - rootMargin: offset extra no bottom
-       - ease-out para entradas (vault)
-       - unobserve após revelar (performance)
-    ── */
     useEffect(() => {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (prefersReducedMotion) return; // vault: respeitar preferência
+        if (prefersReducedMotion) return;
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -180,18 +173,36 @@ export default function LancamentoPage() {
 
         const onEnded = () => {
             video.currentTime = 0;
-            video.play();
+            const p = video.play();
+            if (p) p.catch(() => {});
             requestAnimationFrame(() => requestAnimationFrame(() => {
                 video.classList.remove('lp-hero-video--fading');
                 fading = false;
             }));
         };
 
+        const tryPlay = () => {
+            const p = video.play();
+            if (p) p.catch(() => {});
+        };
+
+        const onFirstInteraction = () => {
+            if (video.paused) tryPlay();
+            window.removeEventListener('touchstart', onFirstInteraction);
+            window.removeEventListener('click', onFirstInteraction);
+        };
+
+        tryPlay();
+        window.addEventListener('touchstart', onFirstInteraction, { passive: true });
+        window.addEventListener('click', onFirstInteraction);
+
         video.addEventListener('timeupdate', onTimeUpdate);
         video.addEventListener('ended', onEnded);
         return () => {
             video.removeEventListener('timeupdate', onTimeUpdate);
             video.removeEventListener('ended', onEnded);
+            window.removeEventListener('touchstart', onFirstInteraction);
+            window.removeEventListener('click', onFirstInteraction);
         };
     }, []);
 
@@ -199,7 +210,6 @@ export default function LancamentoPage() {
         <main className="lancamento-page">
             <div className="lp-curtain" aria-hidden="true" />
 
-            {/* ── SEÇÃO 1: HERO ── */}
             <section className="lp-hero">
                 <div className="lp-hero-bg" aria-hidden="true">
                     <video
@@ -209,8 +219,9 @@ export default function LancamentoPage() {
                         muted
                         playsInline
                         preload="auto"
+                        poster="/videos/lote-lagoa-poster.jpg"
                     >
-                        <source src="/videos/lote-lagoa.mp4" type="video/mp4" />
+                        <source src="/videos/lote-lagoa-web.mp4" type="video/mp4" />
                     </video>
                 </div>
                 <div className="lp-hero-glow" aria-hidden="true" />
@@ -247,7 +258,6 @@ export default function LancamentoPage() {
                 </div>
             </section>
 
-            {/* ── SEÇÃO 2: CONEXÃO EMOCIONAL ── */}
             <section className="lp-section lp-emocional">
                 <div className="container lp-section-inner lp-emocional-inner">
                     <div className="lp-reveal lp-stagger-1">
@@ -272,7 +282,6 @@ export default function LancamentoPage() {
                 </div>
             </section>
 
-            {/* ── SEÇÃO 3: DIFERENCIAIS ── */}
             <section className="lp-section lp-diferenciais">
                 <div className="container lp-section-inner">
                     <div className="lp-reveal lp-stagger-1">
@@ -282,7 +291,6 @@ export default function LancamentoPage() {
                         Por que esse empreendimento será um dos mais desejados de Guaraci?
                     </h2>
 
-                    {/* Stagger no grid — vault: choreography/stagger */}
                     <div className="lp-diferenciais-grid">
                         {DIFERENCIAIS.map((item, i) => (
                             <div
@@ -300,7 +308,6 @@ export default function LancamentoPage() {
                 </div>
             </section>
 
-            {/* ── SEÇÃO 4: COPY ASPIRACIONAL ── */}
             <section className="lp-section lp-aspiracional">
                 <div className="container lp-section-inner lp-aspiracional-inner">
                     <blockquote className="lp-aspiracional-quote lp-reveal lp-stagger-1">
@@ -321,7 +328,6 @@ export default function LancamentoPage() {
                 </div>
             </section>
 
-            {/* ── SEÇÃO 5: LOCALIZAÇÃO ── */}
             <section className="lp-section lp-localizacao">
                 <div className="container lp-section-inner">
                     <div className="lp-reveal lp-stagger-1">
@@ -363,7 +369,6 @@ export default function LancamentoPage() {
                 </div>
             </section>
 
-            {/* ── SEÇÃO 6: ESCASSEZ ── */}
             <section className="lp-section lp-escassez">
                 <div className="container lp-section-inner lp-escassez-inner">
                     <div className="lp-escassez-icon lp-reveal lp-stagger-1" aria-hidden="true">
@@ -391,7 +396,6 @@ export default function LancamentoPage() {
                 </div>
             </section>
 
-            {/* ── SEÇÃO 7: FORMULÁRIO ── */}
             <section className="lp-section lp-form-section" ref={formRef}>
                 <div className="container lp-section-inner">
                     <div className="lp-reveal lp-stagger-1">

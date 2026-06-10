@@ -93,7 +93,7 @@
 }
 
 .btn-submit {
-  background-color: var(--color-primary); /* Orange from palette */
+  background-color: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 24px;
@@ -104,7 +104,7 @@
 }
 
 .btn-submit:hover {
-  background-color: var(--color-primary-dark); /* Darker orange on hover */
+  background-color: var(--color-primary-dark);
 }
 
 .btn-submit:disabled {

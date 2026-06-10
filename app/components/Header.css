@@ -16,12 +16,10 @@
   backface-visibility: hidden;
 }
 
-/* Hidden state - slides up out of view */
 .header-hidden {
   transform: translateY(-100%);
 }
 
-/* Home Page Header (Transparent / Fixed) - shown when scrolling up */
 .header-transparent {
   position: fixed;
   background: rgba(255, 255, 255, 0.45);
@@ -31,20 +29,16 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-/* Home Page Header (Solid / Fixed) - shown at top of page */
 .header-solid-home {
   position: fixed;
   background: var(--bg-primary);
-  /* Solid White */
   border-bottom: 1px solid var(--color-gray-200);
   box-shadow: var(--shadow-sm);
 }
 
-/* Other Pages Header (Solid / Sticky) */
 .header-solid {
   position: sticky;
   background: var(--bg-primary);
-  /* Solid White */
   border-bottom: 1px solid var(--color-gray-200);
   box-shadow: var(--shadow-sm);
 }
@@ -54,13 +48,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-8);
-  /* Increased side padding for balance */
   max-width: 100%;
   margin: 0;
   height: 90px;
 }
 
-/* Logo Styles */
 .header-logo {
   display: flex;
   align-items: center;
@@ -74,7 +66,6 @@
 
 .header-logo:hover {
   opacity: 0.8;
-  /* Subtle hover effect without scaling */
 }
 
 .logo-image {
@@ -132,7 +123,6 @@
   }
 }
 
-/* Desktop Navigation */
 .nav-desktop {
   display: none;
   align-items: center;
@@ -169,7 +159,6 @@
   width: 100%;
 }
 
-/* Login Button - Desktop */
 .login-btn {
   display: flex;
   align-items: center;
@@ -200,7 +189,6 @@
   flex-shrink: 0;
 }
 
-/* Mobile Menu Toggle */
 .menu-toggle {
   display: flex;
   flex-direction: column;
@@ -255,7 +243,6 @@
   transform: rotate(-45deg);
 }
 
-/* Mobile Navigation */
 .nav-mobile {
   position: fixed;
   top: 70px;
@@ -298,7 +285,6 @@
   color: var(--color-primary);
 }
 
-/* Login Button - Mobile */
 .login-btn-mobile {
   display: flex;
   align-items: center;
@@ -326,7 +312,6 @@
   flex-shrink: 0;
 }
 
-/* Tablet (768px and up) */
 @media (min-width: 768px) {
   .nav-desktop {
     display: flex;
@@ -341,7 +326,6 @@
   }
 }
 
-/* Desktop (1024px and up) */
 @media (min-width: 1024px) {
   .header-container {
     padding-top: var(--space-5);

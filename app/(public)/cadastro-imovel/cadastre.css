@@ -1,4 +1,3 @@
-/* Animations & Variables */
 :root {
     --primary: #e85d2f;
     --primary-dark: #d14a2a;
@@ -56,7 +55,6 @@
     align-items: center;
     justify-content: center;
     padding: 30px 16px;
-    /* Reduced vertical padding */
     background: linear-gradient(to bottom, #f8f9fa, #ffffff);
 }
 
@@ -66,26 +64,21 @@
     margin: 0 auto;
 }
 
-/* Form Container - Premium Card */
 .cadastre-form-container {
     width: 100%;
     background: var(--bg-surface);
     border-radius: 20px;
-    /* Slightly tighter radius */
     box-shadow:
         0 20px 25px -5px rgba(0, 0, 0, 0.05),
         0 10px 10px -5px rgba(0, 0, 0, 0.02),
         0 0 1px rgba(0, 0, 0, 0.1);
     padding: 40px 48px;
-    /* Reduced padding from 56px */
     opacity: 0;
-    /* Fix: Start invisible to prevent jump */
     animation: slideUpFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     position: relative;
     overflow: hidden;
 }
 
-/* Decorative top gradient line */
 .cadastre-form-container::before {
     content: '';
     position: absolute;
@@ -93,19 +86,16 @@
     left: 0;
     width: 100%;
     height: 5px;
-    /* Slightly thinner */
     background: linear-gradient(90deg, #e85d2f, #f97316);
 }
 
 .cadastre-page .form-header {
     margin-bottom: 32px;
-    /* Reduced from 48px */
     text-align: center;
 }
 
 .cadastre-page .form-header h2 {
     font-size: 1.8rem;
-    /* Slightly smaller */
     font-weight: 800;
     color: var(--text-primary);
     margin-bottom: 8px;
@@ -121,12 +111,10 @@
     margin: 0 auto;
 }
 
-/* Form Grid */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    /* Reduced from 28px */
 }
 
 .span-full {
@@ -137,7 +125,6 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    /* Tighter gap */
 }
 
 .cadastre-page .form-group label {
@@ -150,7 +137,6 @@
     white-space: nowrap;
 }
 
-/* Premium Input Styles */
 .cadastre-page .input-wrapper {
     position: relative;
     display: flex;
@@ -164,7 +150,6 @@
     transition: color 0.3s ease;
     z-index: 10;
     width: 18px;
-    /* Slightly smaller icon */
     height: 18px;
 }
 
@@ -173,27 +158,22 @@
 .cadastre-page .form-textarea {
     width: 100%;
     padding: 12px 16px 12px 44px;
-    /* Reduced vertical padding (16->12), adjusted left padding */
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     font-size: 0.95rem;
-    /* Slightly smaller font */
     background: #f9fafb;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     color: var(--text-primary);
     font-weight: 500;
     min-height: 48px;
-    /* Explicit height control */
 }
 
 .form-textarea {
     padding-left: 16px;
     resize: vertical;
     min-height: 100px;
-    /* Reduced height */
 }
 
-/* Select Styling */
 .form-select {
     padding-left: 16px;
     cursor: pointer;
@@ -204,7 +184,6 @@
     padding-right: 40px;
 }
 
-/* Focus States */
 .cadastre-page .input-wrapper input:focus,
 .cadastre-page .form-select:focus,
 .cadastre-page .form-textarea:focus {
@@ -225,7 +204,6 @@
     font-weight: 400;
 }
 
-/* Hover States for Inputs */
 .cadastre-page .input-wrapper input:hover:not(:focus),
 .cadastre-page .form-select:hover:not(:focus),
 .cadastre-page .form-textarea:hover:not(:focus) {
@@ -233,11 +211,9 @@
     background: #f3f4f6;
 }
 
-/* Buttons - High Impact */
 .cadastre-page .submit-btn {
     width: 100%;
     padding: 14px;
-    /* Reduced from 18px */
     background: linear-gradient(135deg, #e85d2f 0%, #d94f26 100%);
     color: white;
     font-size: 1rem;
@@ -269,7 +245,6 @@
     box-shadow: none;
 }
 
-/* Loading Spinner */
 .cadastre-page .loading-spinner {
     width: 20px;
     height: 20px;
@@ -285,17 +260,14 @@
     }
 }
 
-/* Step Indicator - Compact */
 .step-indicator {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 40px;
-    /* Reduced from 56px */
     width: 100%;
     position: relative;
     max-width: 400px;
-    /* Tighter width */
     margin-left: auto;
     margin-right: auto;
 }
@@ -305,7 +277,6 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    /* Reduced gap */
     position: relative;
     z-index: 2;
     flex: 0 0 auto;
@@ -313,7 +284,6 @@
 
 .step-circle {
     width: 40px;
-    /* Reduced from 48px */
     height: 40px;
     border-radius: 50%;
     background: white;
@@ -335,7 +305,6 @@
 
 .step-label {
     font-size: 0.75rem;
-    /* Smaller labels */
     font-weight: 700;
     color: #9ca3af;
     transition: all 0.3s ease;
@@ -343,7 +312,6 @@
     letter-spacing: 0.05em;
 }
 
-/* Active Step */
 .step-item.active .step-circle {
     background: var(--primary);
     color: white;
@@ -357,7 +325,6 @@
     color: var(--primary);
 }
 
-/* Completed Step */
 .step-item.completed .step-circle {
     background: var(--primary);
     color: white;
@@ -372,7 +339,6 @@
     color: var(--primary);
 }
 
-/* Connecting Line */
 .step-line {
     flex: 1;
     height: 3px;
@@ -381,12 +347,10 @@
     border-radius: 2px;
     position: relative;
     top: 20px;
-    /* Adjusted for 40px circle (half is 20) */
     z-index: 1;
     overflow: hidden;
 }
 
-/* Animated Line Fill */
 .step-line::after {
     content: '';
     position: absolute;
@@ -402,19 +366,16 @@
     width: 100%;
 }
 
-/* Navigation Buttons */
 .cadastre-page .form-actions {
     display: flex;
     gap: 12px;
     margin-top: 32px;
-    /* Reduced margin */
     align-items: center;
 }
 
 .cadastre-page .nav-btn {
     flex: 1;
     padding: 14px;
-    /* Reduced padding */
     border: none;
     border-radius: 12px;
     font-size: 0.95rem;
@@ -447,7 +408,6 @@
     box-shadow: 0 8px 20px rgba(232, 93, 47, 0.3);
 }
 
-/* Success Message */
 .form-success {
     margin-top: 24px;
     padding: 20px;
@@ -460,7 +420,6 @@
     animation: slideUpFade 0.5s ease forwards;
 }
 
-/* Field Error Messages */
 .field-error {
     color: #dc2626;
     font-size: 0.78rem;
@@ -470,7 +429,6 @@
     animation: slideUpFade 0.3s ease;
 }
 
-/* Password Strength Meter */
 .password-strength {
     display: flex;
     align-items: center;
@@ -498,7 +456,6 @@
     white-space: nowrap;
 }
 
-/* Responsive */
 @media (max-width: 640px) {
     .cadastre-form-container {
         padding: 32px 20px;
@@ -540,7 +497,6 @@
     }
 }
 
-/* Toast Notification - Polished & Unified */
 .toast-notification {
     position: fixed;
     top: 24px;
@@ -569,15 +525,12 @@
     font-weight: 500;
     font-size: 0.95rem;
     line-height: 1;
-    /* Fix vertical alignment */
 }
 
 .toast-content span {
     padding-top: 2px;
-    /* Micro-adjustment for visual center */
 }
 
-/* Toast Variants */
 .toast-notification.error {
     box-shadow: 0 10px 30px rgba(232, 93, 47, 0.15), 0 0 0 1px rgba(232, 93, 47, 0.1);
     color: #c2410c;

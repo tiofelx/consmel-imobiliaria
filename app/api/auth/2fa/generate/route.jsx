@@ -30,9 +30,6 @@ async function buildEnrollmentResponse(user, includeSecret) {
     });
 }
 
-// GET /api/auth/2fa/generate
-// Apenas para enrollment INICIAL (quando 2FA ainda não está habilitado).
-// Se 2FA já está ativo, recusa — usar POST com currentToken para regenerar.
 export async function GET(request) {
     try {
         const session = await verifySession();
@@ -46,9 +43,6 @@ export async function GET(request) {
         });
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-        // Defesa contra bypass: se 2FA já está habilitado, qualquer regeneração
-        // precisa provar posse do TOTP atual via POST. GET nunca pode sobrescrever
-        // um secret ativo.
         if (user.twoFactorEnabled) {
             logSecurityAttempt('2fa-regenerate-without-token', {
                 ip: getClientIpFromHeaders(request.headers),
@@ -72,9 +66,6 @@ export async function GET(request) {
     }
 }
 
-// POST /api/auth/2fa/generate
-// Regenera o secret 2FA exigindo o código TOTP atual.
-// Body: { currentToken: string, manualEntry?: boolean }
 export async function POST(request) {
     try {
         const session = await verifySession();

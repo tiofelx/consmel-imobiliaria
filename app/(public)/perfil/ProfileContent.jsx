@@ -48,7 +48,7 @@ export default function ProfileContent({ user }) {
             if (res.ok) {
                 setSuccess('Autenticação de Dois Fatores ativada com sucesso!');
                 setIs2FAEnabled(true);
-                setQrCode(null); // Clear QR code on success
+                setQrCode(null);
                 setSecret(null);
             } else {
                 setError(data.error || 'Código inválido.');

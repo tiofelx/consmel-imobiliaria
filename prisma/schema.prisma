@@ -183,6 +183,21 @@ model LancamentoLead {
   @@map("lancamento_leads")
 }
 
+// ==========================================
+// Rate Limiting (persistente, global entre instâncias)
+// ==========================================
+// Substitui o LRU em memória: sobrevive a deploy/cold-start e é compartilhado
+// entre todas as instâncias serverless. Janela fixa: `expiresAt` marca o fim
+// da janela; ao expirar, o contador é reiniciado no próximo incremento.
+model RateLimit {
+  key       String   @id // ex.: "auth:1.2.3.4" ou "rl:RATE_LIMIT_CONTACT_1.2.3.4"
+  count     Int      @default(0)
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@map("rate_limits")
+}
+
 model SecurityEvent {
   id        String   @id @default(cuid())
   event     String

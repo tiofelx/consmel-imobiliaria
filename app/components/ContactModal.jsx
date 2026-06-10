@@ -27,12 +27,10 @@ export default function ContactModal({ isOpen, onClose }) {
           <h2 className="contact-modal-title">Entre em Contato</h2>
 
           <div className="contact-grid-modal">
-            {/* Contact Form */}
             <div className="contact-form-container">
               <ContactForm />
             </div>
 
-            {/* Contact Info */}
             <div className="contact-info">
               <h3>Informações de Contato</h3>
               <p>
@@ -97,7 +95,6 @@ export default function ContactModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Map Section */}
           <section className="map-section-modal">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d272.66132579462095!2d-48.9396451703555!3d-20.504342426564012!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94bc89984507a0cd%3A0x634909072c597085!2sImobili%C3%A1ria%20Consmel!5e1!3m2!1spt-BR!2sus!4v1772810706605!5m2!1spt-BR!2sus"

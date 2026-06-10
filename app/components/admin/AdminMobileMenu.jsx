@@ -7,7 +7,6 @@ export default function AdminMobileMenu({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  // Prevent scrolling when menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';

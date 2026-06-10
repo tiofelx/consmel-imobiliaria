@@ -25,7 +25,6 @@ export async function GET(request) {
         return NextResponse.redirect(new URL('/login?error=invalid_state', request.url));
     }
 
-    // Clear state cookie
     cookieStore.delete('oauth_state');
 
     try {
@@ -33,7 +32,6 @@ export async function GET(request) {
         const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
         const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/google/callback`;
 
-        // Exchange code for tokens
         const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -53,7 +51,6 @@ export async function GET(request) {
             return NextResponse.redirect(new URL('/login?error=token_error', request.url));
         }
 
-        // Get User Info
         const userResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
             headers: { Authorization: `Bearer ${tokens.access_token}` },
         });
@@ -64,8 +61,10 @@ export async function GET(request) {
             return NextResponse.redirect(new URL('/login?error=user_info_error', request.url));
         }
 
-        // Database Logic
-        // Check if user exists
+        if (googleUser.email_verified !== true || !googleUser.email) {
+            return NextResponse.redirect(new URL('/login?error=email_unverified', request.url));
+        }
+
         let user = await prisma.user.findUnique({
             where: { email: googleUser.email },
             select: {
@@ -77,15 +76,13 @@ export async function GET(request) {
             }
         });
 
-        // 1. If user doesn't exist, create one
         if (!user) {
-            // Transaction to create User and Client
             const result = await prisma.$transaction(async (tx) => {
                 const newUser = await tx.user.create({
                     data: {
                         name: googleUser.name,
                         email: googleUser.email,
-                        password: '', // OAuth users have no password initially
+                        password: '',
                         role: 'CLIENT',
                     },
                     select: {
@@ -97,7 +94,6 @@ export async function GET(request) {
                     }
                 });
 
-                // Create Client entry if it doesn't exist
                 const existingClient = await tx.client.findFirst({
                     where: { email: googleUser.email }
                 });
@@ -117,17 +113,9 @@ export async function GET(request) {
             user = result;
         }
 
-        // 2. Create Session or Pending Session
         if (user.twoFactorEnabled) {
-            // User has 2FA enabled, so we DON'T create a full session yet.
-            // Instead, we create a short-lived "pending" session.
             
-            // We need to import createPendingSession at the top, but since we can't easily add imports with clean edits sometimes,
-            // let's assume I'll add the import in a separate block or updated the import line.
-            // Wait, I should have updated the imports first. Let me do that carefully.
             
-            // Actually, I can use the existing import line update strategy. 
-            // For this block, I will use the new createPendingSession.
             
             await createPendingSession({
                 userId: user.id,
@@ -140,7 +128,6 @@ export async function GET(request) {
             return NextResponse.redirect(new URL('/login?action=2fa', request.url));
         }
 
-        // Standard Login (No 2FA)
         await createSession({
             userId: user.id,
             email: user.email,

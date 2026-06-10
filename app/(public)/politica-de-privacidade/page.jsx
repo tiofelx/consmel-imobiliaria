@@ -8,18 +8,15 @@ export const metadata = {
 export default function PoliticaDePrivacidade() {
   return (
     <>
-      {/* Hero Section */}
       <section className="page-hero">
         <div className="container">
           <h1 className="animate-slide-in-up">Políticas de Privacidade</h1>
         </div>
       </section>
 
-      {/* Content Section */}
       <section className="section policy-content">
         <div className="container animate-page-entrance">
 
-          {/* Intro */}
           <div className="policy-card">
             <p>
               Nós, da Imobiliária Consmel, estamos comprometidos em proteger a privacidade e os dados pessoais de nossos clientes e
@@ -28,7 +25,6 @@ export default function PoliticaDePrivacidade() {
             </p>
           </div>
 
-          {/* Coleta de Informações */}
           <h2 className="policy-title">Coleta de Informações Pessoais</h2>
           <div className="policy-card">
             <p>
@@ -38,7 +34,6 @@ export default function PoliticaDePrivacidade() {
             </p>
           </div>
 
-          {/* Uso de Informações */}
           <h2 className="policy-title">Uso de Informações Pessoais</h2>
           <div className="policy-card">
             <p>
@@ -48,7 +43,6 @@ export default function PoliticaDePrivacidade() {
             </p>
           </div>
 
-          {/* Proteção */}
           <h2 className="policy-title">Proteção de Informações Pessoais</h2>
           <div className="policy-card">
             <p>
@@ -58,7 +52,6 @@ export default function PoliticaDePrivacidade() {
             </p>
           </div>
 
-          {/* Cookies */}
           <h2 className="policy-title">Cookies</h2>
           <div className="policy-card">
             <p>
@@ -68,7 +61,6 @@ export default function PoliticaDePrivacidade() {
             </p>
           </div>
 
-          {/* Alterações */}
           <h2 className="policy-title">Alterações Nesta Política de Privacidade</h2>
           <div className="policy-card">
             <p>
@@ -77,7 +69,6 @@ export default function PoliticaDePrivacidade() {
             </p>
           </div>
 
-          {/* Contato */}
           <h2 className="policy-title">Contato</h2>
           <div className="policy-card">
             <p>
@@ -86,7 +77,6 @@ export default function PoliticaDePrivacidade() {
             </p>
           </div>
 
-          {/* Direitos */}
           <h2 className="policy-title">Quais os Seus Direitos Sobre Seus Dados</h2>
           <div className="policy-card">
             <p>

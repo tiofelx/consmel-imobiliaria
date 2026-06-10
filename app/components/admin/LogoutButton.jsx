@@ -14,7 +14,6 @@ export default function LogoutButton() {
             router.refresh();
         } catch (error) {
             console.error('Logout failed', error);
-            // Fallback redirect even if fetch fails
             router.push('/login');
         }
     };

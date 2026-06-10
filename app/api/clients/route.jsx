@@ -7,7 +7,6 @@ import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttem
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/clients — List all clients
 export async function GET(request) {
     try {
         const session = await verifySession();
@@ -30,10 +29,8 @@ export async function GET(request) {
     }
 }
 
-// Rate limiter (5 requests per 10 minutes per IP)
 const limiter = rateLimit({ uniqueTokenPerInterval: 500, interval: 600000 });
 
-// Strict validation schema
 const clientSchema = z.object({
     name: z.string().trim().min(2, "Nome muito curto").max(100, "Nome muito longo")
         .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, "Nome contém caracteres inválidos"),
@@ -44,10 +41,8 @@ const clientSchema = z.object({
     notes: z.string().trim().max(1000).optional().nullable()
 });
 
-// POST /api/clients — Create a new client (Public Endpoint for Leads)
 export async function POST(request) {
     try {
-        // Rate Limiting by IP
         const ip = getClientIpFromHeaders(request.headers);
         const userAgent = getClientUserAgentFromHeaders(request.headers);
         const resForHeaders = new NextResponse();
@@ -61,7 +56,6 @@ export async function POST(request) {
 
         const data = await request.json();
 
-        // 1. Zod Validation (Defense in Depth)
         const parsedData = clientSchema.safeParse(data);
         if (!parsedData.success) {
             console.warn(`Tentativa de injeção ou dados inválidos de IP: ${ip}`, parsedData.error.errors);
@@ -84,7 +78,6 @@ export async function POST(request) {
             },
         });
 
-        // Copiamos os headers de rate limit para a resposta final
         const response = NextResponse.json(client, { status: 201 });
         resForHeaders.headers.forEach((value, key) => response.headers.set(key, value));
 

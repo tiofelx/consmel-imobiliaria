@@ -1,8 +1,3 @@
-/* ============================================
-   ADMIN DASHBOARD - PROFESSIONAL DESIGN
-   ============================================ */
-
-/* CSS Variables for consistent theming */
 :root {
     --admin-primary: #f97316;
     --admin-primary-dark: #ea580c;
@@ -33,7 +28,6 @@
     --admin-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Container */
 .admin-container {
     display: flex;
     flex-direction: column;
@@ -48,9 +42,6 @@
     overflow: hidden;
 }
 
-/* ============================================
-   HEADER - Modern & Clean
-   ============================================ */
 .admin-header {
     height: 80px;
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
@@ -110,7 +101,6 @@
     transition: opacity 0.2s ease;
 }
 
-/* Keep menu toggle stable before client hydration */
 .admin-menu-toggle {
     display: none;
 }
@@ -191,9 +181,6 @@
     box-shadow: 0 0 15px rgba(249, 115, 22, 0.4), 0 0 30px rgba(249, 115, 22, 0.2);
 }
 
-/* ============================================
-   SIDEBAR - Dark Gradient Design
-   ============================================ */
 .admin-sidebar {
     width: 260px;
     background: linear-gradient(180deg, var(--admin-gradient-start) 0%, var(--admin-gradient-end) 100%);
@@ -205,7 +192,6 @@
     overflow: hidden;
 }
 
-/* Subtle pattern overlay */
 .admin-sidebar::before {
     content: '';
     position: absolute;
@@ -317,9 +303,6 @@
     color: #fecaca;
 }
 
-/* ============================================
-   MAIN CONTENT AREA
-   ============================================ */
 .admin-main {
     flex: 1;
     display: flex;
@@ -337,7 +320,6 @@
     width: 100%;
 }
 
-/* Section Header */
 .admin-section-header {
     margin-bottom: 32px;
     display: flex;
@@ -374,20 +356,12 @@
     font-weight: 500;
 }
 
-
-
-
-
-/* ============================================
-   TABLE STYLES
-   ============================================ */
 .admin-table-container {
     background: var(--admin-card-bg);
     border-radius: var(--admin-radius-lg);
     border: 1px solid var(--admin-border);
     overflow-x: auto;
     box-shadow: var(--admin-shadow-sm);
-    /* Improve stability */
 }
 
 .table-header {
@@ -493,7 +467,6 @@ tr:last-child td {
     border-bottom: none;
 }
 
-/* Zebra stripes */
 tbody tr:nth-child(even) {
     background-color: rgba(248, 250, 252, 0.5);
 }
@@ -557,9 +530,6 @@ tr:hover .property-thumb {
     transform: scale(1.1);
 }
 
-/* ============================================
-   FORM STYLES
-   ============================================ */
 .form-card {
     background: var(--admin-card-bg);
     border-radius: var(--admin-radius-lg);
@@ -573,7 +543,6 @@ tr:hover .property-thumb {
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    /* Flexible grid */
     gap: 24px;
     margin-bottom: 24px;
 }
@@ -709,9 +678,6 @@ tr:hover .property-thumb {
     border-color: var(--admin-text-secondary);
 }
 
-/* ============================================
-   ANIMATIONS
-   ============================================ */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -761,11 +727,6 @@ tr:hover .property-thumb {
     will-change: transform, opacity;
 }
 
-
-/* =========================================
-   Admin Stepper Form (Replicated from Public)
-   ========================================= */
-
 .admin-stepper-container {
     max-width: 800px;
     margin: 0 auto;
@@ -775,7 +736,6 @@ tr:hover .property-thumb {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-/* Stepper Indicator */
 .step-indicator {
     display: flex;
     align-items: flex-start;
@@ -823,21 +783,18 @@ tr:hover .property-thumb {
     letter-spacing: 0.05em;
 }
 
-/* Active Step */
 .step-item.active .step-circle {
     background: var(--admin-primary);
     color: white;
     border-color: var(--admin-primary);
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
-    /* Orange shadow */
 }
 
 .step-item.active .step-label {
     color: var(--admin-primary);
 }
 
-/* Completed Step */
 .step-item.completed .step-circle {
     background: var(--admin-primary);
     color: white;
@@ -848,7 +805,6 @@ tr:hover .property-thumb {
     color: var(--admin-primary);
 }
 
-/* Connecting Line */
 .step-line {
     flex: 1;
     height: 3px;
@@ -876,7 +832,6 @@ tr:hover .property-thumb {
     width: 100%;
 }
 
-/* Form Inputs (Rounded & Gray) */
 .admin-stepper-form .input-wrapper {
     position: relative;
     display: flex;
@@ -908,18 +863,15 @@ tr:hover .property-thumb {
     min-height: 48px;
 }
 
-/* Apenas inputs com ícone à esquerda (svg ou prefixo) recebem padding extra */
 .admin-stepper-form .input-wrapper:has(> svg) input,
 .admin-stepper-form .input-wrapper:has(> .input-prefix) input {
     padding-left: 44px;
 }
 
-/* Inputs com sufixo (m², etc.) à direita reservam espaço */
 .admin-stepper-form .input-wrapper:has(> .input-suffix) input {
     padding-right: 56px;
 }
 
-/* Prefixo de moeda / unidade */
 .admin-stepper-form .input-wrapper .input-prefix {
     position: absolute;
     left: 16px;
@@ -940,7 +892,6 @@ tr:hover .property-thumb {
     z-index: 1;
 }
 
-/* Esconde spinners do input type=number nos formulários do admin */
 .admin-stepper-form input[type="number"]::-webkit-outer-spin-button,
 .admin-stepper-form input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -951,10 +902,8 @@ tr:hover .property-thumb {
     -moz-appearance: textfield;
 }
 
-/* Adjust padding if no icon wrapper is used */
 .admin-stepper-form .form-select {
     padding-left: 16px;
-    /* No icon usually for select unless wrapped */
 }
 
 .admin-stepper-form .form-textarea {
@@ -972,7 +921,6 @@ tr:hover .property-thumb {
     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
 }
 
-/* Form Actions */
 .admin-stepper-form .form-actions {
     display: flex;
     gap: 12px;
@@ -1005,7 +953,6 @@ tr:hover .property-thumb {
 }
 
 .admin-stepper-form .next-btn:hover {
-    /* Darker Orange */
     transform: translateY(-1px);
 }
 
@@ -1025,8 +972,6 @@ tr:hover .property-thumb {
     color: #dc2626;
 }
 
-/* 4th child delay moved to main block */
-
 .admin-table-container {
     animation: fadeInUp 0.6s ease-out forwards;
     opacity: 0;
@@ -1039,9 +984,6 @@ tr:hover .property-thumb {
     will-change: transform, opacity;
 }
 
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
 @media (max-width: 1024px) {
     .admin-sidebar {
         width: 220px;
@@ -1053,8 +995,6 @@ tr:hover .property-thumb {
         gap: 20px;
         padding: 20px;
     }
-
-
 
     .stat-card {
         flex: 0 1 calc(50% - 12px);
@@ -1105,9 +1045,6 @@ tr:hover .property-thumb {
     }
 }
 
-/* ============================================
-   SKELETON LOADING
-   ============================================ */
 .skeleton {
     background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
     background-size: 200% 100%;
@@ -1127,9 +1064,7 @@ tr:hover .property-thumb {
 
 .skeleton-card {
     border-color: var(--admin-border);
-    /* Restore border */
     pointer-events: none;
-    /* Reset animation inheritance from .stat-card */
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

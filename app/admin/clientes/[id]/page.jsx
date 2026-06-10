@@ -7,7 +7,7 @@ import AdminHeader from '@/app/components/admin/AdminHeader';
 import FormStepper from '@/app/components/admin/FormStepper';
 
 export default function EditClient({ params }) {
-    const { id } = useParams(); // Changed from `use(params)` to `useParams()`
+    const { id } = useParams();
     const router = useRouter();
 
     const [client, setClient] = useState(null);
@@ -15,7 +15,6 @@ export default function EditClient({ params }) {
     const [isSaving, setIsSaving] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
 
-    // Form state
     const [formData, setFormData] = useState({
         name: '', email: '', phone: '', interest: 'Compra', status: 'Novo', notes: ''
     });
@@ -105,7 +104,6 @@ export default function EditClient({ params }) {
                     />
                 </div>
 
-                {/* Step 1: Contact Info */}
                 {currentStep === 1 && (
                     <div>
                         <div className="form-group" style={{ marginBottom: '24px' }}>
@@ -137,7 +135,6 @@ export default function EditClient({ params }) {
                     </div>
                 )}
 
-                {/* Step 2: Lead Details */}
                 {currentStep === 2 && (
                     <div>
                         <div className="form-group" style={{ marginBottom: '24px' }}>
@@ -168,7 +165,6 @@ export default function EditClient({ params }) {
                     </div>
                 )}
 
-                {/* Footer Actions */}
                 <div className="form-actions">
                     {currentStep > 1 ? (
                         <button onClick={prevStep} className="nav-btn prev-btn">Voltar</button>

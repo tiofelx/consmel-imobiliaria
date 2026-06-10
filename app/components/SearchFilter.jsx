@@ -14,7 +14,6 @@ export default function SearchFilter({ onFilterChange }) {
     priceRange: ''
   });
 
-  // Define price ranges based on transaction type
   const rentalPriceRanges = [
     { value: '', label: 'Selecione...' },
     { value: '0-500', label: 'até R$ 500' },
@@ -39,7 +38,6 @@ export default function SearchFilter({ onFilterChange }) {
     { value: '500000-99999999', label: 'acima de R$ 500.000' }
   ];
 
-  // Get current price ranges based on transaction type
   const currentPriceRanges = filters.transactionType === 'aluguel'
     ? rentalPriceRanges
     : salePriceRanges;
@@ -52,7 +50,6 @@ export default function SearchFilter({ onFilterChange }) {
     };
     setFilters(newFilters);
 
-    // Notify parent of changes
     if (onFilterChange) {
       onFilterChange(newFilters);
     }
@@ -62,11 +59,10 @@ export default function SearchFilter({ onFilterChange }) {
     const newFilters = {
       ...filters,
       transactionType: type,
-      priceRange: '' // Reset price range when changing transaction type
+      priceRange: ''
     };
     setFilters(newFilters);
 
-    // Notify parent of changes
     if (onFilterChange) {
       onFilterChange(newFilters);
     }
@@ -75,7 +71,6 @@ export default function SearchFilter({ onFilterChange }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Build query string
     const params = new URLSearchParams();
 
     if (filters.transactionType) params.append('tipo', filters.transactionType);
@@ -84,7 +79,6 @@ export default function SearchFilter({ onFilterChange }) {
     if (filters.neighborhood) params.append('bairro', filters.neighborhood);
     if (filters.priceRange) params.append('preco', filters.priceRange);
 
-    // Navigate to properties page with filters
     router.push(`/imoveis?${params.toString()}`);
   };
 
@@ -93,7 +87,6 @@ export default function SearchFilter({ onFilterChange }) {
       <h3 className="search-filter-title">Buscar por Código</h3>
 
       <form onSubmit={handleSubmit} className="search-filter-form">
-        {/* Transaction Type - Large Buttons */}
         <div className="transaction-buttons">
           <button
             type="button"
@@ -111,7 +104,6 @@ export default function SearchFilter({ onFilterChange }) {
           </button>
         </div>
 
-        {/* Property Type */}
         <div className="filter-field">
           <label htmlFor="propertyType">Tipo</label>
           <select
@@ -129,7 +121,6 @@ export default function SearchFilter({ onFilterChange }) {
           </select>
         </div>
 
-        {/* City */}
         <div className="filter-field">
           <label htmlFor="city">Cidade</label>
           <select
@@ -147,7 +138,6 @@ export default function SearchFilter({ onFilterChange }) {
           </select>
         </div>
 
-        {/* Neighborhood */}
         <div className="filter-field">
           <label htmlFor="neighborhood">Bairro</label>
           <select
@@ -167,7 +157,6 @@ export default function SearchFilter({ onFilterChange }) {
           </select>
         </div>
 
-        {/* Price Range - Dynamic based on transaction type */}
         <div className="filter-field">
           <label htmlFor="priceRange">Valor</label>
           <select
@@ -184,7 +173,6 @@ export default function SearchFilter({ onFilterChange }) {
           </select>
         </div>
 
-        {/* Submit Button */}
         <button type="submit" className="btn-search-submit">
           Pesquisar
         </button>

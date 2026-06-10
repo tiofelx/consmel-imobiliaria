@@ -15,17 +15,7 @@ export default function ProfilePage() {
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 
     useEffect(() => {
-        // Fetch user info (simulated or real endpoint needed here if not in session/context)
-        // For now, let's assume we can get basic info or need to fetch it.
-        // In a real app, you'd likely have a /api/me endpoint or use the session.
-        // Given existing auth, let's try to get current user capabilities or infer from session
-        // However, we probably need a /api/me endpoint.
-        // Let's implement a quick fetch logic assuming we can get 2FA status from a new endpoint or existing one.
-        // Since we don't have /api/me explicitly found, we might need to rely on the generate endpoint initial check or add one.
-        // For now, let's just start with the "Generate" flow which checks user.
 
-        // Actually, let's fetch basic status first. We can reuse the generate endpoint logic partially or just try to generate and see if it returns "already enabled" or similar if we modify it, but standard flow is robust.
-        // Let's assume user starts with "Enable 2FA" button to check status.
     }, []);
 
     const handleEnable2FA = async () => {
@@ -63,7 +53,7 @@ export default function ProfilePage() {
             if (res.ok) {
                 setSuccess('Autenticação de Dois Fatores ativada com sucesso!');
                 setIs2FAEnabled(true);
-                setQrCode(null); // Clear QR code on success
+                setQrCode(null);
                 setSecret(null);
             } else {
                 setError(data.error || 'Código inválido.');
@@ -84,7 +74,6 @@ export default function ProfilePage() {
 
             <div className="profile-section">
                 <h2>Informações Pessoais</h2>
-                {/* Placeholder for user details */}
                 <div className="profile-details">
                     <div className="detail-item">
                         <label>Nome</label>

@@ -40,7 +40,6 @@ const ETAPAS = [
 export default function DespachantePage() {
     return (
         <>
-            {/* Hero */}
             <section className="page-hero">
                 <div className="container">
                     <h1 className="animate-slide-in-up">Despachante Imobiliário</h1>
@@ -50,7 +49,6 @@ export default function DespachantePage() {
                 </div>
             </section>
 
-            {/* Problema */}
             <section className="section">
                 <div className="container">
                     <div className="desp-problema-grid animate-page-entrance">
@@ -87,7 +85,6 @@ export default function DespachantePage() {
                 </div>
             </section>
 
-            {/* Serviços */}
             <section className="section bg-secondary">
                 <div className="container">
                     <h2 className="text-center" style={{ marginBottom: 'var(--space-4)' }}>O que fazemos</h2>
@@ -110,7 +107,6 @@ export default function DespachantePage() {
                 </div>
             </section>
 
-            {/* Como funciona */}
             <section className="section">
                 <div className="container">
                     <h2 className="text-center" style={{ marginBottom: 'var(--space-12)' }}>
@@ -129,7 +125,6 @@ export default function DespachantePage() {
                 </div>
             </section>
 
-            {/* Por que você precisa */}
             <section className="section bg-secondary">
                 <div className="container">
                     <div className="desp-dor-grid">
@@ -161,7 +156,6 @@ export default function DespachantePage() {
                 </div>
             </section>
 
-            {/* CTA */}
             <section className="section bg-secondary" style={{ borderTop: '1px solid var(--border-light)' }}>
                 <div className="container text-center">
                     <h2>Quer acompanhamento especializado?</h2>

@@ -5,7 +5,6 @@ import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttem
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/stats — Dashboard statistics
 export async function GET(request) {
     try {
         const session = await verifySession();

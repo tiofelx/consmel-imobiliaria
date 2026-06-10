@@ -29,7 +29,6 @@ function Recenter({ center, marker }) {
     });
   }, [center, marker, map]);
 
-  // Garante que o leaflet recalcule o tamanho ao montar (evita tiles cinzas).
   useEffect(() => {
     const timers = [60, 240, 600].map((delay) =>
       window.setTimeout(() => map.invalidateSize(false), delay)

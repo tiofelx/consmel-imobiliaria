@@ -32,7 +32,6 @@
   transform: scale(1.02);
 }
 
-/* Watermark */
 .watermark-overlay {
   position: absolute;
   top: 50%;
@@ -50,7 +49,6 @@
   width: 85%;
 }
 
-/* Expand Overlay */
 .expand-overlay {
   position: absolute;
   top: 16px;
@@ -75,7 +73,6 @@
   opacity: 1;
 }
 
-/* Room Label Badge */
 .room-label-badge {
   position: absolute;
   bottom: 16px;
@@ -93,7 +90,6 @@
   border-radius: var(--radius-sm);
 }
 
-/* Image Counter */
 .image-counter {
   position: absolute;
   bottom: 16px;
@@ -107,7 +103,6 @@
   z-index: 30;
 }
 
-/* Navigation Buttons */
 .gallery-nav-btn {
   position: absolute;
   top: 50%;
@@ -146,7 +141,6 @@
   right: var(--space-4);
 }
 
-/* Thumbnails */
 .gallery-thumbnails {
   display: flex;
   gap: var(--space-2);
@@ -184,7 +178,6 @@
   object-fit: cover;
 }
 
-/* Modal Lightbox - RENAMED to avoid conflicts */
 .lightbox-modal-overlay {
   position: fixed;
   top: 0;
@@ -299,7 +292,6 @@
   opacity: 0.8;
 }
 
-/* Mobile Optimizations */
 @media (max-width: 1200px) {
   .modal-prev {
     left: 16px;
@@ -313,10 +305,8 @@
 @media (max-width: 768px) {
   .gallery-main {
     aspect-ratio: 4 / 3;
-    /* Taller on mobile for better visibility */
     max-height: 400px;
     border-radius: 0;
-    /* Full width feel */
   }
 
   .expand-overlay {

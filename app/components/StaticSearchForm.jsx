@@ -61,7 +61,6 @@ export default function StaticSearchForm() {
           </button>
         </form>
         
-        {/* Hidden Map Container placeholder */}
         <div className="smart-search-map"></div>
       </div>
     </div>

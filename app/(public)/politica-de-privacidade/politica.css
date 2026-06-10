@@ -29,7 +29,6 @@
   font-size: 0.95rem;
 }
 
-/* First card without title above it */
 .policy-content > .container > .policy-card:first-child {
   margin-bottom: var(--space-6);
 }

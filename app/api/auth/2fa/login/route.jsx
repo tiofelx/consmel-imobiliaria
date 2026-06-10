@@ -15,7 +15,6 @@ export async function POST(request) {
         const ip = getClientIpFromHeaders(requestHeaders);
         const userAgent = getClientUserAgentFromHeaders(requestHeaders);
 
-        // 1. Permanent DB Block Check
         const isBlocked = await checkIpBlocked(ip);
         if (isBlocked) {
             logSecurityAttempt('blocked-ip-2fa', { ip, userAgent, route: '/api/auth/2fa/login', reason: 'IP already blocked', severity: 'critical' });
@@ -25,7 +24,6 @@ export async function POST(request) {
             );
         }
 
-        // 2. Validate Rate Limit against 2FA brute force attacks
         if (!checkRateLimit(ip)) {
             logSecurityAttempt('rate-limit-2fa', { ip, userAgent, route: '/api/auth/2fa/login', reason: 'Too many invalid 2FA attempts', severity: 'critical' });
             await blockIpAndAlert(ip, 'Fouça bruta detectada no 2FA', '2fa-login', { userAgent });
@@ -38,19 +36,16 @@ export async function POST(request) {
         const { token } = await request.json();
 
         if (!token) {
-            // Always increment when invalid data reaches us
             incrementRateLimit(ip);
             return NextResponse.json({ error: 'Código 2FA obrigatório.' }, { status: 400 });
         }
 
-        // 1. Verify "Pending" Session
         const pendingPayload = await verifyPendingSession();
 
         if (!pendingPayload || pendingPayload.stage !== '2fa_pending') {
             return NextResponse.json({ error: 'Sessão inválida ou expirada. Faça login novamente.' }, { status: 401 });
         }
 
-        // 2. Get User Secret
         const user = await prisma.user.findUnique({
             where: { id: pendingPayload.userId },
             select: {
@@ -67,8 +62,6 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Erro de configuração de segurança.' }, { status: 400 });
         }
 
-        // 3. Verify TOTP
-
         let secret;
         try {
             secret = decrypt(user.twoFactorSecret);
@@ -78,9 +71,6 @@ export async function POST(request) {
 
         let isValidResult;
         try {
-            // window=1 = aceita ±30s de drift. Reduz superfície de brute-force
-            // de 7 códigos válidos (window=3) para 3, mantendo tolerância
-            // razoável para dessincronização de relógio entre PC e celular.
             isValidResult = await verifyToken({ token, secret, window: 1 });
         } catch (verErr) {
             throw verErr;
@@ -91,7 +81,6 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Código 2FA incorreto.' }, { status: 401 });
         }
 
-        // 4. Upgrade to Full Session
         resetRateLimit(ip);
         await createSession({
             userId: user.id,
@@ -100,7 +89,6 @@ export async function POST(request) {
             name: user.name
         });
 
-        // 5. Delete Pending Cookie
         const cookieStore = await cookies();
         cookieStore.delete('pending_2fa');
 

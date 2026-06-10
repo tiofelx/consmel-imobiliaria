@@ -22,7 +22,6 @@
   gap: var(--space-5);
 }
 
-/* Transaction Type Buttons - Large and Prominent */
 .transaction-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -53,7 +52,6 @@
   color: var(--text-inverse);
 }
 
-/* Filter Fields - Vertical Layout */
 .filter-field {
   display: flex;
   flex-direction: column;
@@ -92,7 +90,6 @@
   box-shadow: 0 0 0 3px var(--color-primary-subtle);
 }
 
-/* Submit Button - Full Width Green */
 .btn-search-submit {
   width: 100%;
   padding: var(--space-4);
@@ -118,7 +115,6 @@
   transform: translateY(0);
 }
 
-/* Mobile Adjustments */
 @media (max-width: 768px) {
   .search-filter-card {
     max-width: 100%;

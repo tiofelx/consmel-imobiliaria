@@ -44,17 +44,13 @@ function LoginForm() {
         }
     }, [searchParams]);
 
-    // Force scroll to top on mount and prevent browser scroll restoration
     useEffect(() => {
-        // Disable browser's automatic scroll restoration
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
 
-        // Force scroll to top
         window.scrollTo(0, 0);
 
-        // Re-enable scroll restoration when component unmounts
         return () => {
             if ('scrollRestoration' in history) {
                 history.scrollRestoration = 'auto';
@@ -64,18 +60,15 @@ function LoginForm() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        // Auto-mask phone
         if (name === 'phone') {
             setFormData(prev => ({ ...prev, phone: maskPhone(value) }));
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
-        // Password strength check
         if (name === 'password') {
             const result = validatePassword(value);
             setPasswordStrength(value ? result : null);
         }
-        // Clear error on edit
         if (fieldErrors[name]) {
             setFieldErrors(prev => ({ ...prev, [name]: '' }));
         }
@@ -84,7 +77,6 @@ function LoginForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Special handling for OAuth 2FA (no email/pass needed, just token)
         if (is2FAPage) {
             setIsLoading(true);
             try {
@@ -110,7 +102,6 @@ function LoginForm() {
 
         if (isLogin) {
             setIsLoading(true);
-            // Login validation
             const errors = {};
             const emailResult = validateEmail(formData.email);
             if (!emailResult.valid) errors.email = emailResult.message;
@@ -129,7 +120,7 @@ function LoginForm() {
                     body: JSON.stringify({
                         email: formData.email,
                         password: formData.password,
-                        token: is2FARequired ? token : undefined, // Send token if required
+                        token: is2FARequired ? token : undefined,
                     }),
                 });
 
@@ -138,15 +129,13 @@ function LoginForm() {
                 setIsLoading(false);
 
                 if (res.ok) {
-                    // Check if 2FA is required
                     if (data.require2fa) {
                         setIs2FARequired(true);
-                        setToken(''); // Reset token input
+                        setToken('');
                         alert(data.message || 'Digite o código de verificação 2FA.');
                         return;
                     }
 
-                    // Redirect based on role
                     if (data.user?.role === 'ADMIN') {
                         window.location.href = '/admin';
                     } else {
@@ -160,7 +149,6 @@ function LoginForm() {
                 alert('Erro de conexão ao realizar login.');
             }
         } else {
-            // Registration validation
             const errors = {};
             if (!formData.name || formData.name.trim().length < 3) {
                 errors.name = 'Nome completo é obrigatório (mínimo 3 caracteres).';
@@ -173,7 +161,6 @@ function LoginForm() {
             if (!passResult.valid) {
                 errors.password = passResult.message;
                 if (passResult.suspicious) {
-                    // Suspicious password — create alert
                     try {
                         await fetch('/api/alerts', {
                             method: 'POST',
@@ -188,7 +175,7 @@ function LoginForm() {
                                 reasons: ['Senha suspeita detectada: possível tentativa de injection'],
                             }),
                         });
-                    } catch { /* silent */ }
+                    } catch {}
                 }
             }
             if (formData.password !== formData.confirmPassword) {
@@ -202,7 +189,6 @@ function LoginForm() {
 
             setIsLoading(true);
 
-            // Fraud detection
             const fraud = detectFraud({
                 name: formData.name,
                 email: formData.email,
@@ -224,7 +210,7 @@ function LoginForm() {
                             reasons: fraud.reasons,
                         }),
                     });
-                } catch { /* silent */ }
+                } catch {}
             }
 
             try {
@@ -235,7 +221,7 @@ function LoginForm() {
                         name: formData.name,
                         email: formData.email,
                         phone: formData.phone,
-                        password: formData.password, // Send password to backend
+                        password: formData.password,
                     }),
                 });
 
@@ -244,7 +230,6 @@ function LoginForm() {
 
                 if (res.ok) {
                     alert('Cadastro realizado com sucesso! Você será redirecionado.');
-                    // Auto-login happens in backend, so just redirect
                     window.location.href = '/admin';
                 } else {
                     alert(data.error || 'Erro ao realizar cadastro.');
@@ -255,7 +240,6 @@ function LoginForm() {
             }
         }
     };
-
 
     const toggleForm = () => {
         setIsLogin(!isLogin);
@@ -273,7 +257,6 @@ function LoginForm() {
             <Header />
             <main className="login-page">
                 <div className="login-container">
-                    {/* Left side - Branding */}
                     <div className="login-branding">
                         <div className="branding-content">
                             <Image
@@ -336,7 +319,6 @@ function LoginForm() {
                         </div>
                     </div>
 
-                    {/* Right side - Form */}
                     <div className="login-form-container">
                         <div className="form-wrapper" key={isLogin ? 'login' : 'register'}>
                             <div className="form-header">
@@ -378,7 +360,6 @@ function LoginForm() {
 
                             <form onSubmit={handleSubmit} className="login-form">
                                 {is2FAPage ? (
-                                     /* Only show 2FA input for OAuth flow */
                                      <div className="form-group">
                                         <label htmlFor="token">Código 2FA</label>
                                         <div className="input-wrapper">
@@ -400,7 +381,6 @@ function LoginForm() {
                                         </div>
                                     </div>
                                 ) : (
-                                /* Normal Login Form Content */
                                 <>
                                 {!isLogin && (
                                     <div className="form-group">

@@ -1,4 +1,3 @@
-/* Container handling the background gradient and positioning */
 .house-shadow-container {
     position: absolute;
     top: 0;
@@ -12,11 +11,6 @@
     z-index: 0;
 }
 
-/*
- * Sunset gradient pre-blended with the old hero-overlay rgba(30,58,95,0.4)
- * so the visual matches the original look with zero flash on reload.
- * Top #1e3a5f matches inline backgroundColor.
- */
 .house-shadow-container::before {
     content: '';
     position: absolute;
@@ -117,7 +111,6 @@
     height: 100%;
 }
 
-/* The Silhouette Container Animation */
 .house-silhouette {
     transform: translateY(100%);
     opacity: 0;
@@ -137,7 +130,6 @@
     }
 }
 
-/* Stars */
 .star {
     position: absolute;
     background: white;
@@ -200,7 +192,6 @@
     }
 }
 
-/* Clouds and Birds */
 .sky-silhouette-overlay {
     --sky-silhouette-gap: 0px;
     position: absolute;
@@ -311,7 +302,6 @@
     }
 }
 
-/* Entrances */
 .animate-entrance-top {
     animation: entranceSlideDown 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
     opacity: 0;
@@ -324,7 +314,6 @@
     will-change: transform, opacity;
 }
 
-/* Delays */
 .delay-0 {
     animation-delay: 0ms;
 }
@@ -448,7 +437,6 @@
     }
 }
 
-/* Light animations */
 .light-flicker {
     animation: lightFlicker 4s infinite alternate ease-in-out;
 }
@@ -539,7 +527,6 @@
     }
 }
 
-/* TV Effect */
 .tv-effect {
     animation: tvFlicker 6s infinite alternate steps(10);
     mix-blend-mode: overlay;
@@ -557,7 +544,6 @@
     }
 }
 
-/* Opacity Variables */
 .sky-silhouette-overlay.animate-entrance-top {
     --final-opacity: 0.92;
 }
@@ -566,7 +552,6 @@
     --final-opacity: 0.8;
 }
 
-/* Shooting Stars */
 .shooting-stars-container {
     position: absolute;
     top: 0;
@@ -645,7 +630,6 @@
     }
 }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
     .sky-layer {
         height: 420px;

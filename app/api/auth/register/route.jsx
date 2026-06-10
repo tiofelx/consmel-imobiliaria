@@ -17,17 +17,14 @@ const registerSchema = z.object({
     phone: z.string().trim().max(20).optional().nullable()
 });
 
-// POST /api/auth/register — Register a new user
 export async function POST(request) {
     try {
         const requestHeaders = request.headers;
         const ip = getClientIpFromHeaders(requestHeaders);
         const userAgent = getClientUserAgentFromHeaders(requestHeaders);
 
-        // Increment rate limit immediately to protect against all spam (success or failure)
         incrementRateLimit(ip);
 
-        // 1. Permanent DB Block Check
         const isBlocked = await checkIpBlocked(ip);
         if (isBlocked) {
             logSecurityAttempt('blocked-ip-register', { ip, userAgent, route: '/api/auth/register', reason: 'IP already blocked', severity: 'critical' });
@@ -37,8 +34,6 @@ export async function POST(request) {
             );
         }
 
-        // 2. Fast-path Rate Limiting check (prevent SPAM bots creating multiple accounts)
-        // Check rateLimit logic uses increment inside logic, preventing > 30 requests an hour
         if (!checkRateLimit(ip)) {
             logSecurityAttempt('rate-limit-register', { ip, userAgent, route: '/api/auth/register', reason: 'Too many registration attempts', severity: 'critical' });
             await blockIpAndAlert(ip, 'Múltiplas tentativas abusivas de acesso', 'register', { userAgent });
@@ -50,13 +45,11 @@ export async function POST(request) {
 
         const data = await request.json();
 
-        // 3. Strict Zod Validation (Defense in Depth)
         const parsedData = registerSchema.safeParse(data);
         if (!parsedData.success) {
             const zodErrors = parsedData.error?.errors || parsedData.error?.issues || [];
             console.warn(`Tentativa de injeção ou dados inválidos de IP: ${ip}`, sanitizeForLog(zodErrors));
 
-            // If the name failed the strict regex, it might be an XSS/SQLi attempt. Log it.
             const hasInvalidName = zodErrors.some(e => e?.path?.includes('name') && e?.code === 'invalid_string' && e?.validation === 'regex');
             if (hasInvalidName) {
                 logSecurityAttempt('xss-register-name', { ip, userAgent, route: '/api/auth/register', reason: 'Invalid name payload matched injection pattern', severity: 'critical' });
@@ -79,7 +72,6 @@ export async function POST(request) {
         const password = validData.password;
         const phone = validData.phone ? xss(validData.phone) : null;
 
-        // Validate allowed email domains
         const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'yahoo.com.br', 'icloud.com', 'live.com'];
         const emailDomain = email.split('@')[1]?.toLowerCase();
 
@@ -92,14 +84,12 @@ export async function POST(request) {
             );
         }
 
-        // Check if user already exists
         const existingUser = await prisma.user.findUnique({
             where: { email },
             select: { id: true, password: true },
         });
 
         if (existingUser) {
-            // Conta criada via Google OAuth (sem senha) — orientar a entrar pelo Google
             if (!existingUser.password) {
                 return NextResponse.json(
                     {
@@ -117,9 +107,7 @@ export async function POST(request) {
 
         const hashedPassword = await hashPassword(password);
 
-        // Transaction to create User and Client (to keep CRM working)
         const result = await prisma.$transaction(async (tx) => {
-            // 1. Create User for Authentication
             const user = await tx.user.create({
                 data: {
                     name,
@@ -130,10 +118,6 @@ export async function POST(request) {
                 select: { id: true, name: true, email: true, role: true },
             });
 
-            // 2. Create Client for CRM/Admin Dashboard
-            // Check if client exists to avoid unique constraint error if email is unique in Client (it's not unique in schema but Logic checked it? Schema says unique? No, schema didn't say Client email is unique, but code checked `findFirst`).
-            // Let's check `Client` schema. `email String`. Not unique.
-            // But good to check.
             const existingClient = await tx.client.findFirst({
                 where: { email }
             });
@@ -154,7 +138,6 @@ export async function POST(request) {
             return { user, client };
         });
 
-        // Auto-login after register
         await createSession({
             userId: result.user.id,
             email: result.user.email,

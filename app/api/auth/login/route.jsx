@@ -9,14 +9,12 @@ import { decrypt } from '@/lib/encryption';
 import { safeLogError } from '@/lib/safe-log';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
 
-// POST /api/auth/login
 export async function POST(request) {
     try {
         const requestHeaders = request.headers;
         const ip = getClientIpFromHeaders(requestHeaders);
         const userAgent = getClientUserAgentFromHeaders(requestHeaders);
 
-        // 1. Permanent DB Block Check
         const isBlocked = await checkIpBlocked(ip);
         if (isBlocked) {
             logSecurityAttempt('blocked-ip-login', { ip, userAgent, route: '/api/auth/login', reason: 'IP already blocked', severity: 'critical' });
@@ -26,9 +24,7 @@ export async function POST(request) {
             );
         }
 
-        // 2. Fast-path Rate Limiting (LRU cache)
         if (!checkRateLimit(ip)) {
-            // Upgrade temporary limit to permanent IP block on repeated abuse
             logSecurityAttempt('rate-limit-login', { ip, userAgent, route: '/api/auth/login', reason: 'Too many failed login attempts', severity: 'critical' });
             await blockIpAndAlert(ip, 'Múltiplas tentativas de login falhas (Possível ataque de força bruta)', 'login', { userAgent });
             return NextResponse.json(
@@ -46,19 +42,16 @@ export async function POST(request) {
             );
         }
 
-        // 3. WAF: Detecção de SQL Injection / Injeção de Código
-        // Verifica se o email tem características anômalas (aspas, OR, AND, hashes)
         const sqliPattern = /(\b(OR|AND|UNION|SELECT|DROP)\b)|([';*])/i;
         if (typeof email !== 'string' || sqliPattern.test(email)) {
-            logSecurityAttempt('sqli-login-payload', { ip, userAgent, route: '/api/auth/login', reason: 'Detected SQLi/NoSQL payload in email field', severity: 'critical' });
-            await blockIpAndAlert(ip, `Tentativa de SQL/NoSQL Injection no login. Payload: ${JSON.stringify(email)}`, 'login', { userAgent });
+            logSecurityAttempt('sqli-login-payload', { ip, userAgent, route: '/api/auth/login', reason: 'Detected SQLi/NoSQL payload in email field', severity: 'high' });
+            incrementRateLimit(ip);
             return NextResponse.json(
-                { error: 'Formato de e-mail inválido ou tentativa de injeção detectada.', isHackerAttempt: true },
-                { status: 403 }
+                { error: 'Formato de e-mail inválido.' },
+                { status: 400 }
             );
         }
 
-        // Find user
         const user = await prisma.user.findUnique({
             where: { email },
             select: {
@@ -73,8 +66,7 @@ export async function POST(request) {
         });
 
         if (!user) {
-            // Perform dummy validation to mitigate timing attacks identifying existing emails
-            await verifyPassword(password, '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGj14s4RzGpq98w1C');
+            await verifyPassword(password, '$2b$12$tOaocb5.XUNqtmhNYnSSduy18O7AIR8RpytvlpnoAv7YtLvraZ0Gu');
             incrementRateLimit(ip);
             return NextResponse.json(
                 { error: 'Credenciais inválidas.' },
@@ -82,7 +74,6 @@ export async function POST(request) {
             );
         }
 
-        // Verify password
         const isValid = await verifyPassword(password, user.password);
 
         if (!isValid) {
@@ -93,26 +84,19 @@ export async function POST(request) {
             );
         }
 
-        // --- 2FA Logic ---
         if (user.twoFactorEnabled) {
             if (!token) {
-                // 2FA required but not provided
-                // Do NOT reset rate limit yet (keep counting if they fail 2fa repeatedly?)
-                // Actually, password was correct, so maybe don't block IP?
-                // But preventing brute force on 2FA is also good.
-                // For now, return specific code.
                 return NextResponse.json(
                     { require2fa: true, message: 'Digite o código de verificação 2FA.' },
-                    { status: 200 } // using 200 to indicate "Phase 1 success, waiting for Phase 2" - Client handles this.
+                    { status: 200 }
                 );
             }
 
-            // Verify Token
             const secret = decrypt(user.twoFactorSecret);
-            const { valid } = await verifyToken({ token, secret, window: 2 });
+            const { valid } = await verifyToken({ token, secret, window: 1 });
 
             if (!valid) {
-                incrementRateLimit(ip); // Treat 2FA failure as auth failure
+                incrementRateLimit(ip);
                 return NextResponse.json(
                     { error: 'Código 2FA inválido.' },
                     { status: 401 }
@@ -120,10 +104,8 @@ export async function POST(request) {
             }
         }
 
-        // Success
         resetRateLimit(ip);
 
-        // Create session
         await createSession({
             userId: user.id,
             email: user.email,

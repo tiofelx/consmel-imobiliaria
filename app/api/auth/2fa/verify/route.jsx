@@ -5,8 +5,6 @@ import { verifySession } from '@/lib/auth';
 import { decrypt } from '@/lib/encryption';
 import { safeLogError } from '@/lib/safe-log';
 
-// POST /api/auth/2fa/verify
-// Verifies the token and enables 2FA for the user
 export async function POST(request) {
     try {
         const session = await verifySession();
@@ -30,18 +28,14 @@ export async function POST(request) {
             return NextResponse.json({ error: '2FA setup not initiated' }, { status: 400 });
         }
 
-        // Decrypt secret
         const secret = decrypt(user.twoFactorSecret);
 
-        // window=1 (±30s) — durante o enrollment o usuário acabou de
-        // escanear o QR, drift é mínimo. Reduz superfície de brute-force.
         const { valid } = await verifyToken({ token, secret, window: 1 });
 
         if (!valid) {
             return NextResponse.json({ error: 'Invalid token' }, { status: 400 });
         }
 
-        // Enable 2FA
         await prisma.user.update({
             where: { id: user.id },
             data: { twoFactorEnabled: true },

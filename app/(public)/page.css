@@ -8,7 +8,6 @@
   align-items: stretch;
   justify-content: center;
   overflow: hidden;
-  /* PREVENT SCROLL JUMPING ON RELOAD: Disable browser scroll-anchoring which gets confused by the translateY(100%) animation */
   overflow-anchor: none;
   padding-top: calc(var(--hero-header-offset) + var(--hero-edge-gap));
   padding-bottom: var(--hero-edge-gap);
@@ -36,9 +35,6 @@
   right: 0;
   bottom: 0;
   background: rgba(30, 58, 95, 0.4);
-  /* Lighter overlay to let magma shine through */
-  /* backdrop-filter: blur(4px); */
-  /* Frosted glass effect */
   z-index: 1;
 }
 
@@ -74,7 +70,6 @@
   line-height: var(--line-height-relaxed);
 }
 
-/* Hero Search Filter */
 .hero-search {
   width: 100%;
   display: flex;
@@ -84,34 +79,28 @@
   transform: translateZ(0);
 }
 
-/* Search Filter Section (Outside Hero) */
 .search-filter-section {
   position: relative;
   z-index: 10;
   margin-top: -100px;
-  /* Overlap the hero from below */
   padding-bottom: var(--space-12);
 }
 
 .search-filter-wrapper {
   display: flex;
   justify-content: flex-end;
-  /* Align filter to the right */
 }
 
 @media (max-width: 1023px) {
   .search-filter-section {
     margin-top: var(--space-8);
-    /* No overlap on mobile */
   }
 
   .search-filter-wrapper {
     justify-content: center;
-    /* Center on mobile */
   }
 }
 
-/* Quick Links Section */
 .quick-links {
   background: var(--bg-secondary);
   padding: var(--space-12) 0;
@@ -166,7 +155,6 @@
   margin: 0;
 }
 
-/* Section Header */
 .section-header {
   text-align: center;
   margin-bottom: var(--space-12);
@@ -183,7 +171,6 @@
   margin: 0 auto;
 }
 
-/* About Section */
 .about-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -253,7 +240,6 @@
   color: var(--color-gray-400);
 }
 
-/* Feature Cards */
 .feature-card {
   background: var(--bg-primary);
   padding: var(--space-8);
@@ -290,7 +276,6 @@
   margin: 0;
 }
 
-/* CTA Section */
 .cta-section {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   color: var(--text-inverse);
@@ -332,7 +317,6 @@
   color: var(--color-primary);
 }
 
-/* Tablet (768px and up) */
 @media (min-width: 768px) {
   .quick-links-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -343,7 +327,6 @@
   }
 }
 
-/* Desktop (1024px and up) */
 @media (min-width: 1024px) {
   .hero {
     --hero-min-height: max(860px, 100svh);
@@ -360,7 +343,6 @@
 
   .featured-properties {
     padding-top: var(--space-20) !important;
-    /* Standard spacing */
   }
 
   .hero-text {
@@ -371,7 +353,6 @@
     margin-bottom: var(--space-6);
   }
 
-  /* Standardize Section Spacing on Desktop */
   .section,
   .quick-links {
     padding-top: var(--space-20) !important;
@@ -416,7 +397,6 @@
   }
 }
 
-/* Centered Properties Grid */
 .properties-grid {
   display: flex;
   flex-wrap: wrap;
@@ -427,7 +407,6 @@
 .properties-grid>* {
   width: 100%;
   max-width: 400px;
-  /* Limit max width on mobile for better look */
 }
 
 @media (min-width: 768px) {

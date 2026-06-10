@@ -3,7 +3,6 @@ import PropertyCardSkeleton from '@/app/components/PropertyCardSkeleton';
 export default function Loading() {
   return (
     <>
-      {/* Hero Section Skeleton */}
       <section className="page-hero-dynamic hero-todos">
         <div className="container">
           <div style={{
@@ -24,7 +23,6 @@ export default function Loading() {
         </div>
       </section>
 
-      {/* Filters Section Skeleton */}
       <section className="filters-section section-sm">
         <div className="container">
           <div className="filters-bar" style={{ opacity: 0.5 }}>
@@ -35,7 +33,6 @@ export default function Loading() {
         </div>
       </section>
 
-      {/* Properties Grid Skeleton */}
       <section className="section">
         <div className="container">
           <div className="results-header">

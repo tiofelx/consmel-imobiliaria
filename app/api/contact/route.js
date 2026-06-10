@@ -46,7 +46,6 @@ export async function POST(request) {
 
     const { name, email, phone, phone2, message, propertyTitle, contactViaEmail, contactViaWhatsApp } = parsed.data;
 
-    // Save to DB
     try {
         await prisma.client.create({
             data: {
@@ -66,7 +65,6 @@ export async function POST(request) {
         console.error('Erro ao salvar cliente:', err);
     }
 
-    // Send email notification — fire-and-forget
     notifyContact({ name, email, phone, phone2, message, propertyTitle, contactViaEmail, contactViaWhatsApp }).catch(() => {});
 
     const response = NextResponse.json({ success: true }, { status: 201 });
@@ -87,11 +85,13 @@ async function notifyContact({ name, email, phone, phone2, message, propertyTitl
         contactViaWhatsApp ? 'WhatsApp' : null,
     ].filter(Boolean).join(', ') || 'Não informado';
 
+    const safeSubjectTitle = propertyTitle ? String(propertyTitle).replace(/[\r\n]+/g, ' ').trim() : '';
+
     await transporter.sendMail({
         from: `Consmel Imobiliária <${from}>`,
         to,
-        subject: propertyTitle
-            ? `Novo contato — Interesse: ${propertyTitle}`
+        subject: safeSubjectTitle
+            ? `Novo contato — Interesse: ${safeSubjectTitle}`
             : 'Novo contato pelo site — Consmel',
         html: buildEmailHtml({ name, email, phone, phone2, message, propertyTitle, viaList, date }),
     });

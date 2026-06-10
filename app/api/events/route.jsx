@@ -5,7 +5,6 @@ import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttem
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/events — List all events
 export async function GET(request) {
     try {
         const session = await verifySession();
@@ -23,11 +22,10 @@ export async function GET(request) {
             orderBy: { date: 'asc' },
         });
 
-        // Format events to match the frontend expected format
         const formatted = events.map(event => ({
             id: event.id,
             title: event.title,
-            date: event.date.toISOString().split('T')[0], // "YYYY-MM-DD"
+            date: event.date.toISOString().split('T')[0],
             time: event.time,
             duration: event.duration ?? 60,
             type: event.type,
@@ -40,7 +38,6 @@ export async function GET(request) {
     }
 }
 
-// POST /api/events — Create a new event
 export async function POST(request) {
     try {
         const session = await verifySession();

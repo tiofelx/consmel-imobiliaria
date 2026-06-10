@@ -66,7 +66,6 @@
   margin-bottom: 0;
 }
 
-/* Centered Properties Grid */
 .properties-grid {
   display: flex;
   flex-wrap: wrap;
@@ -92,7 +91,6 @@
   }
 }
 
-/* Dynamic Page Hero Banners */
 .page-hero-dynamic {
   position: relative;
   padding: var(--space-20) 0 var(--space-16);
@@ -101,23 +99,17 @@
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  /* Parallax feel */
 }
 
-/* Default / Todos */
 .hero-todos {
   background-image: linear-gradient(rgba(30, 58, 95, 0.85), rgba(232, 93, 44, 0.85)), url('/images/recepcao.png');
 }
 
-/* Venda */
 .hero-venda {
-  /* Using recepcao-2.png (Sale) */
   background-image: linear-gradient(rgba(30, 58, 95, 0.8), rgba(232, 93, 44, 0.7)), url('/images/recepcao-2.png');
 }
 
-/* Aluguel */
 .hero-aluguel {
-  /* Using recepcao.png (Rent) */
   background-image: linear-gradient(rgba(30, 58, 95, 0.8), rgba(232, 93, 44, 0.7)), url('/images/recepcao.png');
 }
 

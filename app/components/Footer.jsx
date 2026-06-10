@@ -10,7 +10,6 @@ export default function Footer() {
     <footer className="footer">
       <div className="container">
         <div className="footer-content">
-          {/* Company Info */}
           <div className="footer-section">
             <div className="footer-brand">
               <div className="footer-logo">
@@ -44,10 +43,6 @@ export default function Footer() {
             </div>
           </div>
 
-
-
-
-          {/* Services */}
           <div className="footer-section">
             <h4 className="footer-title">Serviços</h4>
             <ul className="footer-links">
@@ -57,7 +52,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div className="footer-section">
             <h4 className="footer-title">Contato</h4>
             <ul className="footer-contact">
@@ -89,7 +83,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="footer-bottom" style={{ marginTop: '40px', paddingTop: '30px' }}>
           <p><Link href="/politica-de-privacidade" style={{ color: 'inherit', textDecoration: 'underline' }}>Política de Privacidade</Link></p>
           <p>&copy; {currentYear} Consmel Imobiliária. Todos os direitos reservados.</p>

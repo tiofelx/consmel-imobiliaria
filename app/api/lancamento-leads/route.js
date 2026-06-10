@@ -13,8 +13,18 @@ const leadSchema = z.object({
     name: z.string().trim().min(2, 'Nome muito curto').max(100, 'Nome muito longo')
         .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Nome contém caracteres inválidos'),
     email: z.string().trim().email('E-mail inválido').max(150),
-    phone: z.string().trim().min(8, 'WhatsApp inválido').max(25, 'WhatsApp muito longo'),
+    phone: z.string().trim().min(8, 'WhatsApp inválido').max(25, 'WhatsApp muito longo')
+        .regex(/^[\d\s()+\-]+$/, 'WhatsApp contém caracteres inválidos'),
 });
+
+function esc(s) {
+    return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
 
 export async function POST(request) {
     const ip = getClientIpFromHeaders(request.headers);
@@ -51,7 +61,6 @@ export async function POST(request) {
             data: { name, email, phone },
         });
 
-        // Fire-and-forget — vault: never break request flow for notification failures
         notifyNewLead({ name, email, phone }).catch(() => {});
 
         const response = NextResponse.json({ success: true, id: lead.id }, { status: 201 });
@@ -84,6 +93,11 @@ async function notifyNewLead({ name, email, phone }) {
 }
 
 function buildEmailHtml({ name, email, phone, waLink, date }) {
+    const safeName = esc(name);
+    const safeEmail = esc(email);
+    const safePhone = esc(phone);
+    const safeDate = esc(date);
+    const safeWaLink = esc(waLink);
     return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -129,7 +143,7 @@ function buildEmailHtml({ name, email, phone, waLink, date }) {
                       <tr>
                         <td style="padding:16px 20px;border-bottom:1px solid #e5e7eb;">
                           <p style="margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;">Nome</p>
-                          <p style="margin:0;font-size:16px;font-weight:700;color:#111827;">${name}</p>
+                          <p style="margin:0;font-size:16px;font-weight:700;color:#111827;">${safeName}</p>
                         </td>
                       </tr>
                       <!-- Email row -->
@@ -137,7 +151,7 @@ function buildEmailHtml({ name, email, phone, waLink, date }) {
                         <td style="padding:16px 20px;border-bottom:1px solid #e5e7eb;">
                           <p style="margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;">E-mail</p>
                           <p style="margin:0;font-size:15px;font-weight:600;color:#1e3a5f;">
-                            <a href="mailto:${email}" style="color:#1e3a5f;text-decoration:none;">${email}</a>
+                            <a href="mailto:${safeEmail}" style="color:#1e3a5f;text-decoration:none;">${safeEmail}</a>
                           </p>
                         </td>
                       </tr>
@@ -145,14 +159,14 @@ function buildEmailHtml({ name, email, phone, waLink, date }) {
                       <tr>
                         <td style="padding:16px 20px;border-bottom:1px solid #e5e7eb;">
                           <p style="margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;">WhatsApp</p>
-                          <p style="margin:0;font-size:15px;font-weight:600;color:#1e3a5f;">${phone}</p>
+                          <p style="margin:0;font-size:15px;font-weight:600;color:#1e3a5f;">${safePhone}</p>
                         </td>
                       </tr>
                       <!-- Date row -->
                       <tr>
                         <td style="padding:14px 20px;">
                           <p style="margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;">Data do cadastro</p>
-                          <p style="margin:0;font-size:13px;color:#6b7280;">${date}</p>
+                          <p style="margin:0;font-size:13px;color:#6b7280;">${safeDate}</p>
                         </td>
                       </tr>
                     </table>
@@ -164,7 +178,7 @@ function buildEmailHtml({ name, email, phone, waLink, date }) {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;">
                 <tr>
                   <td align="center">
-                    <a href="${waLink}"
+                    <a href="${safeWaLink}"
                        style="display:inline-flex;align-items:center;gap:8px;background:#25d366;color:white;font-weight:700;font-size:15px;padding:14px 32px;border-radius:10px;text-decoration:none;">
                       Abrir WhatsApp
                     </a>

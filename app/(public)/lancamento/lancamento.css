@@ -1,17 +1,9 @@
-/* ─────────────────────────────────────────────
-   CONSMEL · Landing Page Lançamento
-   Design: Premium Real Estate Launch
-   Vault refs: Gradientes, Motion Design, Microinterações,
-               Glassmorphism, Hierarquia Visual
-   ───────────────────────────────────────────── */
-
 .lancamento-page {
     font-family: var(--font-primary, 'Inter', sans-serif);
     color: var(--color-text-primary, #111827);
     overflow-x: hidden;
 }
 
-/* ── Shared Layout ── */
 .lp-section-inner {
     max-width: 780px;
     margin: 0 auto;
@@ -48,10 +40,6 @@
     color: rgba(255, 255, 255, 0.45);
 }
 
-/* ─────────────────────────────────────────────
-   SCROLL REVEAL SYSTEM
-   Vault ref: Motion Design e Animação UX.md
-   ───────────────────────────────────────────── */
 .lp-reveal {
     opacity: 0;
     transform: translateY(36px);
@@ -63,14 +51,12 @@
     transform: translateY(0);
 }
 
-/* Stagger delays — vault: choreography/stagger */
 .lp-stagger-1 { transition-delay: 0.08s; }
 .lp-stagger-2 { transition-delay: 0.16s; }
 .lp-stagger-3 { transition-delay: 0.24s; }
 .lp-stagger-4 { transition-delay: 0.32s; }
 .lp-stagger-5 { transition-delay: 0.40s; }
 
-/* Vault: prefers-reduced-motion obrigatório */
 @media (prefers-reduced-motion: reduce) {
     .lp-reveal {
         opacity: 1;
@@ -85,11 +71,6 @@
     }
 }
 
-/* ─────────────────────────────────────────────
-   CORTINA DE ENTRADA
-   Cobre a viewport com branco no primeiro render.
-   Desliza para baixo revelando fundo + texto juntos.
-   ───────────────────────────────────────────── */
 .lp-curtain {
     position: fixed;
     inset: 0;
@@ -104,11 +85,6 @@
     100% { transform: translateY(100%); }
 }
 
-/* ─────────────────────────────────────────────
-   SEÇÃO 1 · HERO
-   Vault ref: Gradientes.md — mesh gradient,
-              grid pattern, gradient text
-   ───────────────────────────────────────────── */
 .lp-hero {
     position: relative;
     min-height: 100svh;
@@ -118,13 +94,13 @@
     background: #0d1e33;
 }
 
-/* Vídeo da Lagoa Municipal como fundo */
 .lp-hero-bg {
     position: absolute;
     inset: 0;
     z-index: 0;
     overflow: hidden;
     animation: lpBgFadeIn 1.4s 0.35s ease-out both;
+    background: url('/videos/lote-lagoa-poster.jpg') center 38% / cover no-repeat #081224;
 }
 
 .lp-hero-video {
@@ -147,7 +123,6 @@
     to   { opacity: 1; }
 }
 
-/* Overlay escuro em duas camadas: vinheta central + gradiente de profundidade */
 .lp-hero-bg::before {
     content: '';
     position: absolute;
@@ -157,7 +132,6 @@
         linear-gradient(to bottom, rgba(8, 18, 36, 0.55) 0%, rgba(8, 18, 36, 0.72) 100%);
 }
 
-/* Acento coral sutil — mantém identidade da marca sobre a foto */
 .lp-hero-bg::after {
     content: '';
     position: absolute;
@@ -167,7 +141,6 @@
         radial-gradient(ellipse 40% 40% at 85% 70%, rgba(232, 93, 44, 0.08) 0%, transparent 60%);
 }
 
-/* Radial glow accent behind CTA */
 .lp-hero-glow {
     position: absolute;
     width: 560px;
@@ -186,7 +159,6 @@
     50%       { opacity: 1;   transform: translateX(-50%) scale(1.08); }
 }
 
-/* Water-wave bottom transition */
 .lp-hero-wave {
     position: absolute;
     bottom: -2px;
@@ -214,7 +186,6 @@
     align-items: center;
 }
 
-/* Badge */
 .lp-badge {
     display: inline-flex;
     align-items: center;
@@ -251,7 +222,6 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Gradient text headline — vault: background-clip: text ── */
 .lp-hero-headline {
     font-size: clamp(2.4rem, 6vw, 4rem);
     font-weight: 800;
@@ -293,7 +263,6 @@
     animation: fadeInUp 0.4s 1.21s ease-out both;
 }
 
-/* ── Primary CTA Button with glow microinteração ── */
 .btn-lp-primary {
     display: inline-flex;
     align-items: center;
@@ -313,13 +282,11 @@
     overflow: hidden;
     isolation: isolate;
 
-    /* vault: ease-out para entradas, 250ms para microinterações */
     transition: background 0.2s ease-out, transform 0.2s ease-out, box-shadow 0.2s ease-out;
 
     animation: fadeInUp 0.4s 1.28s ease-out both;
 }
 
-/* Glow layer — vault: radial-gradient glow effect */
 .btn-lp-primary::before {
     content: '';
     position: absolute;
@@ -331,7 +298,6 @@
     z-index: -1;
 }
 
-/* Shimmer sweep on hover */
 .btn-lp-primary::after {
     content: '';
     position: absolute;
@@ -354,14 +320,12 @@
 .btn-lp-primary:hover::before { opacity: 1; }
 .btn-lp-primary:hover::after  { left: 140%; }
 
-/* Vault: press state com compositor-only (scale) */
 .btn-lp-primary:active {
     transform: scale(0.97) translateY(0);
     box-shadow: 0 4px 12px rgba(232, 93, 44, 0.25);
     transition-duration: 0.08s;
 }
 
-/* Light variant — dark section */
 .btn-lp-primary-light {
     background: white;
     color: var(--color-secondary);
@@ -378,9 +342,6 @@
                 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* ─────────────────────────────────────────────
-   SEÇÃO 2 · CONEXÃO EMOCIONAL
-   ───────────────────────────────────────────── */
 .lp-section {
     padding: 100px 20px;
 }
@@ -433,17 +394,12 @@
     box-sizing: border-box;
 }
 
-/* ─────────────────────────────────────────────
-   SEÇÃO 3 · DIFERENCIAIS
-   Vault ref: Glassmorphism (glass pattern)
-   ───────────────────────────────────────────── */
 .lp-diferenciais {
     background: linear-gradient(160deg, #1e3a5f 0%, #152a45 60%, #0d1e33 100%);
     position: relative;
     overflow: hidden;
 }
 
-/* Subtle mesh accent behind cards */
 .lp-diferenciais::before {
     content: '';
     position: absolute;
@@ -475,7 +431,6 @@
     z-index: 1;
 }
 
-/* Center last odd card */
 .lp-diferencial-card:last-child:nth-child(odd) {
     grid-column: 1 / -1;
     max-width: 420px;
@@ -483,7 +438,6 @@
     width: 100%;
 }
 
-/* Glassmorphism — vault: glass pattern */
 .lp-diferencial-card {
     background: linear-gradient(
         135deg,
@@ -496,7 +450,6 @@
     border-radius: 16px;
     padding: 28px 24px;
 
-    /* vault: ease-out para entradas, 250ms */
     transition: background 0.25s ease-out,
                 border-color 0.25s ease-out,
                 transform 0.25s ease-out,
@@ -547,9 +500,6 @@
     margin: 0;
 }
 
-/* ─────────────────────────────────────────────
-   SEÇÃO 4 · ASPIRACIONAL
-   ───────────────────────────────────────────── */
 .lp-aspiracional {
     background: #f8f9fb;
     position: relative;
@@ -568,7 +518,6 @@
     padding-left: 28px;
 }
 
-/* Quote bar */
 .lp-aspiracional-quote::before {
     content: '';
     position: absolute;
@@ -614,7 +563,6 @@
     overflow: hidden;
 }
 
-/* Shimmer on the tag */
 .lp-aspiracional-tag::after {
     content: '';
     position: absolute;
@@ -622,9 +570,6 @@
     background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.07) 50%, transparent 100%);
 }
 
-/* ─────────────────────────────────────────────
-   SEÇÃO 5 · LOCALIZAÇÃO
-   ───────────────────────────────────────────── */
 .lp-localizacao {
     background: white;
 }
@@ -714,9 +659,6 @@
     box-shadow: 0 8px 24px rgba(232, 93, 44, 0.40);
 }
 
-/* ─────────────────────────────────────────────
-   SEÇÃO 6 · ESCASSEZ
-   ───────────────────────────────────────────── */
 .lp-escassez {
     background: linear-gradient(135deg, #1e3a5f 0%, #152a45 50%, #0d1e33 100%);
     position: relative;
@@ -770,9 +712,6 @@
     margin: 0 auto 40px;
 }
 
-/* ─────────────────────────────────────────────
-   SEÇÃO 7 · FORMULÁRIO
-   ───────────────────────────────────────────── */
 .lp-form-section {
     background: white;
 }
@@ -831,7 +770,6 @@
     width: 100%;
     box-sizing: border-box;
 
-    /* vault: ease-out 150ms para microinterações imediatas */
     transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
 }
 
@@ -872,7 +810,6 @@
     box-shadow: none !important;
 }
 
-/* Spinner — vault: linear para loaders */
 .lp-spinner {
     width: 18px;
     height: 18px;
@@ -895,7 +832,6 @@
     letter-spacing: 0.2px;
 }
 
-/* ── Success State ── */
 .lp-success-state {
     text-align: center;
     padding: 16px 0;
@@ -967,7 +903,6 @@
     transition-duration: 0.08s;
 }
 
-/* ── Footer strip ── */
 .lp-footer-strip {
     background: #f8f9fb;
     border-top: 1px solid #e5e7eb;
@@ -995,9 +930,6 @@
     color: #d1d5db;
 }
 
-/* ─────────────────────────────────────────────
-   RESPONSIVE
-   ───────────────────────────────────────────── */
 @media (max-width: 768px) {
     .lp-section { padding: 76px 20px; }
 

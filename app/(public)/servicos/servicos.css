@@ -4,7 +4,6 @@
   gap: var(--space-6);
   max-width: 900px;
   margin: var(--space-16) auto var(--space-12);
-  /* Added top/bottom spacing */
 }
 
 .service-card {
@@ -56,14 +55,12 @@
   margin: 0;
 }
 
-/* Tablet (768px and up) */
 @media (min-width: 768px) {
   .services-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Desktop (992px and up) */
 @media (min-width: 992px) {
   .services-grid {
     grid-template-columns: repeat(4, 1fr);

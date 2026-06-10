@@ -9,7 +9,6 @@ export default function SobreContent() {
 
   return (
     <>
-      {/* Hero Section */}
       <section className="page-hero">
         <div className="container">
           <h1 className="animate-slide-in-up">Sobre a Consmel</h1>
@@ -19,7 +18,6 @@ export default function SobreContent() {
         </div>
       </section>
 
-      {/* Company Story */}
       <section className="section">
         <div className="container">
           <div className="content-grid animate-page-entrance">
@@ -46,7 +44,6 @@ export default function SobreContent() {
         </div>
       </section>
 
-      {/* Mission, Vision, Values */}
       <section className="section bg-secondary">
         <div className="container">
           <div className="mvv-grid">
@@ -96,7 +93,6 @@ export default function SobreContent() {
         </div>
       </section>
 
-      {/* Our Differentials */}
       <section className="section">
         <div className="container">
           <h2 className="text-center" style={{ marginBottom: 'var(--space-12)' }}>
@@ -143,7 +139,6 @@ export default function SobreContent() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="cta-simple section bg-secondary">
         <div className="container text-center">
           <h2>Quer conhecer mais sobre a Consmel?</h2>
