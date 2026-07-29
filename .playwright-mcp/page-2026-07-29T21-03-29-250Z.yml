@@ -1,0 +1,142 @@
+- generic [active] [ref=e1]:
+  - banner:
+    - generic:
+      - link "Consmel Imobiliária":
+        - /url: /
+        - img "Consmel Imobiliária"
+      - navigation:
+        - link "Cadastre seu Imóvel":
+          - /url: /cadastro-imovel
+        - link "Despachante":
+          - /url: /despachante
+        - link "Sobre":
+          - /url: /sobre
+        - link "Login":
+          - /url: /login
+  - main [ref=e2]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - heading "Buscar imoveis" [level=3] [ref=e10]
+        - button "Ver no mapa" [ref=e11] [cursor=pointer]
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - button "Aluguel" [ref=e15] [cursor=pointer]
+          - button "Venda" [ref=e16] [cursor=pointer]
+        - generic [ref=e17]:
+          - generic [ref=e18]: Tipo
+          - combobox "Tipo" [ref=e19] [cursor=pointer]:
+            - option "Selecione..." [selected]
+            - option "Casa"
+            - option "Apartamento"
+            - option "Terreno"
+            - option "Comercial"
+            - option "Chacara"
+        - generic [ref=e20]:
+          - generic [ref=e21]: Cidade
+          - combobox "Cidade" [ref=e22] [cursor=pointer]:
+            - option "Selecione..." [selected]
+            - option "Guaraci - SP"
+            - option "Sao Paulo - SP"
+            - option "Barueri - SP"
+            - option "Osasco - SP"
+            - option "Guarulhos - SP"
+            - option "Santo Andre - SP"
+        - generic [ref=e23]:
+          - generic [ref=e24]: Bairro
+          - combobox "Bairro" [ref=e25] [cursor=pointer]:
+            - option "Selecione..." [selected]
+            - option "Curva da Galinha"
+            - option "Jardim Paulista"
+            - option "Moema"
+            - option "Vila Mariana"
+            - option "Pinheiros"
+            - option "Itaim Bibi"
+            - option "Morumbi"
+            - option "Alphaville"
+        - generic [ref=e26]:
+          - generic [ref=e27]: Valor
+          - combobox "Valor" [ref=e28] [cursor=pointer]:
+            - option "Selecione..." [selected]
+            - option "ate R$ 500"
+            - option "de R$ 500 a R$ 1.000"
+            - option "de R$ 1.000 a R$ 1.500"
+            - option "de R$ 1.500 a R$ 2.000"
+            - option "de R$ 2.000 a R$ 3.000"
+            - option "de R$ 3.000 a R$ 5.000"
+            - option "de R$ 5.000 a R$ 10.000"
+            - option "acima de R$ 10.000"
+        - button "Pesquisar" [ref=e29] [cursor=pointer]
+    - generic [ref=e31]:
+      - generic [ref=e32]:
+        - heading "Imóveis em Destaque" [level=2] [ref=e33]
+        - paragraph [ref=e34]: Confira nossa seleção de imóveis com as melhores oportunidades
+      - link "Ver Todos os Imóveis" [ref=e37] [cursor=pointer]:
+        - /url: /imoveis
+    - generic [ref=e41]:
+      - heading "Imóveis para Alugar" [level=2] [ref=e42]
+      - link "Ver Todos" [ref=e43] [cursor=pointer]:
+        - /url: /imoveis?tipo=aluguel
+    - link "Ver Todos os Imóveis para Alugar" [ref=e48] [cursor=pointer]:
+      - /url: /imoveis?tipo=aluguel
+    - generic [ref=e52]:
+      - heading "Imóveis para Comprar" [level=2] [ref=e53]
+      - link "Ver Todos" [ref=e54] [cursor=pointer]:
+        - /url: /imoveis?tipo=venda
+    - link "Ver Todos os Imóveis Ã Venda" [ref=e59] [cursor=pointer]:
+      - /url: /imoveis?tipo=venda
+    - generic [ref=e61]:
+      - generic [ref=e62]:
+        - heading "Por que escolher a Consmel?" [level=2] [ref=e63]
+        - paragraph [ref=e64]: Diferenciais que fazem toda a diferença
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - heading "Segurança" [level=3] [ref=e71]
+          - paragraph [ref=e72]: Documentação verificada e processo 100% seguro
+        - generic [ref=e73]:
+          - heading "Agilidade" [level=3] [ref=e78]
+          - paragraph [ref=e79]: Atendimento rápido e processos otimizados
+        - generic [ref=e80]:
+          - heading "Atendimento Personalizado" [level=3] [ref=e85]
+          - paragraph [ref=e86]: Consultores dedicados às suas necessidades
+        - generic [ref=e87]:
+          - heading "Qualidade" [level=3] [ref=e91]
+          - paragraph [ref=e92]: Imóveis selecionados com critério e cuidado
+  - contentinfo [ref=e93]:
+    - generic [ref=e94]:
+      - generic [ref=e95]:
+        - generic [ref=e97]:
+          - img "Consmel Imobiliária" [ref=e99]
+          - generic [ref=e100]:
+            - heading "Consmel Imobiliária & Despachante" [level=4] [ref=e101]
+            - paragraph [ref=e102]: Soluções imobiliárias completas.
+            - paragraph [ref=e103]: COMPRA | VENDA | LOCAÇÃO | REGULARIZAÇÃO
+            - paragraph [ref=e104]: Despachante Imobiliário
+        - generic [ref=e105]:
+          - heading "Serviços" [level=4] [ref=e106]
+          - list [ref=e107]:
+            - listitem [ref=e108]:
+              - link "Compra de Imóveis" [ref=e109] [cursor=pointer]:
+                - /url: /imoveis?tipo=venda
+            - listitem [ref=e110]:
+              - link "Aluguel de Imóveis" [ref=e111] [cursor=pointer]:
+                - /url: /imoveis?tipo=aluguel
+        - generic [ref=e112]:
+          - heading "Contato" [level=4] [ref=e113]
+          - list [ref=e114]:
+            - listitem [ref=e115]:
+              - generic [ref=e118]: (17) 99607-6414
+            - listitem [ref=e119]:
+              - generic [ref=e122]: imobiliariaconsmel@gmail.com
+            - listitem [ref=e123]:
+              - generic [ref=e124]: R. Santa Gotardo da Silva, 121Jardim Lhen NicolauGuaraci-SP, 15420-354
+      - generic [ref=e128]:
+        - paragraph [ref=e129]:
+          - link "Política de Privacidade" [ref=e130] [cursor=pointer]:
+            - /url: /politica-de-privacidade
+        - paragraph [ref=e131]: © 2026 Consmel Imobiliária. Todos os direitos reservados.
+        - paragraph [ref=e132]: Creci/SP 048265-J
+  - generic:
+    - img "Consmelzinho" [ref=e133]
+    - link "Fale conosco pelo WhatsApp" [ref=e135] [cursor=pointer]:
+      - /url: https://wa.me/5517996076414?text=Ol%C3%A1!%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20im%C3%B3veis.
+  - button "Open Next.js Dev Tools" [ref=e143] [cursor=pointer]
