@@ -129,6 +129,49 @@ const workerPayloadPatchNew = `        const serializableNextConfig = sanitizeFo
                 renderResumeDataCachesByPage
             })))).flat();`;
 
+const workerPayloadNeedleV2 = `        return (await Promise.all(batches.map(async (batch)=>worker.exportPages({
+                buildId,
+                deploymentId: nextConfig.deploymentId,
+                clientAssetToken: nextConfig.experimental.immutableAssetToken || nextConfig.deploymentId,
+                exportPaths: batch,
+                parentSpanId: span.getId(),
+                pagesDataDir,
+                renderOpts,
+                options,
+                dir,
+                distDir,
+                outDir,
+                nextConfig,
+                cacheHandler: nextConfig.cacheHandler,
+                cacheMaxMemorySize: nextConfig.cacheMaxMemorySize,
+                fetchCache: true,
+                fetchCacheKeyPrefix: nextConfig.experimental.fetchCacheKeyPrefix,
+                renderResumeDataCachesByPage
+            })))).flat();`;
+
+const workerPayloadPatchV2 = `        const serializableNextConfig = sanitizeForWorkerPayload(nextConfig);
+        const serializableRenderOpts = sanitizeForWorkerPayload(renderOpts);
+        const serializableOptions = sanitizeForWorkerPayload(options);
+        return (await Promise.all(batches.map(async (batch)=>worker.exportPages({
+                buildId,
+                deploymentId: nextConfig.deploymentId,
+                clientAssetToken: nextConfig.experimental.immutableAssetToken || nextConfig.deploymentId,
+                exportPaths: batch,
+                parentSpanId: span.getId(),
+                pagesDataDir,
+                renderOpts: serializableRenderOpts,
+                options: serializableOptions,
+                dir,
+                distDir,
+                outDir,
+                nextConfig: serializableNextConfig,
+                cacheHandler: nextConfig.cacheHandler,
+                cacheMaxMemorySize: nextConfig.cacheMaxMemorySize,
+                fetchCache: true,
+                fetchCacheKeyPrefix: nextConfig.experimental.fetchCacheKeyPrefix,
+                renderResumeDataCachesByPage
+            })))).flat();`;
+
 const workerPayloadPatch = `        const serializableNextConfig = sanitizeForWorkerPayload({
             enablePrerenderSourceMaps: nextConfig.enablePrerenderSourceMaps,
             cacheHandlers: nextConfig.cacheHandlers,
@@ -177,6 +220,8 @@ if (patched.includes(workerPayloadNeedle)) {
   patched = patched.replace(workerPayloadNeedle, workerPayloadPatch);
 } else if (patched.includes(workerPayloadNeedleNew)) {
   patched = patched.replace(workerPayloadNeedleNew, workerPayloadPatchNew);
+} else if (patched.includes(workerPayloadNeedleV2)) {
+  patched = patched.replace(workerPayloadNeedleV2, workerPayloadPatchV2);
 } else {
   console.warn('[patch-next-export-worker] Bloco de payload do worker não encontrado; nada para aplicar nesta versão do Next.js.');
   process.exit(0);

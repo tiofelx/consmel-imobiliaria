@@ -17,6 +17,7 @@ CLAUDE.md
 # testing
 /coverage
 /artifacts
+.playwright-mcp/
 
 # next.js
 /.next/
