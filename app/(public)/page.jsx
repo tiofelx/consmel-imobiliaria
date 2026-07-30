@@ -189,7 +189,7 @@ export default function Home() {
 
           <div className="text-center" style={{ marginTop: 'var(--space-12)' }}>
             <Link href="/imoveis?tipo=venda" className="btn btn-primary btn-lg">
-              Ver Todos os Imóveis Ã  Venda
+              Ver Todos os Imóveis à Venda
             </Link>
           </div>
         </div>
