@@ -265,6 +265,7 @@ function LoginForm() {
                                 width={180}
                                 height={180}
                                 className="login-logo"
+                                priority
                             />
                             <h1>Bem-vindo à<br />Consmel</h1>
                             <div className="branding-features">
