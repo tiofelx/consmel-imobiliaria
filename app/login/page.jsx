@@ -328,7 +328,7 @@ function LoginForm() {
                                         alt="Consmel Imobiliária"
                                         width={150}
                                         height={55}
-                                        style={{ objectFit: 'contain' }}
+                                        style={{ width: '150px', height: '55px', objectFit: 'contain' }}
                                     />
                                 </div>
                                 <h2>{is2FAPage ? 'Verificação de Segurança' : (isLogin ? 'Entrar' : 'Criar Conta')}</h2>

@@ -52,8 +52,10 @@ export default function AddressMapPicker({ address, value, onChange }) {
 
   useEffect(() => {
     if (value && (status === 'miss' || status === 'error')) {
-      setStatus('ok');
-      setStatusMessage('Pin ajustado manualmente.');
+      queueMicrotask(() => {
+        setStatus('ok');
+        setStatusMessage('Pin ajustado manualmente.');
+      });
     }
   }, [value, status]);
 

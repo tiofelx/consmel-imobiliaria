@@ -86,7 +86,8 @@ function parseBrazilianCurrency(value) {
     const str = value.toString();
     if (/^\d+\.\d+$/.test(str)) return parseFloat(str);
     const cleaned = str.replace(/[^\d,-]/g, '').replace(',', '.');
-    return parseFloat(cleaned) || null;
+    const parsed = parseFloat(cleaned);
+    return Number.isNaN(parsed) ? null : parsed;
 }
 
 function parseDecimal(value) {

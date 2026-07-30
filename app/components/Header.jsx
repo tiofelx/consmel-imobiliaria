@@ -23,13 +23,13 @@ export default function Header({ user }) {
 
   useEffect(() => {
     if (!isHome) {
-      setLoadOpacity(1);
+      queueMicrotask(() => setLoadOpacity(1));
       hasShownHeaderRef.current = true;
       return;
     }
 
     if (hasShownHeaderRef.current) {
-      setLoadOpacity(1);
+      queueMicrotask(() => setLoadOpacity(1));
       return;
     }
 
@@ -73,10 +73,10 @@ export default function Header({ user }) {
 
     if (initialScrollY > 80) {
       headerStyleRef.current = 'translucent';
-      setHeaderStyle('translucent');
+      queueMicrotask(() => setHeaderStyle('translucent'));
     } else {
       headerStyleRef.current = 'solid';
-      setHeaderStyle('solid');
+      queueMicrotask(() => setHeaderStyle('solid'));
     }
 
     const updateHeaderStyle = (nextStyle) => {

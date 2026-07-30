@@ -116,7 +116,8 @@ export async function POST(request) {
             const str = val.toString();
             if (/^\d+\.\d+$/.test(str)) return parseFloat(str);
             const cleaned = str.replace(/[^\d,-]/g, '').replace(',', '.');
-            return parseFloat(cleaned) || null;
+            const parsed = parseFloat(cleaned);
+            return Number.isNaN(parsed) ? null : parsed;
         };
 
         const images = formData.getAll('images').filter((f) => f && typeof f.arrayBuffer === 'function');

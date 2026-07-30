@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { upload } from '@vercel/blob/client';
 import { fetchAddressByCep } from '@/lib/address';
+import { maskCep, maskCurrencyInput, formatCurrencyBRL } from '@/lib/validations';
 import FormStepper from '@/app/components/admin/FormStepper';
 import AddressMapPicker from '@/app/components/admin/AddressMapPicker';
 import './page.css';
@@ -48,9 +49,9 @@ export default function EditProperty({ params }) {
           description: property.description || '',
           transactionType: property.transactionType || 'Venda',
           category: property.category || '',
-          price: property.price || '',
-          condoFee: property.condoFee || '',
-          iptu: property.iptu || '',
+          price: property.price != null ? formatCurrencyBRL(property.price) : '',
+          condoFee: property.condoFee != null ? formatCurrencyBRL(property.condoFee) : '',
+          iptu: property.iptu != null ? formatCurrencyBRL(property.iptu) : '',
           bedrooms: property.bedrooms ?? '',
           suites: property.suites ?? '',
           bathrooms: property.bathrooms ?? '',
@@ -58,7 +59,7 @@ export default function EditProperty({ params }) {
           usableArea: property.usableArea ?? '',
           totalArea: property.totalArea ?? '',
         });
-        setCep(property.cep || '');
+        setCep(maskCep(property.cep || ''));
         setAddress({
           street: property.street || '',
           neighborhood: property.neighborhood || '',
@@ -94,10 +95,12 @@ export default function EditProperty({ params }) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleCurrencyChange = (field, value) => {
+    handleChange(field, maskCurrencyInput(value));
+  };
+
   const handleCepChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length > 5) value = value.replace(/^(\d{5})(\d)/, '$1-$2');
-    setCep(value);
+    setCep(maskCep(e.target.value));
   };
 
   const handleCepBlur = async () => {
@@ -405,21 +408,21 @@ export default function EditProperty({ params }) {
                 <label className="form-label">Preço</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">R$</span>
-                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.price} onChange={(e) => handleChange('price', e.target.value)} />
+                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.price} onChange={(e) => handleCurrencyChange('price', e.target.value)} />
                 </div>
               </div>
               <div className="form-group" style={{ flex: '0 1 300px' }}>
                 <label className="form-label">Condomínio</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">R$</span>
-                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.condoFee} onChange={(e) => handleChange('condoFee', e.target.value)} />
+                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.condoFee} onChange={(e) => handleCurrencyChange('condoFee', e.target.value)} />
                 </div>
               </div>
               <div className="form-group" style={{ flex: '0 1 300px' }}>
                 <label className="form-label">IPTU</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">R$</span>
-                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.iptu} onChange={(e) => handleChange('iptu', e.target.value)} />
+                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.iptu} onChange={(e) => handleCurrencyChange('iptu', e.target.value)} />
                 </div>
               </div>
             </div>

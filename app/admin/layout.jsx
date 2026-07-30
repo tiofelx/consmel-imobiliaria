@@ -30,7 +30,7 @@ export default async function AdminLayout({ children }) {
               width={180}
               height={65}
               priority
-              style={{ objectFit: 'contain' }}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
           </Link>
         </div>
