@@ -23,12 +23,12 @@ export default async function AdminLayout({ children }) {
         </div>
 
         <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <Link href="/" className="header-logo-link" style={{ width: '180px', height: '65px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+          <Link href="/" className="header-logo-link" style={{ width: '220px', height: '80px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
             <Image
               src="/images/logo.png"
               alt="Consmel Imobiliária"
-              width={180}
-              height={65}
+              width={220}
+              height={80}
               priority
               style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
