@@ -48,13 +48,20 @@
   },
   "overrides": {
     "@hono/node-server": "1.19.11",
+    "deepmerge-ts": "8.0.2",
+    "mysql2": "3.24.4",
     "postcss": "8.5.25",
-    "sharp": "0.35.3",
+    "sharp": "0.35.4",
     "flatted": "3.4.4",
     "hono": "4.12.32",
     "lodash": "4.18.1",
     "tar": "7.5.11",
     "undici": "7.29.0",
     "yauzl": "3.2.1"
+  },
+  "allowScripts": {
+    "prisma": true,
+    "unrs-resolver": true,
+    "@prisma/engines": true
   }
 }
