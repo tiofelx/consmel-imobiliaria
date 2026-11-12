@@ -61,8 +61,7 @@ async function run() {
     errors: [],
   };
 
-  const server = spawn('npm', ['run', 'start', '--', '-p', '3000'], {
-    shell: true,
+  const server = spawn(process.execPath, [path.join('node_modules', 'next', 'dist', 'bin', 'next'), 'start', '-p', '3000'], {
     stdio: 'ignore',
   });
 

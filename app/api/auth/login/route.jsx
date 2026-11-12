@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { createSession } from '@/lib/auth';
-import { verifyPassword } from '@/lib/hash';
+import { hashPassword, verifyPassword } from '@/lib/hash';
+import { randomUUID } from 'crypto';
 import { checkRateLimit, incrementRateLimit, resetRateLimit } from '@/lib/rate-limit';
 import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { verifyToken } from '@/lib/otp';
 import { decrypt } from '@/lib/encryption';
 import { safeLogError } from '@/lib/safe-log';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
+
+// Hash de valor aleatório só para igualar o tempo de resposta quando o usuário não existe.
+let dummyHashPromise;
+const getDummyHash = () => (dummyHashPromise ??= hashPassword(randomUUID()));
 
 export async function POST(request) {
     try {
@@ -66,7 +71,7 @@ export async function POST(request) {
         });
 
         if (!user) {
-            await verifyPassword(password, '$2b$12$tOaocb5.XUNqtmhNYnSSduy18O7AIR8RpytvlpnoAv7YtLvraZ0Gu');
+            await verifyPassword(password, await getDummyHash());
             await incrementRateLimit(ip);
             return NextResponse.json(
                 { error: 'Credenciais inválidas.' },

@@ -125,7 +125,7 @@ export default function NewProperty() {
           file: processedFile,
           preview: previewUrl,
           type: isVideo ? 'video' : 'image',
-          id: Date.now() + Math.random().toString(36).substr(2, 9)
+          id: crypto.randomUUID()
         });
       } catch (error) {
         console.error('Error processing file:', error);

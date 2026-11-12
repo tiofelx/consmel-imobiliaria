@@ -24,7 +24,7 @@
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "lru-cache": "^11.2.6",
     "next": "^16.1.6",
-    "nodemailer": "^9.0.3",
+    "nodemailer": "^10.0.2",
     "otpauth": "^9.5.0",
     "pg": "^8.18.0",
     "qrcode": "^1.5.4",
@@ -56,7 +56,7 @@
     "hono": "4.12.32",
     "lodash": "4.18.1",
     "tar": "7.5.11",
-    "undici": "7.29.0",
+    "undici": "7.29.1",
     "yauzl": "3.2.1"
   },
   "allowScripts": {

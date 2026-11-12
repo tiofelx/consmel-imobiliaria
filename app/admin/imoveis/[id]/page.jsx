@@ -151,7 +151,7 @@ export default function EditProperty({ params }) {
     setIsProcessing(true);
     await new Promise(resolve => setTimeout(resolve, 500));
     const newItems = files.map(file => ({
-      id: Math.random().toString(36).substr(2, 9),
+      id: crypto.randomUUID(),
       file,
       preview: URL.createObjectURL(file),
       type: file.type.startsWith('video/') ? 'video' : 'image',

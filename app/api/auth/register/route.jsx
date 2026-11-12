@@ -48,7 +48,7 @@ export async function POST(request) {
         const parsedData = registerSchema.safeParse(data);
         if (!parsedData.success) {
             const zodErrors = parsedData.error?.errors || parsedData.error?.issues || [];
-            console.warn(`Tentativa de injeção ou dados inválidos de IP: ${ip}`, sanitizeForLog(zodErrors));
+            console.warn('Tentativa de injeção ou dados inválidos de IP: %s', ip, sanitizeForLog(zodErrors));
 
             const hasInvalidName = zodErrors.some(e => e?.path?.includes('name') && e?.code === 'invalid_string' && e?.validation === 'regex');
             if (hasInvalidName) {

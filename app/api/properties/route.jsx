@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
@@ -135,7 +136,7 @@ export async function POST(request) {
             throw uploadError;
         }
 
-        const customId = Array.from({ length: 12 }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.charAt(Math.floor(Math.random() * 36))).join('');
+        const customId = Array.from({ length: 12 }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.charAt(randomInt(36))).join('');
 
         let parsedFeatures = [];
         if (data.features) {

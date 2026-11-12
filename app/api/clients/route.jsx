@@ -58,7 +58,7 @@ export async function POST(request) {
 
         const parsedData = clientSchema.safeParse(data);
         if (!parsedData.success) {
-            console.warn(`Tentativa de injeção ou dados inválidos de IP: ${ip}`, parsedData.error.errors);
+            console.warn('Tentativa de injeção ou dados inválidos de IP: %s', ip, parsedData.error.errors);
             return NextResponse.json({
                 error: 'Dados inválidos',
                 details: parsedData.error.errors
