@@ -7,7 +7,7 @@ import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import xss from 'xss';
 import { z } from 'zod';
 import { safeLogError, sanitizeForLog } from '@/lib/safe-log';
-import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
+import { getClientIpFromHeaders, getClientUserAgentFromHeaders, isJsonRequest, logSecurityAttempt } from '@/lib/request-security';
 
 const registerSchema = z.object({
     name: z.string().trim().min(3, "Nome completo é obrigatório").max(100)
@@ -20,6 +20,10 @@ const registerSchema = z.object({
 export async function POST(request) {
     try {
         const requestHeaders = request.headers;
+        // Antes de contar tentativa ou bloquear: senão outro site faz isso pelo navegador da vítima.
+        if (!isJsonRequest(requestHeaders)) {
+            return NextResponse.json({ error: 'Content-Type deve ser application/json.' }, { status: 415 });
+        }
         const ip = getClientIpFromHeaders(requestHeaders);
         const userAgent = getClientUserAgentFromHeaders(requestHeaders);
 
@@ -77,7 +81,6 @@ export async function POST(request) {
 
         if (!emailDomain || !allowedDomains.includes(emailDomain)) {
             logSecurityAttempt('invalid-email-domain-register', { ip, userAgent, route: '/api/auth/register', reason: 'Disallowed email provider', severity: 'high' });
-            await blockIpAndAlert(ip, `Tentativa de cadastro com e-mail inválido/falso: ${email}`, 'register', { userAgent });
             return NextResponse.json(
                 { error: 'Por favor, utilize um e-mail de um provedor válido (ex: Gmail, Outlook, Yahoo).' },
                 { status: 400 }

@@ -8,7 +8,7 @@ import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { verifyToken } from '@/lib/otp';
 import { decrypt } from '@/lib/encryption';
 import { safeLogError } from '@/lib/safe-log';
-import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
+import { getClientIpFromHeaders, getClientUserAgentFromHeaders, isJsonRequest, logSecurityAttempt } from '@/lib/request-security';
 
 // Hash de valor aleatório só para igualar o tempo de resposta quando o usuário não existe.
 let dummyHashPromise;
@@ -17,6 +17,10 @@ const getDummyHash = () => (dummyHashPromise ??= hashPassword(randomUUID()));
 export async function POST(request) {
     try {
         const requestHeaders = request.headers;
+        // Antes de contar tentativa ou bloquear: senão outro site faz isso pelo navegador da vítima.
+        if (!isJsonRequest(requestHeaders)) {
+            return NextResponse.json({ error: 'Content-Type deve ser application/json.' }, { status: 415 });
+        }
         const ip = getClientIpFromHeaders(requestHeaders);
         const userAgent = getClientUserAgentFromHeaders(requestHeaders);
 

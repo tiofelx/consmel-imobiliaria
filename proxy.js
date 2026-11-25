@@ -11,7 +11,8 @@ async function verifySessionFromRequest(request) {
 
     try {
         const { payload } = await jwtVerify(session, key);
-        return payload;
+        // Token intermediário do 2FA (stage) não vale como sessão.
+        return payload.stage ? null : payload;
     } catch {
         return null;
     }
