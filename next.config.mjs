@@ -62,7 +62,8 @@ const nextConfig = {
     ],
   },
   compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
+    // Também vale para o servidor: error e warn precisam ficar para haver log em produção.
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
   },
   experimental: {
     workerThreads: true,

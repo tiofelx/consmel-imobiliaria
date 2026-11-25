@@ -32,6 +32,7 @@ export default function CadastreImovel() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setStatus("idle");
     if (name === 'contato1' || name === 'contato2') {
       setFormData((prev) => ({ ...prev, [name]: maskPhone(value) }));
     } else {
@@ -95,7 +96,8 @@ export default function CadastreImovel() {
     setCurrentStep((prev) => prev - 1);
   };
 
-  const sendWhatsApp = (data) => {
+  // Links clicados pelo usuário: window.open depois de await é barrado como pop-up.
+  const whatsAppUrl = (data) => {
     const message = encodeURIComponent(
       `*Novo Cadastro de Imóvel - Site Consmel*\n\n` +
       `*Proprietário:* ${data.nome}\n` +
@@ -111,10 +113,10 @@ export default function CadastreImovel() {
       `*Garagem:* ${data.vagas || '0'}\n\n` +
       `*Descrição:*\n${data.descricao || 'Não informada'}`
     );
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
   };
 
-  const sendEmail = (data) => {
+  const mailtoUrl = (data) => {
     const subject = encodeURIComponent('Novo Cadastro de Imóvel - Site Consmel');
     const body = encodeURIComponent(
       `Proprietário: ${data.nome}\n` +
@@ -130,7 +132,7 @@ export default function CadastreImovel() {
       `Garagem: ${data.vagas || '0'}\n\n` +
       `Descrição:\n${data.descricao || 'Não informada'}`
     );
-    window.open(`mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`, '_blank');
+    return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   };
 
   const handleSubmit = async (e) => {
@@ -169,18 +171,19 @@ export default function CadastreImovel() {
       } catch {}
     }
 
-    const details = `
-      Proprietário: ${formData.nome}
-      Contato 1: ${formData.contato1}
-      Contato 2: ${formData.contato2}
-      Tipo: ${formData.tipoImovel} (${formData.tipoTransacao})
-      Endereço: ${formData.endereco}
-      Cômodos: ${formData.quartos} quartos, ${formData.suites} suítes, ${formData.banheiros} banheiros, ${formData.vagas} vagas
-      Descrição: ${formData.descricao}
-    `.trim();
+    const details = [
+      `Proprietário: ${formData.nome}`,
+      `Contato 1: ${formData.contato1}`,
+      `Contato 2: ${formData.contato2}`,
+      `Tipo: ${formData.tipoImovel} (${formData.tipoTransacao})`,
+      `Endereço: ${formData.endereco}`,
+      `Cômodos: ${formData.quartos} quartos, ${formData.suites} suítes, ${formData.banheiros} banheiros, ${formData.vagas} vagas`,
+      `Descrição: ${formData.descricao}`,
+    ].join('\n');
 
+    let error = 'Não foi possível enviar. Verifique sua conexão e tente novamente.';
     try {
-      await fetch('/api/clients', {
+      const res = await fetch('/api/clients', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -189,24 +192,26 @@ export default function CadastreImovel() {
           phone: formData.contato1,
           interest: 'Cadastro de Imóvel',
           notes: details,
-          status: 'Novo'
         })
       });
+      if (res.ok) {
+        error = null;
+      } else {
+        const body = await res.json().catch(() => ({}));
+        error = body.details?.[0]?.message || body.error || 'Não foi possível enviar. Tente novamente.';
+      }
     } catch (err) {
       console.error('Failed to save lead', err);
     }
 
-    setTimeout(() => {
-      sendEmail(formData);
-      sendWhatsApp(formData);
+    if (error) {
+      setStatus("idle");
+      showToast(error, "error");
+      return;
+    }
 
-      setStatus("success");
-      showToast("Dados enviados com sucesso!", "success");
-
-      setTimeout(() => {
-        setStatus("idle");
-      }, 3000);
-    }, 500);
+    setStatus("success");
+    showToast("Dados enviados com sucesso!", "success");
   };
 
   const handleKeyDown = (e) => {
@@ -301,6 +306,7 @@ export default function CadastreImovel() {
                           value={formData.nome}
                           onChange={handleChange}
                           required
+                          maxLength={100}
                           placeholder="Nome completo do proprietário"
                         />
                       </div>
@@ -414,6 +420,7 @@ export default function CadastreImovel() {
                           value={formData.endereco}
                           onChange={handleChange}
                           required
+                          maxLength={300}
                           placeholder="Rua, Número - Bairro - Cidade / UF"
                         />
                       </div>
@@ -481,6 +488,7 @@ export default function CadastreImovel() {
                         value={formData.descricao}
                         onChange={handleChange}
                         rows="4"
+                        maxLength={1000}
                         placeholder="Detalhes que valorizam o seu imóvel..."
                         className="form-textarea"
                       ></textarea>
@@ -505,16 +513,26 @@ export default function CadastreImovel() {
                     type="button"
                     onClick={handleSubmit}
                     className="submit-btn"
-                    disabled={status === "sending"}
+                    disabled={status === "sending" || status === "success"}
                   >
                     {status === "sending" ? (
                       <span className="loading-spinner"></span>
+                    ) : status === "success" ? (
+                      "Enviado"
                     ) : (
                       "Finalizar"
                     )}
                   </button>
                 )}
               </div>
+
+              {status === "success" && (
+                <p role="status" style={{ marginTop: 16, textAlign: "center" }}>
+                  Cadastro recebido. Se quiser agilizar, envie também por{' '}
+                  <a href={whatsAppUrl(formData)} target="_blank" rel="noopener noreferrer"><strong>WhatsApp</strong></a>
+                  {' '}ou <a href={mailtoUrl(formData)}><strong>e-mail</strong></a>.
+                </p>
+              )}
             </form>
           </div>
         </div>

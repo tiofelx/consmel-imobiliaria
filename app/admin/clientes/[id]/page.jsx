@@ -146,6 +146,8 @@ export default function EditClient({ params }) {
                                 <select className="form-select" value={formData.interest} onChange={(e) => handleChange('interest', e.target.value)}>
                                     <option value="Compra">Compra</option>
                                     <option value="Aluguel">Aluguel</option>
+                                    <option value="Cadastro de Imóvel">Cadastro de Imóvel</option>
+                                    <option value="Solicitação">Solicitação</option>
                                 </select>
                             </div>
                             <div className="form-group">

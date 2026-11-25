@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { z } from 'zod';
+import { safeLogError } from '@/lib/safe-log';
 import prisma from '@/lib/prisma';
 import transporter from '@/lib/mailer';
 import rateLimit from '@/lib/rate-limit';
@@ -11,7 +12,7 @@ const limiter = rateLimit({ uniqueTokenPerInterval: 500, interval: 600000 });
 
 const contactSchema = z.object({
     name: z.string().trim().min(2, 'Nome muito curto').max(100, 'Nome muito longo')
-        .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Nome contém caracteres inválidos'),
+        .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$/, 'Nome contém caracteres inválidos'),
     email: z.string().trim().email('E-mail inválido').max(150),
     phone: z.string().trim().min(7, 'Telefone inválido').max(25, 'Telefone muito longo'),
     phone2: z.string().trim().max(25).optional().nullable(),
@@ -62,10 +63,13 @@ export async function POST(request) {
             },
         });
     } catch (err) {
-        console.error('Erro ao salvar cliente:', err);
+        safeLogError('Erro ao salvar contato', err);
+        return NextResponse.json({ error: 'Erro ao salvar contato. Tente novamente.' }, { status: 500 });
     }
 
-    notifyContact({ name, email, phone, phone2, message, propertyTitle, contactViaEmail, contactViaWhatsApp }).catch(() => {});
+    // after(): em serverless, promessa solta pode ser cortada junto com a resposta.
+    after(() => notifyContact({ name, email, phone, phone2, message, propertyTitle, contactViaEmail, contactViaWhatsApp })
+        .catch((err) => safeLogError('Erro ao enviar aviso de contato', err)));
 
     const response = NextResponse.json({ success: true }, { status: 201 });
     resForHeaders.headers.forEach((v, k) => response.headers.set(k, v));

@@ -33,11 +33,12 @@ const limiter = rateLimit({ uniqueTokenPerInterval: 500, interval: 600000 });
 
 const clientSchema = z.object({
     name: z.string().trim().min(2, "Nome muito curto").max(100, "Nome muito longo")
-        .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, "Nome contém caracteres inválidos"),
+        .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$/, "Nome contém caracteres inválidos"),
     email: z.string().trim().email("E-mail inválido").max(150),
     phone: z.string().trim().max(20).optional().nullable(),
-    interest: z.enum(["Compra", "Aluguel", "Cadastro de Imóvel"]).optional().nullable(),
-    notes: z.string().trim().max(1000).optional().nullable()
+    interest: z.enum(["Compra", "Aluguel", "Cadastro de Imóvel", "Solicitação"]).optional().nullable(),
+    // Folga para os formulários, que juntam vários campos aqui.
+    notes: z.string().trim().max(2000).optional().nullable()
 });
 
 export async function POST(request) {
@@ -57,10 +58,10 @@ export async function POST(request) {
 
         const parsedData = clientSchema.safeParse(data);
         if (!parsedData.success) {
-            console.warn('Tentativa de injeção ou dados inválidos de IP: %s', ip, parsedData.error.errors);
+            console.warn('Tentativa de injeção ou dados inválidos de IP: %s', ip, parsedData.error.issues);
             return NextResponse.json({
                 error: 'Dados inválidos',
-                details: parsedData.error.errors
+                details: parsedData.error.issues
             }, { status: 400 });
         }
 

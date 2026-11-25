@@ -166,6 +166,7 @@ export default function ContactForm({ propertyTitle }) {
           onChange={handleChange}
           className="form-textarea"
           rows="4"
+          maxLength={1000}
         ></textarea>
       </div>
 

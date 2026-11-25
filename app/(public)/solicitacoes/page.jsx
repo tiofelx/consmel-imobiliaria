@@ -19,16 +19,19 @@ export default function Solicitacoes() {
     mensagem: ''
   });
   const [status, setStatus] = useState('idle');
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setStatus('idle');
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const sendWhatsApp = (data) => {
+  // Links clicados pelo usuário: window.open automático é barrado como pop-up.
+  const whatsAppUrl = (data) => {
     const message = encodeURIComponent(
       `*Nova Solicitação - Site Consmel*\n\n` +
       `*CPF:* ${data.cpf}\n` +
@@ -41,10 +44,10 @@ export default function Solicitacoes() {
       `*Cidade:* ${data.cidade}\n\n` +
       `*Mensagem:*\n${data.mensagem}`
     );
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
   };
 
-  const sendEmail = (data) => {
+  const mailtoUrl = (data) => {
     const subject = encodeURIComponent('Nova Solicitação - Site Consmel');
     const body = encodeURIComponent(
       `CPF: ${data.cpf}\n` +
@@ -57,34 +60,46 @@ export default function Solicitacoes() {
       `Cidade: ${data.cidade}\n\n` +
       `Mensagem:\n${data.mensagem}`
     );
-    window.open(`mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`, '_blank');
+    return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
+    setError('');
 
-    setTimeout(() => {
-      sendEmail(formData);
-      sendWhatsApp(formData);
+    let failure = 'Não foi possível enviar. Verifique sua conexão e tente novamente.';
+    try {
+      const res = await fetch('/api/clients', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.nome,
+          email: formData.email,
+          phone: formData.celular,
+          interest: 'Solicitação',
+          // O CPF não é gravado no banco: segue só na mensagem que o próprio usuário envia.
+          notes: [
+            `Empresa: ${formData.empresa || 'Não informado'}`,
+            `Cargo: ${formData.cargo || 'Não informado'}`,
+            `Tel. Empresa: ${formData.telefoneEmpresa || 'Não informado'}`,
+            `Cidade: ${formData.cidade}`,
+            `Mensagem: ${formData.mensagem}`,
+          ].join('\n'),
+        }),
+      });
+      if (res.ok) {
+        failure = '';
+      } else {
+        const body = await res.json().catch(() => ({}));
+        failure = body.details?.[0]?.message || body.error || 'Não foi possível enviar. Tente novamente.';
+      }
+    } catch (err) {
+      console.error('Failed to save request', err);
+    }
 
-      setStatus('success');
-
-      setTimeout(() => {
-        setFormData({
-          cpf: '',
-          nome: '',
-          celular: '',
-          email: '',
-          empresa: '',
-          cargo: '',
-          telefoneEmpresa: '',
-          cidade: '',
-          mensagem: ''
-        });
-        setStatus('idle');
-      }, 3000);
-    }, 500);
+    setError(failure);
+    setStatus(failure ? 'idle' : 'success');
   };
 
   return (
@@ -124,6 +139,7 @@ export default function Solicitacoes() {
                   <input
                     type="text"
                     id="nome"
+                    maxLength={100}
                     name="nome"
                     value={formData.nome}
                     onChange={handleChange}
@@ -138,6 +154,7 @@ export default function Solicitacoes() {
                   <input
                     type="tel"
                     id="celular"
+                    maxLength={20}
                     name="celular"
                     value={formData.celular}
                     onChange={handleChange}
@@ -152,6 +169,7 @@ export default function Solicitacoes() {
                   <input
                     type="email"
                     id="email"
+                    maxLength={150}
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
@@ -166,6 +184,7 @@ export default function Solicitacoes() {
                   <input
                     type="text"
                     id="empresa"
+                    maxLength={100}
                     name="empresa"
                     value={formData.empresa}
                     onChange={handleChange}
@@ -179,6 +198,7 @@ export default function Solicitacoes() {
                   <input
                     type="text"
                     id="cargo"
+                    maxLength={100}
                     name="cargo"
                     value={formData.cargo}
                     onChange={handleChange}
@@ -192,6 +212,7 @@ export default function Solicitacoes() {
                   <input
                     type="tel"
                     id="telefoneEmpresa"
+                    maxLength={20}
                     name="telefoneEmpresa"
                     value={formData.telefoneEmpresa}
                     onChange={handleChange}
@@ -205,6 +226,7 @@ export default function Solicitacoes() {
                   <input
                     type="text"
                     id="cidade"
+                    maxLength={100}
                     name="cidade"
                     value={formData.cidade}
                     onChange={handleChange}
@@ -218,6 +240,7 @@ export default function Solicitacoes() {
                   <label htmlFor="mensagem">Mensagem *</label>
                   <textarea
                     id="mensagem"
+                    maxLength={1000}
                     name="mensagem"
                     value={formData.mensagem}
                     onChange={handleChange}
@@ -232,7 +255,7 @@ export default function Solicitacoes() {
               <button
                 type="submit"
                 className="btn btn-primary btn-lg"
-                disabled={status === 'sending'}
+                disabled={status === 'sending' || status === 'success'}
                 style={{ width: '100%', marginTop: 'var(--space-2)' }}
               >
                 {status === 'sending' ? 'Enviando...' :
@@ -240,9 +263,15 @@ export default function Solicitacoes() {
                     'Enviar Solicitação'}
               </button>
 
+              {error && (
+                <div role="alert" style={{ color: '#dc2626', textAlign: 'center' }}>{error}</div>
+              )}
+
               {status === 'success' && (
-                <div className="form-success">
-                  Solicitação enviada com sucesso! Entraremos em contato em breve.
+                <div className="form-success" role="status">
+                  Solicitação registrada! Entraremos em contato em breve. Para agilizar, envie também por{' '}
+                  <a href={whatsAppUrl(formData)} target="_blank" rel="noopener noreferrer"><strong>WhatsApp</strong></a>
+                  {' '}ou <a href={mailtoUrl(formData)}><strong>e-mail</strong></a> (a mensagem inclui o CPF).
                 </div>
               )}
             </form>

@@ -53,6 +53,14 @@ export default function AdminNavLinks() {
                 Clientes
             </Link>
 
+            <Link href="/admin/leads" className={`nav-item ${isActive('/admin/leads') ? 'active' : ''}`}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16v16H4z"></path>
+                    <path d="M4 13h5l1 2h4l1-2h5"></path>
+                </svg>
+                Lançamento
+            </Link>
+
             <Link href="/admin/seguranca" className={`nav-item ${isActive('/admin/seguranca') ? 'active' : ''}`}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>

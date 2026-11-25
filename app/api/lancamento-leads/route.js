@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
+import { safeLogError } from '@/lib/safe-log';
 import transporter from '@/lib/mailer';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
@@ -61,13 +62,15 @@ export async function POST(request) {
             data: { name, email, phone },
         });
 
-        notifyNewLead({ name, email, phone }).catch(() => {});
+        // after(): em serverless, promessa solta pode ser cortada junto com a resposta.
+        after(() => notifyNewLead({ name, email, phone })
+            .catch((err) => safeLogError('Erro ao enviar aviso de lead', err)));
 
         const response = NextResponse.json({ success: true, id: lead.id }, { status: 201 });
         resForHeaders.headers.forEach((value, key) => response.headers.set(key, value));
         return response;
     } catch (error) {
-        console.error('Erro ao salvar lead de lançamento:', error);
+        safeLogError('Erro ao salvar lead de lançamento', error);
         return NextResponse.json(
             { error: 'Erro ao salvar cadastro. Tente novamente.' },
             { status: 500 }
