@@ -8,6 +8,7 @@ export default function ProfileContent({ user }) {
     const [qrCode, setQrCode] = useState(null);
     const [secret, setSecret] = useState(null);
     const [verificationCode, setVerificationCode] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -41,12 +42,14 @@ export default function ProfileContent({ user }) {
             const res = await fetch('/api/auth/2fa/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token: verificationCode }),
+                body: JSON.stringify({ token: verificationCode, password }),
             });
             const data = await res.json();
 
             if (res.ok) {
-                setSuccess('Autenticação de Dois Fatores ativada com sucesso!');
+                setPassword('');
+                setVerificationCode('');
+                setSuccess('Autenticação de Dois Fatores ativada. As outras sessões desta conta foram encerradas.');
                 setIs2FAEnabled(true);
                 setQrCode(null);
                 setSecret(null);
@@ -143,8 +146,22 @@ export default function ProfileContent({ user }) {
                                     </p>
                                 </div>
 
-                                <p className="step-instruction">2. Digite o código de 6 dígitos:</p>
+                                <p className="step-instruction">
+                                    2. Digite o código de 6 dígitos{user.hasPassword ? ' e a sua senha' : ''}:
+                                </p>
                                 <div className="verification-input-group">
+                                    {user.hasPassword && (
+                                        <input
+                                            type="password"
+                                            aria-label="Sua senha atual"
+                                            placeholder="Sua senha"
+                                            autoComplete="current-password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            maxLength={100}
+                                            className="code-input"
+                                        />
+                                    )}
                                     <input
                                         type="text"
                                         placeholder="000000"
@@ -156,7 +173,7 @@ export default function ProfileContent({ user }) {
                                     <button
                                         className="btn-verify"
                                         onClick={handleVerify2FA}
-                                        disabled={loading || verificationCode.length !== 6}
+                                        disabled={loading || verificationCode.length !== 6 || (user.hasPassword && !password)}
                                     >
                                         {loading ? 'Verificando...' : 'Verificar'}
                                     </button>

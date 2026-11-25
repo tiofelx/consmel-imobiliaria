@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import '../admin.css';
 
 const severityOptions = ['all', 'critical', 'high', 'medium', 'low'];
-const SECURITY_EVENTS_POLL_MS = 2000;
+const SECURITY_EVENTS_POLL_MS = 15000;
 
 function severityBadgeColor(severity) {
   if (severity === 'critical') return { bg: '#fee2e2', color: '#991b1b' };
@@ -65,7 +65,8 @@ export default function SegurancaPage() {
     }
 
     fetchEvents();
-    const intervalId = setInterval(fetchEvents, SECURITY_EVENTS_POLL_MS);
+    // Aba escondida não consulta: cada consulta gasta cota do banco.
+    const intervalId = setInterval(() => { if (!document.hidden) fetchEvents(); }, SECURITY_EVENTS_POLL_MS);
 
     return () => {
       isMounted = false;

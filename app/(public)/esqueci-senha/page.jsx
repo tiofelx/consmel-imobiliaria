@@ -50,10 +50,10 @@ export default function EsqueciSenha() {
                         </div>
                     ) : (
                         <>
-                            <p role="status">Se o e-mail tiver uma conta, enviamos um código de 6 dígitos. Ele vale por 15 minutos.</p>
+                            <p role="status">Se o e-mail tiver uma conta, enviamos um código de 8 dígitos. Ele vale por 15 minutos.</p>
                             <div style={{ marginTop: 16 }}>
                                 <label className="input-label" htmlFor="token">Código recebido</label>
-                                <input id="token" inputMode="numeric" className="form-input-service" value={form.token} onChange={set('token')} maxLength={6} autoComplete="one-time-code" required />
+                                <input id="token" inputMode="numeric" className="form-input-service" value={form.token} onChange={set('token')} maxLength={8} autoComplete="one-time-code" required />
                             </div>
                             <div style={{ marginTop: 16 }}>
                                 <label className="input-label" htmlFor="password">Nova senha (mínimo 8 caracteres)</label>

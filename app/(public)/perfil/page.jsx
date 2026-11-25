@@ -17,6 +17,7 @@ export default async function ProfilePage() {
             email: true,
             role: true,
             twoFactorEnabled: true,
+            password: true,
         },
     });
 
@@ -24,5 +25,7 @@ export default async function ProfilePage() {
         redirect('/login');
     }
 
-    return <ProfileContent user={user} />;
+    // O hash não vai para o navegador: só a informação de que há senha.
+    const { password, ...profile } = user;
+    return <ProfileContent user={{ ...profile, hasPassword: Boolean(password) }} />;
 }

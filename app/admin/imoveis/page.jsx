@@ -10,12 +10,18 @@ export default function AdminProperties() {
 
   useEffect(() => {
     fetch('/api/properties', { cache: 'no-store' })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Erro ao buscar imóveis');
+        return res.json();
+      })
       .then(data => {
         setProperties(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setLoading(false);
+        alert('Não foi possível carregar os imóveis. Recarregue a página.');
+      });
   }, []);
 
   const handleDelete = async (id) => {

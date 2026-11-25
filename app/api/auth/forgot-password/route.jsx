@@ -7,7 +7,7 @@ import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { safeLogError } from '@/lib/safe-log';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, isJsonRequest, logSecurityAttempt } from '@/lib/request-security';
 
-const schema = z.object({ email: z.string().trim().email().max(150) });
+const schema = z.object({ email: z.string().trim().toLowerCase().email().max(150) });
 
 const fail = (error, status) => NextResponse.json({ error }, { status });
 
@@ -35,17 +35,10 @@ export async function POST(request) {
         const { email } = parsed.data;
         const user = await prisma.user.findUnique({ where: { email }, select: { id: true } });
 
-        // Mesma resposta com ou sem conta: sem conta vai só um aviso, sem código.
+        // Mesma resposta com ou sem conta. Sem conta nada é enviado (senão a rota vira disparador de e-mail).
         const { error, status } = await startEmailVerification(
             { email, via: 'reset' },
-            user
-                ? undefined
-                : {
-                    notice: {
-                        subject: 'Redefinição de senha — Consmel',
-                        text: 'Recebemos um pedido de redefinição de senha para este e-mail, mas não há conta com ele. Se não foi você, ignore esta mensagem.',
-                    },
-                }
+            { ip, background: true, deliver: Boolean(user) }
         );
         if (error) return fail(error, status);
 

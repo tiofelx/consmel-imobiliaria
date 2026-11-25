@@ -175,6 +175,9 @@ export async function POST(request) {
                     }))
                 }
             },
+        }).catch(async (error) => {
+            await deleteBlobs(savedImages);
+            throw error;
         });
 
         return NextResponse.json(property, { status: 201 });

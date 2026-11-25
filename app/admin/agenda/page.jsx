@@ -158,9 +158,15 @@ export default function AgendaPage() {
 
     useEffect(() => {
         fetch('/api/events', { cache: 'no-store' })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('Erro ao buscar eventos');
+                return res.json();
+            })
             .then(data => { setEvents(data); setLoading(false); })
-            .catch(() => setLoading(false));
+            .catch(() => {
+                setLoading(false);
+                alert('Não foi possível carregar a agenda. Recarregue a página.');
+            });
     }, []);
 
     const filteredEvents = useMemo(

@@ -22,6 +22,7 @@ export default function EditProperty({ params }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -88,6 +89,7 @@ export default function EditProperty({ params }) {
         setLoading(false);
       })
       .catch(() => {
+        setLoadError(true);
         setLoading(false);
       });
   }, [id]);
@@ -260,6 +262,15 @@ export default function EditProperty({ params }) {
 
   if (loading) {
     return <div style={{ padding: '60px', textAlign: 'center', color: '#94a3b8' }}>Carregando...</div>;
+  }
+
+  // Sem os dados, salvar um formulário vazio apagaria fotos e campos.
+  if (loadError) {
+    return (
+      <div style={{ padding: '60px', textAlign: 'center', color: '#94a3b8' }}>
+        Não foi possível carregar o imóvel. <Link href="/admin/imoveis">Voltar para a lista</Link>
+      </div>
+    );
   }
 
   return (

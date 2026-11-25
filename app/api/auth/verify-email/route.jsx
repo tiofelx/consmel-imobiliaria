@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { startSession, createPendingSession, verifyPendingEmail, getKnownDevice } from '@/lib/auth';
 import { hashPassword } from '@/lib/hash';
 import { codeMatches, confirmAccount } from '@/lib/email-verification';
-import { consumeAttempt, resetRateLimit, resetAccountAttempts } from '@/lib/rate-limit';
+import { consumeAttempt, refundAttempt, resetAccountAttempts } from '@/lib/rate-limit';
 import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { safeLogError } from '@/lib/safe-log';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, isJsonRequest, logSecurityAttempt } from '@/lib/request-security';
@@ -51,7 +51,7 @@ export async function POST(request) {
 
         if (!user) return fail('Não foi possível confirmar. Entre com sua conta.', 409);
 
-        await resetRateLimit(ip);
+        await refundAttempt(ip);
         if (isReset) await resetAccountAttempts(user.email, ip, await getKnownDevice(user.email));
 
         // No login com senha o 2FA já foi conferido; nos outros caminhos ele vem agora.

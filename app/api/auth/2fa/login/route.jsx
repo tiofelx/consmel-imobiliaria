@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import { verifyPendingSession, startSession } from '@/lib/auth';
 import { verifyToken } from '@/lib/otp';
 import { decrypt } from '@/lib/encryption';
-import { consumeAttempt, resetRateLimit, consumeTotpCode } from '@/lib/rate-limit';
+import { consumeAttempt, refundAttempt, resetRateLimit, consumeTotpCode } from '@/lib/rate-limit';
 import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { cookies } from 'next/headers';
 import { safeLogError } from '@/lib/safe-log';
@@ -21,7 +21,7 @@ export async function POST(request) {
 
         const isBlocked = await checkIpBlocked(ip);
         if (isBlocked) {
-            logSecurityAttempt('blocked-ip-2fa', { ip, userAgent, route: '/api/auth/2fa/login', reason: 'IP already blocked', severity: 'critical' });
+            logSecurityAttempt('blocked-ip-2fa', { ip, userAgent, route: '/api/auth/2fa/login', reason: 'IP already blocked', severity: 'high' });
             return NextResponse.json(
                 { error: 'Acesso negado. Seu IP foi bloqueado por motivos de segurança.', isHackerAttempt: true },
                 { status: 403 }
@@ -90,7 +90,7 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Código 2FA incorreto.' }, { status: 401 });
         }
 
-        await resetRateLimit(ip);
+        await refundAttempt(ip);
         await resetRateLimit(codeKey);
         await startSession(user);
 

@@ -16,10 +16,11 @@ export default function AlertasPage() {
     const fetchAlerts = async () => {
         try {
             const res = await fetch('/api/alerts', { cache: 'no-store' });
+            if (!res.ok) throw new Error('Erro ao buscar alertas');
             const data = await res.json();
             setAlerts(data);
         } catch {
-            console.error('Erro ao buscar alertas');
+            alert('Não foi possível carregar os alertas. Recarregue a página.');
         } finally {
             setLoading(false);
         }
@@ -27,11 +28,12 @@ export default function AlertasPage() {
 
     const resolveAlert = async (id) => {
         try {
-            await fetch(`/api/alerts/${id}`, {
+            const res = await fetch(`/api/alerts/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ resolved: true }),
             });
+            if (!res.ok) throw new Error('Erro ao resolver alerta');
             setAlerts(prev => prev.map(a => a.id === id ? { ...a, resolved: true } : a));
         } catch {
             alert('Erro ao resolver alerta.');

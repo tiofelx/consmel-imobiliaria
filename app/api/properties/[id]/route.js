@@ -197,7 +197,7 @@ export async function PUT(request, { params }) {
             'bedrooms', 'suites', 'bathrooms', 'parkingSpaces',
             'usableArea', 'totalArea',
             'cep', 'street', 'number', 'complement', 'neighborhood', 'city', 'state',
-            'latitude', 'longitude',
+            'latitude', 'longitude', 'videos',
         ];
         for (const key of fieldKeys) {
             const value = formData.get(key);
@@ -275,6 +275,9 @@ export async function PUT(request, { params }) {
                 data: updateData,
                 include: { images: { orderBy: { order: 'asc' } } },
             });
+        }).catch(async (error) => {
+            await deleteBlobs(newUrls);
+            throw error;
         });
 
         await removeUnusedBlobs(before, property);

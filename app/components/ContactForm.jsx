@@ -17,6 +17,7 @@ export default function ContactForm({ propertyTitle, transactionType }) {
     contactViaWhatsApp: false
   });
   const [status, setStatus] = useState('idle');
+  const [whatsAppLink, setWhatsAppLink] = useState('');
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -26,7 +27,8 @@ export default function ContactForm({ propertyTitle, transactionType }) {
     }));
   };
 
-  const openWhatsApp = (data) => {
+  // Link clicado pelo usuário: window.open depois de await é barrado como pop-up.
+  const whatsAppUrl = (data) => {
     const text = encodeURIComponent(
       `*Novo contato do site*\n\n` +
       `*Nome:* ${data.name}\n` +
@@ -36,7 +38,7 @@ export default function ContactForm({ propertyTitle, transactionType }) {
       (propertyTitle ? `*Imóvel:* ${propertyTitle}\n` : '') +
       (data.message ? `*Mensagem:* ${data.message}` : '')
     );
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
   };
 
   const handleSubmit = async (e) => {
@@ -48,6 +50,7 @@ export default function ContactForm({ propertyTitle, transactionType }) {
     }
 
     setStatus('sending');
+    setWhatsAppLink('');
 
     try {
       const res = await fetch('/api/contact', {
@@ -73,7 +76,7 @@ export default function ContactForm({ propertyTitle, transactionType }) {
     }
 
     if (formData.contactViaWhatsApp) {
-      openWhatsApp(formData);
+      setWhatsAppLink(whatsAppUrl(formData));
     }
 
     setStatus('success');
@@ -209,6 +212,11 @@ export default function ContactForm({ propertyTitle, transactionType }) {
       {status === 'success' && (
         <div className="form-success">
           Mensagem enviada!
+        </div>
+      )}
+      {whatsAppLink && (
+        <div className="form-success">
+          <a href={whatsAppLink} target="_blank" rel="noopener noreferrer"><strong>Abrir conversa no WhatsApp</strong></a>
         </div>
       )}
       {status === 'error' && (

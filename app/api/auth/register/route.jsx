@@ -12,7 +12,7 @@ import { getClientIpFromHeaders, getClientUserAgentFromHeaders, isJsonRequest, l
 const registerSchema = z.object({
     name: z.string().trim().min(3, "Nome completo é obrigatório").max(100)
         .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$/, "O nome contém caracteres inválidos"),
-    email: z.string().trim().email("E-mail inválido").max(150),
+    email: z.string().trim().toLowerCase().email("E-mail inválido").max(150),
     password: z.string().min(8, "A senha deve ter pelo menos 8 caracteres").max(100),
     phone: z.string().trim().max(20).optional().nullable()
 });
@@ -29,7 +29,7 @@ export async function POST(request) {
 
         const isBlocked = await checkIpBlocked(ip);
         if (isBlocked) {
-            logSecurityAttempt('blocked-ip-register', { ip, userAgent, route: '/api/auth/register', reason: 'IP already blocked', severity: 'critical' });
+            logSecurityAttempt('blocked-ip-register', { ip, userAgent, route: '/api/auth/register', reason: 'IP already blocked', severity: 'high' });
             return NextResponse.json(
                 { error: 'Acesso negado. Seu IP foi bloqueado por motivos de segurança.', isHackerAttempt: true },
                 { status: 403 }
@@ -88,14 +88,15 @@ export async function POST(request) {
         // A conta só é criada (ou alterada) depois que o código for confirmado.
         const { error, status } = await startEmailVerification(
             { email, via: 'register', name, phone, passwordHash },
-            existingUser?.emailVerified
-                ? {
-                    notice: {
+            {
+                ip,
+                notice: existingUser?.emailVerified
+                    ? {
                         subject: 'Você já tem uma conta na Consmel',
                         text: 'Recebemos um pedido de cadastro com este e-mail, mas ele já tem uma conta. Entre com sua senha ou com o Google. Se não foi você, ignore esta mensagem.',
-                    },
-                }
-                : undefined
+                    }
+                    : null,
+            }
         );
         if (error) return NextResponse.json({ error }, { status });
 

@@ -68,8 +68,9 @@ export async function GET(request) {
             return NextResponse.redirect(new URL('/login?error=email_unverified', base));
         }
 
-        let user = await prisma.user.findUnique({
-            where: { email: googleUser.email },
+        const email = String(googleUser.email).toLowerCase();
+        const user = await prisma.user.findUnique({
+            where: { email },
             select: {
                 id: true,
                 email: true,
@@ -84,9 +85,9 @@ export async function GET(request) {
         // Conta nova ou nunca verificada: confirma o e-mail antes de qualquer sessão.
         if (!user?.emailVerified) {
             const { error, status } = await startEmailVerification({
-                email: googleUser.email,
+                email,
                 via: 'google',
-                name: googleUser.name || googleUser.email.split('@')[0],
+                name: googleUser.name || email.split('@')[0],
             });
             const target = error
                 ? `/login?error=${status === 429 ? 'email_limit' : 'email_send_error'}`

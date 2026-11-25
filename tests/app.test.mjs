@@ -1,6 +1,7 @@
 // Testes de ponta a ponta do app compilado. Uso: npm run build && npm test
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 import { after, before, test } from 'node:test';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
@@ -168,16 +169,21 @@ test('ataque de vários IPs não trava navegador já conhecido', async () => {
 test('redefinição de senha: troca a senha e derruba sessões', async () => {
     const user = await createUser('esqueci@example.com');
     const oldSession = await sessionFor(user);
-    // E-mail bloqueado no teste: com ou sem conta a resposta é a mesma.
+    // E-mail bloqueado no teste: com ou sem conta a resposta é a mesma, e só a conta existente tenta enviar.
+    const mailErrors = () => server.state.logs.split('Verification email error').length - 1;
+    const before = mailErrors();
     const known = await post('/api/auth/forgot-password', { email: user.email });
     const unknown = await post('/api/auth/forgot-password', { email: 'ninguem@example.com' });
-    assert.deepEqual([known.status, unknown.status], [503, 503]);
+    assert.deepEqual([known.status, unknown.status], [200, 200]);
+    assert.ok(cookieFrom(unknown, 'pending_email'));
+    await wait();
+    assert.equal(mailErrors() - before, 1);
 
-    const code = '123456';
+    const code = '12345678';
     const codeMac = crypto.createHmac('sha256', JWT_SECRET).update(`email-code:${user.email}:${code}`).digest('hex');
     const cookie = `pending_email=${await sign({ email: user.email, via: 'reset', stage: 'email_pending', codeMac })}`;
     assert.equal((await post('/api/auth/verify-email', { token: code, password: 'curta' }, { cookie })).status, 400);
-    assert.equal((await post('/api/auth/verify-email', { token: '000000', password: NEW_PASSWORD }, { cookie })).status, 401);
+    assert.equal((await post('/api/auth/verify-email', { token: '00000000', password: NEW_PASSWORD }, { cookie })).status, 401);
     assert.equal((await post('/api/auth/verify-email', { token: code, password: NEW_PASSWORD }, { cookie })).status, 200);
 
     assert.equal((await call('/api/auth/2fa/generate', { cookie: oldSession })).status, 401);
@@ -201,6 +207,75 @@ test('2FA: desativar exige código e encerra as outras sessões', async () => {
     assert.equal(res.status, 200);
     assert.equal((await call('/api/auth/2fa/generate', { cookie })).status, 401);
     assert.equal((await call('/api/auth/2fa/generate', { cookie: cookieFrom(res, 'session') })).status, 200);
+});
+
+test('limite por IP: login certo devolve só a própria tentativa', async () => {
+    const user = await createUser('contador@example.com');
+    const ip = '10.77.0.1';
+    for (let i = 0; i < 3; i += 1) await post('/api/auth/login', { email: `alvo${i}@example.com`, password: 'errada' }, { ip });
+    assert.equal((await post('/api/auth/login', { email: user.email, password: PASSWORD }, { ip })).status, 200);
+    assert.equal((await rows('select count from rate_limits where "key" = $1', [`auth:${ip}`]))[0].count, 3);
+});
+
+test('e-mail: maiúsculas entram na mesma conta; migração normaliza sem colidir', async () => {
+    const user = await createUser('caixa@example.com');
+    assert.equal((await post('/api/auth/login', { email: ' Caixa@Example.com ', password: PASSWORD })).status, 200);
+    assert.ok(user.id);
+
+    for (const email of ['Mista@example.com', 'Dupla@example.com', 'dupla@example.com']) await createUser(email);
+    await db.exec(fs.readFileSync(new URL('../prisma/migrations/20261126000000_lowercase_user_email/migration.sql', import.meta.url), 'utf8'));
+    const emails = (await rows("select email from users where lower(email) in ('mista@example.com', 'dupla@example.com')")).map((r) => r.email).sort();
+    assert.deepEqual(emails, ['Dupla@example.com', 'dupla@example.com', 'mista@example.com']);
+});
+
+test('imóvel: edição com formulário multipart aplica os vídeos', async () => {
+    const video = 'https://loja.public.blob.vercel-storage.com/v.mp4';
+    await rows('insert into properties (id, title, "transactionType", category, price, videos, "updatedAt") values ($1, $2, $3, $4, 1, $5, now())', ['VID1', 'Casa', 'Venda', 'Casa', [video]]);
+    const form = new FormData();
+    form.append('title', 'Casa');
+    form.append('existingImageUrls', '[]');
+    form.append('videos', '[]');
+    assert.equal((await call('/api/properties/VID1', { method: 'PUT', form, cookie: adminCookie })).status, 200);
+    assert.deepEqual((await rows("select videos from properties where id = 'VID1'"))[0].videos, []);
+});
+
+test('formulários públicos: só JSON; IPv6 conta por /64', async () => {
+    for (const url of ['/api/contact', '/api/clients', '/api/lancamento-leads']) {
+        const res = await call(url, { method: 'POST', form: '{}', headers: { 'Content-Type': 'text/plain' } });
+        assert.equal(res.status, 415, url);
+    }
+    const statuses = [];
+    for (let i = 1; i <= 6; i += 1) {
+        const res = await post('/api/lancamento-leads', { name: 'Ana', email: 'v6@example.com', phone: '(17) 98888-0000' }, { ip: `2001:db8:1:1::${i}` });
+        statuses.push(res.status);
+    }
+    assert.deepEqual(statuses, [201, 201, 201, 201, 429, 429]);
+});
+
+test('2FA: ativar pede a senha e encerra as outras sessões', async () => {
+    const user = await createUser('ativa@example.com');
+    const cookie = await sessionFor(user);
+    const other = await sessionFor(user, { jti: 'outra' });
+    const { secret } = await (await call('/api/auth/2fa/generate?manualEntry=true', { cookie })).json();
+    const token = new OTPAuth.TOTP({ secret: OTPAuth.Secret.fromBase32(secret) }).generate();
+
+    assert.equal((await post('/api/auth/2fa/verify', { token }, { cookie })).status, 400);
+    assert.equal((await post('/api/auth/2fa/verify', { token, password: 'errada' }, { cookie })).status, 400);
+    const res = await post('/api/auth/2fa/verify', { token, password: PASSWORD }, { cookie });
+    assert.equal(res.status, 200);
+    assert.equal((await call('/api/auth/2fa/generate', { cookie: other })).status, 401);
+    assert.equal((await call('/api/auth/2fa/generate', { cookie: cookieFrom(res, 'session') })).status, 409);
+
+    const profile = await (await call('/perfil', { cookie: cookieFrom(res, 'session') })).text();
+    assert.doesNotMatch(profile, /\$2[aby]\$/);
+});
+
+test('sair invalida o token', async () => {
+    const user = await createUser('sair@example.com', { role: 'ADMIN' });
+    const cookie = await sessionFor(user);
+    assert.equal((await call('/api/stats', { cookie })).status, 200);
+    assert.equal((await call('/api/auth/logout', { method: 'POST', cookie })).status, 200);
+    assert.equal((await call('/api/stats', { cookie })).status, 403);
 });
 
 test('CSP: sem unsafe-inline em script e todo script com o nonce da resposta', async () => {

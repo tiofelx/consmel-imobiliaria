@@ -1,3 +1,7 @@
+// O id da loja do Blob está no token (lido no build). Sem ele, aceita qualquer loja.
+const blobStoreId = process.env.BLOB_READ_WRITE_TOKEN?.match(/^vercel_blob_rw_([A-Za-z0-9]+)_/)?.[1];
+const blobHostname = `${blobStoreId?.toLowerCase() ?? '*'}.public.blob.vercel-storage.com`;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Remove o header `X-Powered-By: Next.js` (fingerprint de framework).
@@ -51,7 +55,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.public.blob.vercel-storage.com',
+        hostname: blobHostname,
         pathname: '/**',
       },
     ],

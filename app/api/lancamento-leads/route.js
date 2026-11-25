@@ -3,8 +3,8 @@ import { safeLogError } from '@/lib/safe-log';
 import transporter from '@/lib/mailer';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
-import rateLimit from '@/lib/rate-limit';
-import { getClientIpFromHeaders } from '@/lib/request-security';
+import rateLimit, { allowFormNotice } from '@/lib/rate-limit';
+import { getClientIpFromHeaders, isJsonRequest } from '@/lib/request-security';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,6 +28,11 @@ function esc(s) {
 }
 
 export async function POST(request) {
+    // Outro site não consegue enviar application/json pelo navegador do visitante.
+    if (!isJsonRequest(request.headers)) {
+        return NextResponse.json({ error: 'Content-Type deve ser application/json.' }, { status: 415 });
+    }
+
     const ip = getClientIpFromHeaders(request.headers);
     const resForHeaders = new NextResponse();
 
@@ -82,7 +87,7 @@ async function notifyNewLead({ name, email, phone }) {
     const from = process.env.GMAIL_USER;
     const to = process.env.LANCAMENTO_NOTIFY_EMAIL || process.env.SECURITY_ALERT_EMAIL_TO;
 
-    if (!from || !to) return;
+    if (!from || !to || !(await allowFormNotice())) return;
 
     const date = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
     const waLink = `https://wa.me/55${phone.replace(/\D/g, '')}`;

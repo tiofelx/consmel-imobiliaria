@@ -4,7 +4,7 @@ import { verifySession } from '@/lib/auth';
 import { z } from 'zod';
 import rateLimit from '@/lib/rate-limit';
 import { flagSuspiciousSignup } from '@/lib/security';
-import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
+import { getClientIpFromHeaders, getClientUserAgentFromHeaders, isJsonRequest, logSecurityAttempt } from '@/lib/request-security';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,6 +46,11 @@ const clientSchema = z.object({
 
 export async function POST(request) {
     try {
+        // Outro site não consegue enviar application/json pelo navegador do visitante.
+        if (!isJsonRequest(request.headers)) {
+            return NextResponse.json({ error: 'Content-Type deve ser application/json.' }, { status: 415 });
+        }
+
         const ip = getClientIpFromHeaders(request.headers);
         const userAgent = getClientUserAgentFromHeaders(request.headers);
         const resForHeaders = new NextResponse();

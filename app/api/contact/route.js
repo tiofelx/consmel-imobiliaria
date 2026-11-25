@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { safeLogError } from '@/lib/safe-log';
 import prisma from '@/lib/prisma';
 import transporter from '@/lib/mailer';
-import rateLimit from '@/lib/rate-limit';
-import { getClientIpFromHeaders, logSecurityAttempt } from '@/lib/request-security';
+import rateLimit, { allowFormNotice } from '@/lib/rate-limit';
+import { getClientIpFromHeaders, isJsonRequest, logSecurityAttempt } from '@/lib/request-security';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +24,11 @@ const contactSchema = z.object({
 });
 
 export async function POST(request) {
+    // Outro site não consegue enviar application/json pelo navegador do visitante.
+    if (!isJsonRequest(request.headers)) {
+        return NextResponse.json({ error: 'Content-Type deve ser application/json.' }, { status: 415 });
+    }
+
     const ip = getClientIpFromHeaders(request.headers);
     const resForHeaders = new NextResponse();
 
@@ -81,7 +86,7 @@ async function notifyContact({ name, email, phone, phone2, message, propertyTitl
     const from = process.env.GMAIL_USER;
     const to = process.env.SECURITY_ALERT_EMAIL_TO;
 
-    if (!from || !to) return;
+    if (!from || !to || !(await allowFormNotice())) return;
 
     const date = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
 

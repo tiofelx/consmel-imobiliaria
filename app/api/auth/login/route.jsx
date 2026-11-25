@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import { startSession, getKnownDevice } from '@/lib/auth';
 import { hashPassword, verifyPassword } from '@/lib/hash';
 import { randomUUID } from 'crypto';
-import { consumeAttempt, resetRateLimit, consumeAccountAttempt, resetAccountAttempts, consumeTotpCode } from '@/lib/rate-limit';
+import { consumeAttempt, refundAttempt, resetRateLimit, consumeAccountAttempt, resetAccountAttempts, consumeTotpCode } from '@/lib/rate-limit';
 import { startEmailVerification } from '@/lib/email-verification';
 import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { verifyToken } from '@/lib/otp';
@@ -30,7 +30,7 @@ export async function POST(request) {
 
         const isBlocked = await checkIpBlocked(ip);
         if (isBlocked) {
-            logSecurityAttempt('blocked-ip-login', { ip, userAgent, route: '/api/auth/login', reason: 'IP already blocked', severity: 'critical' });
+            logSecurityAttempt('blocked-ip-login', { ip, userAgent, route: '/api/auth/login', reason: 'IP already blocked', severity: 'high' });
             return NextResponse.json(
                 { error: 'Acesso negado. Seu IP foi bloqueado por motivos de segurança.', isHackerAttempt: true },
                 { status: 403 }
@@ -46,9 +46,10 @@ export async function POST(request) {
             );
         }
 
-        const { email, password, token } = await request.json();
+        const { email: rawEmail, password, token } = await request.json();
+        const email = typeof rawEmail === 'string' ? rawEmail.trim().toLowerCase() : '';
 
-        if (typeof email !== 'string' || typeof password !== 'string' || !email || !password || email.length > 150) {
+        if (typeof password !== 'string' || !email || !password || email.length > 150) {
             return NextResponse.json(
                 { error: 'Email e senha são obrigatórios.' },
                 { status: 400 }
@@ -98,6 +99,7 @@ export async function POST(request) {
 
         if (user.twoFactorEnabled) {
             if (!token) {
+                await refundAttempt(ip);
                 return NextResponse.json(
                     { require2fa: true, message: 'Digite o código de verificação 2FA.' },
                     { status: 200 }
@@ -122,7 +124,7 @@ export async function POST(request) {
             }
         }
 
-        await resetRateLimit(ip);
+        await refundAttempt(ip);
         await resetAccountAttempts(email, ip, deviceId);
         if (user.twoFactorEnabled) await resetRateLimit(`2fa:${user.id}`);
 

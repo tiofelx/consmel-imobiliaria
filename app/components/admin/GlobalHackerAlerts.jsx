@@ -35,7 +35,8 @@ export default function GlobalHackerAlerts() {
 
         fetchAlerts();
 
-        const intervalId = setInterval(fetchAlerts, ALERT_POLL_INTERVAL_MS);
+        // Aba escondida não consulta; ao voltar, `since` traz o que ficou para trás.
+        const intervalId = setInterval(() => { if (!document.hidden) fetchAlerts(); }, ALERT_POLL_INTERVAL_MS);
 
         return () => clearInterval(intervalId);
     }, []);
