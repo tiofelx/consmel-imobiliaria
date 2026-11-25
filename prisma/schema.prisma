@@ -24,6 +24,7 @@ model User {
   name     String?
   role     String  @default("CLIENT") // "ADMIN" | "CLIENT"
   phone    String?
+  emailVerified DateTime?
 
   // 2FA Fields
   twoFactorEnabled Boolean @default(false)

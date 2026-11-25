@@ -37,7 +37,6 @@ const clientSchema = z.object({
     email: z.string().trim().email("E-mail inválido").max(150),
     phone: z.string().trim().max(20).optional().nullable(),
     interest: z.enum(["Compra", "Aluguel", "Cadastro de Imóvel"]).optional().nullable(),
-    status: z.enum(["Novo", "Em Negociação", "Visita Agendada", "Arquivado"]).optional().nullable(),
     notes: z.string().trim().max(1000).optional().nullable()
 });
 
@@ -73,7 +72,7 @@ export async function POST(request) {
                 email: validData.email,
                 phone: validData.phone || null,
                 interest: validData.interest || 'Compra',
-                status: validData.status || 'Novo',
+                status: 'Novo', // rota pública: o status é definido pela equipe
                 notes: validData.notes || null,
             },
         });

@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import { verifyPendingSession, createSession } from '@/lib/auth';
 import { verifyToken } from '@/lib/otp';
 import { decrypt } from '@/lib/encryption';
-import { checkRateLimit, incrementRateLimit, resetRateLimit } from '@/lib/rate-limit';
+import { consumeAttempt, resetRateLimit } from '@/lib/rate-limit';
 import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { cookies } from 'next/headers';
 import { safeLogError } from '@/lib/safe-log';
@@ -28,7 +28,7 @@ export async function POST(request) {
             );
         }
 
-        if (!(await checkRateLimit(ip))) {
+        if (!(await consumeAttempt(ip))) {
             logSecurityAttempt('rate-limit-2fa', { ip, userAgent, route: '/api/auth/2fa/login', reason: 'Too many invalid 2FA attempts', severity: 'critical' });
             await blockIpAndAlert(ip, 'Fouça bruta detectada no 2FA', '2fa-login', { userAgent });
             return NextResponse.json(
@@ -40,7 +40,6 @@ export async function POST(request) {
         const { token } = await request.json();
 
         if (!token) {
-            await incrementRateLimit(ip);
             return NextResponse.json({ error: 'Código 2FA obrigatório.' }, { status: 400 });
         }
 
@@ -48,6 +47,11 @@ export async function POST(request) {
 
         if (!pendingPayload || pendingPayload.stage !== '2fa_pending') {
             return NextResponse.json({ error: 'Sessão inválida ou expirada. Faça login novamente.' }, { status: 401 });
+        }
+
+        const accountKey = `acct:${String(pendingPayload.email).toLowerCase()}`;
+        if (!(await consumeAttempt(accountKey, 20))) {
+            return NextResponse.json({ error: 'Muitas tentativas para esta conta. Tente novamente em 1 hora.' }, { status: 429 });
         }
 
         const user = await prisma.user.findUnique({
@@ -81,11 +85,11 @@ export async function POST(request) {
         }
 
         if (!isValidResult?.valid) {
-            await incrementRateLimit(ip);
             return NextResponse.json({ error: 'Código 2FA incorreto.' }, { status: 401 });
         }
 
         await resetRateLimit(ip);
+        await resetRateLimit(accountKey);
         await createSession({
             userId: user.id,
             email: user.email,

@@ -12,8 +12,13 @@ const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/webm'];
 const MAX_VIDEO_SIZE_BYTES = 200 * 1024 * 1024;
 
 export async function POST(request) {
-    const session = await verifySession();
-    if (!session || session.role !== 'ADMIN') {
+    const body = await request.json();
+
+    // Só o pedido de token vem do navegador do admin. O aviso de upload concluído vem
+    // da Vercel, sem cookie, e é autenticado por assinatura dentro do handleUpload.
+    const isCompletion = body?.type === 'blob.upload-completed';
+    const session = isCompletion ? null : await verifySession();
+    if (!isCompletion && session?.role !== 'ADMIN') {
         logSecurityAttempt('unauthorized-upload-token', {
             ip: getClientIpFromHeaders(request.headers),
             userAgent: getClientUserAgentFromHeaders(request.headers),
@@ -23,8 +28,6 @@ export async function POST(request) {
         });
         return NextResponse.json({ error: 'Não autorizado' }, { status: 403 });
     }
-
-    const body = await request.json();
 
     try {
         const jsonResponse = await handleUpload({

@@ -3,7 +3,8 @@ import prisma from '@/lib/prisma';
 import { createSession } from '@/lib/auth';
 import { hashPassword, verifyPassword } from '@/lib/hash';
 import { randomUUID } from 'crypto';
-import { checkRateLimit, incrementRateLimit, resetRateLimit } from '@/lib/rate-limit';
+import { consumeAttempt, resetRateLimit } from '@/lib/rate-limit';
+import { startEmailVerification } from '@/lib/email-verification';
 import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { verifyToken } from '@/lib/otp';
 import { decrypt } from '@/lib/encryption';
@@ -13,6 +14,9 @@ import { getClientIpFromHeaders, getClientUserAgentFromHeaders, isJsonRequest, l
 // Hash de valor aleatório só para igualar o tempo de resposta quando o usuário não existe.
 let dummyHashPromise;
 const getDummyHash = () => (dummyHashPromise ??= hashPassword(randomUUID()));
+
+// Limite por conta, além do limite por IP: segura força bruta distribuída.
+const ACCOUNT_MAX_ATTEMPTS = 20;
 
 export async function POST(request) {
     try {
@@ -33,7 +37,7 @@ export async function POST(request) {
             );
         }
 
-        if (!(await checkRateLimit(ip))) {
+        if (!(await consumeAttempt(ip))) {
             logSecurityAttempt('rate-limit-login', { ip, userAgent, route: '/api/auth/login', reason: 'Too many failed login attempts', severity: 'critical' });
             await blockIpAndAlert(ip, 'Múltiplas tentativas de login falhas (Possível ataque de força bruta)', 'login', { userAgent });
             return NextResponse.json(
@@ -54,10 +58,18 @@ export async function POST(request) {
         const sqliPattern = /(\b(OR|AND|UNION|SELECT|DROP)\b)|([';*])/i;
         if (typeof email !== 'string' || sqliPattern.test(email)) {
             logSecurityAttempt('sqli-login-payload', { ip, userAgent, route: '/api/auth/login', reason: 'Detected SQLi/NoSQL payload in email field', severity: 'high' });
-            await incrementRateLimit(ip);
             return NextResponse.json(
                 { error: 'Formato de e-mail inválido.' },
                 { status: 400 }
+            );
+        }
+
+        const accountKey = `acct:${email.toLowerCase()}`;
+        if (!(await consumeAttempt(accountKey, ACCOUNT_MAX_ATTEMPTS))) {
+            logSecurityAttempt('rate-limit-account', { ip, userAgent, route: '/api/auth/login', reason: 'Too many attempts for one account', severity: 'high' });
+            return NextResponse.json(
+                { error: 'Muitas tentativas para esta conta. Tente novamente em 1 hora.' },
+                { status: 429 }
             );
         }
 
@@ -71,12 +83,12 @@ export async function POST(request) {
                 role: true,
                 twoFactorEnabled: true,
                 twoFactorSecret: true,
+                emailVerified: true,
             }
         });
 
         if (!user) {
             await verifyPassword(password, await getDummyHash());
-            await incrementRateLimit(ip);
             return NextResponse.json(
                 { error: 'Credenciais inválidas.' },
                 { status: 401 }
@@ -86,7 +98,6 @@ export async function POST(request) {
         const isValid = await verifyPassword(password, user.password);
 
         if (!isValid) {
-            await incrementRateLimit(ip);
             return NextResponse.json(
                 { error: 'Credenciais inválidas.' },
                 { status: 401 }
@@ -105,7 +116,6 @@ export async function POST(request) {
             const { valid } = await verifyToken({ token, secret, window: 1 });
 
             if (!valid) {
-                await incrementRateLimit(ip);
                 return NextResponse.json(
                     { error: 'Código 2FA inválido.' },
                     { status: 401 }
@@ -114,6 +124,13 @@ export async function POST(request) {
         }
 
         await resetRateLimit(ip);
+        await resetRateLimit(accountKey);
+
+        if (!user.emailVerified) {
+            const { error, status } = await startEmailVerification({ email: user.email, via: 'password' });
+            if (error) return NextResponse.json({ error }, { status });
+            return NextResponse.json({ requireEmailVerification: true });
+        }
 
         await createSession({
             userId: user.id,

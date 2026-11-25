@@ -12,6 +12,8 @@ import './login.css';
 function LoginForm() {
     const searchParams = useSearchParams();
     const is2FAPage = searchParams.get('action') === '2fa';
+    const isVerifyPage = searchParams.get('action') === 'verify';
+    const isCodePage = is2FAPage || isVerifyPage;
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -39,6 +41,8 @@ function LoginForm() {
                 token_error: 'Erro ao validar token do Google.',
                 user_info_error: 'Erro ao obter dados do usuário.',
                 server_error: 'Erro interno no servidor.',
+                email_send_error: 'Não foi possível enviar o código por e-mail. Tente novamente.',
+                email_limit: 'Muitos códigos enviados para este e-mail. Tente novamente em 1 hora.',
             };
             alert(errorMap[error] || 'Ocorreu um erro no login.');
         }
@@ -77,10 +81,10 @@ function LoginForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (is2FAPage) {
+        if (isCodePage) {
             setIsLoading(true);
             try {
-                const res2fa = await fetch('/api/auth/2fa/login', {
+                const res2fa = await fetch(isVerifyPage ? '/api/auth/verify-email' : '/api/auth/2fa/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token }),
@@ -129,6 +133,11 @@ function LoginForm() {
                 setIsLoading(false);
 
                 if (res.ok) {
+                    if (data.requireEmailVerification) {
+                        window.location.href = '/login?action=verify';
+                        return;
+                    }
+
                     if (data.require2fa) {
                         setIs2FARequired(true);
                         setToken('');
@@ -229,8 +238,7 @@ function LoginForm() {
                 setIsLoading(false);
 
                 if (res.ok) {
-                    alert('Cadastro realizado com sucesso! Você será redirecionado.');
-                    window.location.href = '/admin';
+                    window.location.href = '/login?action=verify';
                 } else {
                     alert(data.error || 'Erro ao realizar cadastro.');
                 }
@@ -332,11 +340,11 @@ function LoginForm() {
                                         style={{ width: '150px', height: '55px', objectFit: 'contain' }}
                                     />
                                 </div>
-                                <h2>{is2FAPage ? 'Verificação de Segurança' : (isLogin ? 'Entrar' : 'Criar Conta')}</h2>
-                                <p>{is2FAPage ? 'Digite o código do seu aplicativo autenticador.' : (isLogin ? 'Acesse sua conta para gerenciar seus imóveis' : 'Preencha seus dados para se cadastrar')}</p>
+                                <h2>{isVerifyPage ? 'Confirme seu e-mail' : is2FAPage ? 'Verificação de Segurança' : (isLogin ? 'Entrar' : 'Criar Conta')}</h2>
+                                <p>{isVerifyPage ? 'Digite o código de 6 dígitos que enviamos para o seu e-mail.' : is2FAPage ? 'Digite o código do seu aplicativo autenticador.' : (isLogin ? 'Acesse sua conta para gerenciar seus imóveis' : 'Preencha seus dados para se cadastrar')}</p>
                             </div>
 
-                            {!is2FAPage && (
+                            {!isCodePage && (
                                 <>
                                     <div className="social-login social-login-primary">
                                         <a href="/api/auth/google" className="social-btn google" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -360,9 +368,9 @@ function LoginForm() {
                             )}
 
                             <form onSubmit={handleSubmit} className="login-form">
-                                {is2FAPage ? (
+                                {isCodePage ? (
                                      <div className="form-group">
-                                        <label htmlFor="token">Código 2FA</label>
+                                        <label htmlFor="token">{isVerifyPage ? 'Código recebido por e-mail' : 'Código 2FA'}</label>
                                         <div className="input-wrapper">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -586,7 +594,7 @@ function LoginForm() {
                                     {isLoading ? (
                                         <span className="loading-spinner"></span>
                                     ) : (
-                                        is2FAPage ? 'Verificar' : (isLogin ? (is2FARequired ? 'Verificar' : 'Entrar') : 'Criar Conta')
+                                        isCodePage ? 'Verificar' : (isLogin ? (is2FARequired ? 'Verificar' : 'Entrar') : 'Criar Conta')
                                     )}
                                 </button>
                             </form>

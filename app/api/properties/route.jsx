@@ -95,7 +95,7 @@ export async function POST(request) {
         const keys = [
             'title', 'description', 'transactionType', 'category',
             'cep', 'street', 'number', 'complement', 'neighborhood', 'city', 'state', 'features',
-            'latitude', 'longitude'
+            'latitude', 'longitude', 'videos'
         ];
 
         keys.forEach(key => {

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { createSession } from '@/lib/auth';
+import { startEmailVerification } from '@/lib/email-verification';
 import { hashPassword } from '@/lib/hash';
-import { checkRateLimit, incrementRateLimit, resetRateLimit } from '@/lib/rate-limit';
+import { consumeAttempt } from '@/lib/rate-limit';
 import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import xss from 'xss';
 import { z } from 'zod';
@@ -27,8 +27,6 @@ export async function POST(request) {
         const ip = getClientIpFromHeaders(requestHeaders);
         const userAgent = getClientUserAgentFromHeaders(requestHeaders);
 
-        await incrementRateLimit(ip);
-
         const isBlocked = await checkIpBlocked(ip);
         if (isBlocked) {
             logSecurityAttempt('blocked-ip-register', { ip, userAgent, route: '/api/auth/register', reason: 'IP already blocked', severity: 'critical' });
@@ -38,7 +36,7 @@ export async function POST(request) {
             );
         }
 
-        if (!(await checkRateLimit(ip))) {
+        if (!(await consumeAttempt(ip))) {
             logSecurityAttempt('rate-limit-register', { ip, userAgent, route: '/api/auth/register', reason: 'Too many registration attempts', severity: 'critical' });
             await blockIpAndAlert(ip, 'Múltiplas tentativas abusivas de acesso', 'register', { userAgent });
             return NextResponse.json(
@@ -89,69 +87,20 @@ export async function POST(request) {
 
         const existingUser = await prisma.user.findUnique({
             where: { email },
-            select: { id: true, password: true },
+            select: { emailVerified: true },
         });
 
-        if (existingUser) {
-            if (!existingUser.password) {
-                return NextResponse.json(
-                    {
-                        error: 'Esta conta foi criada com o Google. Clique em "Continuar com Google" para entrar.',
-                        isOAuthAccount: true,
-                    },
-                    { status: 409 }
-                );
-            }
-            return NextResponse.json(
-                { error: 'Este e-mail já está cadastrado.' },
-                { status: 409 }
-            );
-        }
+        // Gera o hash nos dois casos para o tempo de resposta não revelar contas.
+        const passwordHash = await hashPassword(password);
 
-        const hashedPassword = await hashPassword(password);
-
-        const result = await prisma.$transaction(async (tx) => {
-            const user = await tx.user.create({
-                data: {
-                    name,
-                    email,
-                    password: hashedPassword,
-                    role: 'CLIENT',
-                },
-                select: { id: true, name: true, email: true, role: true },
-            });
-
-            const existingClient = await tx.client.findFirst({
-                where: { email }
-            });
-
-            let client;
-            if (!existingClient) {
-                client = await tx.client.create({
-                    data: {
-                        name,
-                        email,
-                        phone,
-                        interest: 'Compra',
-                        status: 'Novo',
-                    },
-                });
-            }
-
-            return { user, client };
-        });
-
-        await createSession({
-            userId: result.user.id,
-            email: result.user.email,
-            role: result.user.role,
-            name: result.user.name
-        });
-
-        return NextResponse.json(
-            { message: 'Cadastro realizado com sucesso!', user: { name: result.user.name, email: result.user.email } },
-            { status: 201 }
+        // A conta só é criada (ou alterada) depois que o código for confirmado.
+        const { error, status } = await startEmailVerification(
+            { email, via: 'register', name, phone, passwordHash },
+            { accountExists: Boolean(existingUser?.emailVerified) }
         );
+        if (error) return NextResponse.json({ error }, { status });
+
+        return NextResponse.json({ requireEmailVerification: true });
     } catch (error) {
         safeLogError('Error registering user in API', error);
         return NextResponse.json({ error: 'Erro ao realizar cadastro' }, { status: 500 });

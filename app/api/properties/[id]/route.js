@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { del } from '@vercel/blob';
 import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
@@ -341,9 +342,17 @@ export async function DELETE(request, { params }) {
         }
 
         const { id } = await params;
-        await prisma.property.delete({
+        const deleted = await prisma.property.delete({
             where: { id },
+            include: { images: true },
         });
+
+        const blobUrls = [...deleted.images.map((image) => image.url), ...deleted.videos]
+            .filter((url) => VERCEL_BLOB_URL_PATTERN.test(url));
+        if (blobUrls.length > 0) {
+            // O imóvel já foi excluído: falha aqui só deixa arquivo órfão.
+            await del(blobUrls).catch((error) => safeLogError('Error deleting property blobs', error));
+        }
 
         return NextResponse.json({ message: 'Imóvel excluído com sucesso' });
     } catch (error) {

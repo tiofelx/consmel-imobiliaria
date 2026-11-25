@@ -11,13 +11,14 @@ const limiter = rateLimit({ uniqueTokenPerInterval: 500, interval: 60000 });
 
 const alertSchema = z.object({
     type: z.enum(["fraud", "suspicious_password", "ddd_mismatch", "location_mismatch"]).optional(),
-    severity: z.enum(["low", "medium", "high", "critical"]).optional(),
-    source: z.string().min(1).max(100),
+    // "critical" é reservado ao servidor.
+    severity: z.enum(["low", "medium", "high"]).optional(),
+    source: z.enum(["register", "cadastro-imovel"]),
     name: z.string().max(150).optional().nullable(),
     email: z.string().email().max(150).optional().nullable(),
     phone: z.string().max(30).optional().nullable(),
     address: z.string().max(300).optional().nullable(),
-    reasons: z.array(z.string()).optional()
+    reasons: z.array(z.string().max(300)).max(10).optional()
 });
 
 export async function GET(request) {

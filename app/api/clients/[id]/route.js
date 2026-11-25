@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
-import { parsePositiveIntId, getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
+import { parseRecordId, getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
 
 export async function GET(request, { params }) {
     try {
@@ -17,7 +17,7 @@ export async function GET(request, { params }) {
         }
 
         const { id } = await params;
-        const parsedId = parsePositiveIntId(id);
+        const parsedId = parseRecordId(id);
         if (!parsedId) {
             return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
         }
@@ -50,7 +50,7 @@ export async function PUT(request, { params }) {
         }
 
         const { id } = await params;
-        const parsedId = parsePositiveIntId(id);
+        const parsedId = parseRecordId(id);
         if (!parsedId) {
             return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
         }
@@ -90,7 +90,7 @@ export async function DELETE(request, { params }) {
         }
 
         const { id } = await params;
-        const parsedId = parsePositiveIntId(id);
+        const parsedId = parseRecordId(id);
         if (!parsedId) {
             return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
         }

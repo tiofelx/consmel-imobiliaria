@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { createSession, createPendingSession } from '@/lib/auth';
+import { startEmailVerification } from '@/lib/email-verification';
 import { cookies } from 'next/headers';
 import { safeLogError, sanitizeForLog } from '@/lib/safe-log';
 
@@ -73,44 +74,21 @@ export async function GET(request) {
                 name: true,
                 role: true,
                 twoFactorEnabled: true,
+                emailVerified: true,
             }
         });
 
-        if (!user) {
-            const result = await prisma.$transaction(async (tx) => {
-                const newUser = await tx.user.create({
-                    data: {
-                        name: googleUser.name,
-                        email: googleUser.email,
-                        password: '',
-                        role: 'CLIENT',
-                    },
-                    select: {
-                        id: true,
-                        email: true,
-                        name: true,
-                        role: true,
-                        twoFactorEnabled: true,
-                    }
-                });
-
-                const existingClient = await tx.client.findFirst({
-                    where: { email: googleUser.email }
-                });
-
-                if (!existingClient) {
-                    await tx.client.create({
-                        data: {
-                            name: googleUser.name,
-                            email: googleUser.email,
-                            interest: 'Compra',
-                            status: 'Novo',
-                        },
-                    });
-                }
-                return newUser;
+        // Conta nova ou nunca verificada: confirma o e-mail antes de qualquer sessão.
+        if (!user?.emailVerified) {
+            const { error, status } = await startEmailVerification({
+                email: googleUser.email,
+                via: 'google',
+                name: googleUser.name || googleUser.email.split('@')[0],
             });
-            user = result;
+            const target = error
+                ? `/login?error=${status === 429 ? 'email_limit' : 'email_send_error'}`
+                : '/login?action=verify';
+            return NextResponse.redirect(new URL(target, request.url));
         }
 
         if (user.twoFactorEnabled) {
