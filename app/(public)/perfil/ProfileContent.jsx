@@ -18,7 +18,7 @@ export default function ProfileContent({ user }) {
         setLoading(true);
         setError('');
         try {
-            const res = await fetch('/api/auth/2fa/generate');
+            const res = await fetch('/api/auth/2fa/generate?manualEntry=true');
             const data = await res.json();
 
             if (res.ok) {
