@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { verifySession } from '@/lib/auth';
+import { requireAdmin } from '@/lib/auth';
 import './page.css';
 import prisma from '@/lib/prisma';
 
@@ -59,8 +59,8 @@ async function getStats() {
 }
 
 export default async function AdminDashboard() {
-  const session = await verifySession();
-  const userName = session?.name || 'Admin';
+  const session = await requireAdmin();
+  const userName = session.name || 'Admin';
   const stats = await getStats();
 
   return (

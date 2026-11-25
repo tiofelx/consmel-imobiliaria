@@ -52,16 +52,6 @@ export async function POST(request) {
             const zodErrors = parsedData.error?.errors || parsedData.error?.issues || [];
             console.warn('Tentativa de injeção ou dados inválidos de IP: %s', ip, sanitizeForLog(zodErrors));
 
-            const hasInvalidName = zodErrors.some(e => e?.path?.includes('name') && e?.code === 'invalid_string' && e?.validation === 'regex');
-            if (hasInvalidName) {
-                logSecurityAttempt('xss-register-name', { ip, userAgent, route: '/api/auth/register', reason: 'Invalid name payload matched injection pattern', severity: 'critical' });
-                await blockIpAndAlert(ip, `Tentativa XSS/Injeção bloqueada pelo Zod no nome: ${data?.name}`, 'register', { userAgent });
-                return NextResponse.json(
-                    { error: 'O nome contém caracteres inválidos. Apenas letras e espaços são permitidos.' },
-                    { status: 400 }
-                );
-            }
-
             return NextResponse.json({
                 error: 'Dados de cadastro inválidos',
                 details: zodErrors

@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import { createSession } from '@/lib/auth';
 import { hashPassword, verifyPassword } from '@/lib/hash';
 import { randomUUID } from 'crypto';
-import { consumeAttempt, resetRateLimit } from '@/lib/rate-limit';
+import { consumeAttempt, resetRateLimit, consumeAccountAttempt, resetAccountAttempts, consumeTotpCode } from '@/lib/rate-limit';
 import { startEmailVerification } from '@/lib/email-verification';
 import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { verifyToken } from '@/lib/otp';
@@ -15,8 +15,8 @@ import { getClientIpFromHeaders, getClientUserAgentFromHeaders, isJsonRequest, l
 let dummyHashPromise;
 const getDummyHash = () => (dummyHashPromise ??= hashPassword(randomUUID()));
 
-// Limite por conta, além do limite por IP: segura força bruta distribuída.
-const ACCOUNT_MAX_ATTEMPTS = 20;
+// Só quem acertou a senha chega aqui: terceiros não conseguem gastar este limite.
+const TWO_FACTOR_MAX_ATTEMPTS = 20;
 
 export async function POST(request) {
     try {
@@ -48,24 +48,14 @@ export async function POST(request) {
 
         const { email, password, token } = await request.json();
 
-        if (!email || !password) {
+        if (typeof email !== 'string' || typeof password !== 'string' || !email || !password || email.length > 150) {
             return NextResponse.json(
                 { error: 'Email e senha são obrigatórios.' },
                 { status: 400 }
             );
         }
 
-        const sqliPattern = /(\b(OR|AND|UNION|SELECT|DROP)\b)|([';*])/i;
-        if (typeof email !== 'string' || sqliPattern.test(email)) {
-            logSecurityAttempt('sqli-login-payload', { ip, userAgent, route: '/api/auth/login', reason: 'Detected SQLi/NoSQL payload in email field', severity: 'high' });
-            return NextResponse.json(
-                { error: 'Formato de e-mail inválido.' },
-                { status: 400 }
-            );
-        }
-
-        const accountKey = `acct:${email.toLowerCase()}`;
-        if (!(await consumeAttempt(accountKey, ACCOUNT_MAX_ATTEMPTS))) {
+        if (!(await consumeAccountAttempt(email, ip))) {
             logSecurityAttempt('rate-limit-account', { ip, userAgent, route: '/api/auth/login', reason: 'Too many attempts for one account', severity: 'high' });
             return NextResponse.json(
                 { error: 'Muitas tentativas para esta conta. Tente novamente em 1 hora.' },
@@ -112,10 +102,17 @@ export async function POST(request) {
                 );
             }
 
+            if (!(await consumeAttempt(`2fa:${user.id}`, TWO_FACTOR_MAX_ATTEMPTS))) {
+                return NextResponse.json(
+                    { error: 'Muitas tentativas para esta conta. Tente novamente em 1 hora.' },
+                    { status: 429 }
+                );
+            }
+
             const secret = decrypt(user.twoFactorSecret);
             const { valid } = await verifyToken({ token, secret, window: 1 });
 
-            if (!valid) {
+            if (!valid || !(await consumeTotpCode(user.id, token))) {
                 return NextResponse.json(
                     { error: 'Código 2FA inválido.' },
                     { status: 401 }
@@ -124,7 +121,8 @@ export async function POST(request) {
         }
 
         await resetRateLimit(ip);
-        await resetRateLimit(accountKey);
+        await resetAccountAttempts(email, ip);
+        if (user.twoFactorEnabled) await resetRateLimit(`2fa:${user.id}`);
 
         if (!user.emailVerified) {
             const { error, status } = await startEmailVerification({ email: user.email, via: 'password' });

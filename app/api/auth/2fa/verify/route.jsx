@@ -20,9 +20,14 @@ export async function POST(request) {
 
         const user = await prisma.user.findUnique({ 
             where: { id: session.userId },
-            select: { id: true, twoFactorSecret: true } 
+            select: { id: true, twoFactorSecret: true, twoFactorEnabled: true } 
         });
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
+        // Esta rota só ativa o 2FA; depois disso viraria teste de código sem limite.
+        if (user.twoFactorEnabled) {
+            return NextResponse.json({ error: '2FA já está ativo.' }, { status: 409 });
+        }
 
         if (!user.twoFactorSecret) {
             return NextResponse.json({ error: '2FA setup not initiated' }, { status: 400 });

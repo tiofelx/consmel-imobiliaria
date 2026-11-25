@@ -48,8 +48,8 @@ export async function POST(request) {
 
         const session = { userId: user.id, email: user.email, role: user.role, name: user.name };
 
-        // No login com senha o 2FA já foi conferido; no Google ele vem agora.
-        if (pending.via === 'google' && user.twoFactorEnabled) {
+        // No login com senha o 2FA já foi conferido; nos outros caminhos ele vem agora.
+        if (pending.via !== 'password' && user.twoFactorEnabled) {
             await createPendingSession({ ...session, stage: '2fa_pending' });
             return NextResponse.json({ redirectUrl: '/login?action=2fa' });
         }

@@ -56,14 +56,14 @@ async function main() {
       expectedStatus: 400,
     },
     {
-      name: 'Reject SQLi-like login email',
+      name: 'SQLi-like login email gets no session',
       path: '/api/auth/login',
       method: 'POST',
       body: {
         email: "admin@consmel.com' OR 1=1 --",
         password: 'StrongPassword123',
       },
-      expectedStatus: 403,
+      expectedStatus: 401,
     },
   ];
 

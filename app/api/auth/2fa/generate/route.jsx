@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import QRCode from 'qrcode';
 import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
-import { encrypt, decrypt } from '@/lib/encryption';
+import { encrypt } from '@/lib/encryption';
 import { safeLogError } from '@/lib/safe-log';
-import { verifyToken, authenticator, generateURI } from '@/lib/otp';
+import { authenticator, generateURI } from '@/lib/otp';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
 
 async function buildEnrollmentResponse(user, includeSecret) {
@@ -52,7 +52,7 @@ export async function GET(request) {
                 severity: 'high',
             });
             return NextResponse.json(
-                { error: '2FA já está ativo. Para regenerar, use POST com o código atual.' },
+                { error: '2FA já está ativo.' },
                 { status: 409 }
             );
         }
@@ -63,58 +63,5 @@ export async function GET(request) {
     } catch (error) {
         safeLogError('2FA Generate Error', error);
         return NextResponse.json({ error: 'Failed to generate 2FA' }, { status: 500 });
-    }
-}
-
-export async function POST(request) {
-    try {
-        const session = await verifySession();
-        if (!session) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const body = await request.json().catch(() => ({}));
-        const currentToken = body?.currentToken;
-        const includeSecret = body?.manualEntry === true;
-
-        if (!currentToken || typeof currentToken !== 'string') {
-            return NextResponse.json(
-                { error: 'currentToken é obrigatório para regenerar 2FA.' },
-                { status: 400 }
-            );
-        }
-
-        const user = await prisma.user.findUnique({
-            where: { id: session.userId },
-            select: { id: true, email: true, twoFactorEnabled: true, twoFactorSecret: true },
-        });
-        if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
-
-        if (!user.twoFactorEnabled || !user.twoFactorSecret) {
-            return NextResponse.json(
-                { error: '2FA não está ativo nesta conta. Use GET para configurar pela primeira vez.' },
-                { status: 400 }
-            );
-        }
-
-        const existingSecret = decrypt(user.twoFactorSecret);
-        const { valid } = await verifyToken({ token: currentToken, secret: existingSecret, window: 1 });
-
-        if (!valid) {
-            logSecurityAttempt('2fa-regenerate-invalid-token', {
-                ip: getClientIpFromHeaders(request.headers),
-                userAgent: getClientUserAgentFromHeaders(request.headers),
-                route: '/api/auth/2fa/generate',
-                reason: 'Regeneration attempt with invalid current token',
-                severity: 'high',
-            });
-            return NextResponse.json({ error: 'Código atual inválido.' }, { status: 401 });
-        }
-
-        return await buildEnrollmentResponse(user, includeSecret);
-
-    } catch (error) {
-        safeLogError('2FA Regenerate Error', error);
-        return NextResponse.json({ error: 'Failed to regenerate 2FA' }, { status: 500 });
     }
 }

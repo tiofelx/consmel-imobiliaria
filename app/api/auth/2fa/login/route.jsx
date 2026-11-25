@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import { verifyPendingSession, createSession } from '@/lib/auth';
 import { verifyToken } from '@/lib/otp';
 import { decrypt } from '@/lib/encryption';
-import { consumeAttempt, resetRateLimit } from '@/lib/rate-limit';
+import { consumeAttempt, resetRateLimit, consumeTotpCode } from '@/lib/rate-limit';
 import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { cookies } from 'next/headers';
 import { safeLogError } from '@/lib/safe-log';
@@ -49,8 +49,9 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Sessão inválida ou expirada. Faça login novamente.' }, { status: 401 });
         }
 
-        const accountKey = `acct:${String(pendingPayload.email).toLowerCase()}`;
-        if (!(await consumeAttempt(accountKey, 20))) {
+        // Mesmo contador do 2FA no login com senha. Só chega aqui quem já passou o 1º fator.
+        const codeKey = `2fa:${pendingPayload.userId}`;
+        if (!(await consumeAttempt(codeKey, 20))) {
             return NextResponse.json({ error: 'Muitas tentativas para esta conta. Tente novamente em 1 hora.' }, { status: 429 });
         }
 
@@ -84,12 +85,12 @@ export async function POST(request) {
             throw verErr;
         }
 
-        if (!isValidResult?.valid) {
+        if (!isValidResult?.valid || !(await consumeTotpCode(user.id, token))) {
             return NextResponse.json({ error: 'Código 2FA incorreto.' }, { status: 401 });
         }
 
         await resetRateLimit(ip);
-        await resetRateLimit(accountKey);
+        await resetRateLimit(codeKey);
         await createSession({
             userId: user.id,
             email: user.email,

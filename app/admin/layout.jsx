@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { verifySession } from '@/lib/auth';
+import { requireAdmin } from '@/lib/auth';
 import AdminSidebar from '@/app/components/admin/AdminSidebar';
 import AdminNavLinks from '@/app/components/admin/AdminNavLinks';
 import AdminMobileMenu from '@/app/components/admin/AdminMobileMenu';
@@ -9,8 +9,8 @@ import GlobalHackerAlerts from '@/app/components/admin/GlobalHackerAlerts';
 import './admin.css';
 
 export default async function AdminLayout({ children }) {
-  const session = await verifySession();
-  const userName = session?.name || 'Admin';
+  const session = await requireAdmin();
+  const userName = session.name || 'Admin';
 
   return (
     <div className="admin-container">
