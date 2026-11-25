@@ -6,24 +6,26 @@ import { cookies } from 'next/headers';
 import { safeLogError, sanitizeForLog } from '@/lib/safe-log';
 
 export async function GET(request) {
+    // Atrás de proxy próprio, request.url aponta para localhost: usa o endereço público.
+    const base = process.env.NEXT_PUBLIC_BASE_URL || request.url;
     const searchParams = request.nextUrl.searchParams;
     const code = searchParams.get('code');
     const state = searchParams.get('state');
     const error = searchParams.get('error');
 
     if (error) {
-        return NextResponse.redirect(new URL('/login?error=oauth_error', request.url));
+        return NextResponse.redirect(new URL('/login?error=oauth_error', base));
     }
 
     if (!code || !state) {
-        return NextResponse.redirect(new URL('/login?error=missing_params', request.url));
+        return NextResponse.redirect(new URL('/login?error=missing_params', base));
     }
 
     const cookieStore = await cookies();
     const storedState = cookieStore.get('oauth_state')?.value;
 
     if (!storedState || state !== storedState) {
-        return NextResponse.redirect(new URL('/login?error=invalid_state', request.url));
+        return NextResponse.redirect(new URL('/login?error=invalid_state', base));
     }
 
     cookieStore.delete('oauth_state');
@@ -49,7 +51,7 @@ export async function GET(request) {
 
         if (!tokenResponse.ok) {
             console.error('Google Token Error', sanitizeForLog(tokens));
-            return NextResponse.redirect(new URL('/login?error=token_error', request.url));
+            return NextResponse.redirect(new URL('/login?error=token_error', base));
         }
 
         const userResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
@@ -59,11 +61,11 @@ export async function GET(request) {
         const googleUser = await userResponse.json();
 
         if (!userResponse.ok) {
-            return NextResponse.redirect(new URL('/login?error=user_info_error', request.url));
+            return NextResponse.redirect(new URL('/login?error=user_info_error', base));
         }
 
         if (googleUser.email_verified !== true || !googleUser.email) {
-            return NextResponse.redirect(new URL('/login?error=email_unverified', request.url));
+            return NextResponse.redirect(new URL('/login?error=email_unverified', base));
         }
 
         let user = await prisma.user.findUnique({
@@ -89,7 +91,7 @@ export async function GET(request) {
             const target = error
                 ? `/login?error=${status === 429 ? 'email_limit' : 'email_send_error'}`
                 : '/login?action=verify';
-            return NextResponse.redirect(new URL(target, request.url));
+            return NextResponse.redirect(new URL(target, base));
         }
 
         if (user.twoFactorEnabled) {
@@ -104,19 +106,19 @@ export async function GET(request) {
                 stage: '2fa_pending'
             });
 
-            return NextResponse.redirect(new URL('/login?action=2fa', request.url));
+            return NextResponse.redirect(new URL('/login?action=2fa', base));
         }
 
         await startSession(user);
 
         if (user.role === 'ADMIN') {
-            return NextResponse.redirect(new URL('/admin', request.url));
+            return NextResponse.redirect(new URL('/admin', base));
         } else {
-            return NextResponse.redirect(new URL('/', request.url));
+            return NextResponse.redirect(new URL('/', base));
         }
 
     } catch (error) {
         safeLogError('OAuth Callback Error', error);
-        return NextResponse.redirect(new URL('/login?error=server_error', request.url));
+        return NextResponse.redirect(new URL('/login?error=server_error', base));
     }
 }
