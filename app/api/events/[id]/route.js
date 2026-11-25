@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
+import { eventSchema } from '@/lib/admin-schemas';
 
 const CUID_RE = /^c[a-z0-9]{20,30}$/;
 
@@ -27,7 +28,11 @@ export async function PUT(request, { params }) {
             return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
         }
 
-        const data = await request.json();
+        const parsed = eventSchema.safeParse(await request.json());
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.issues }, { status: 400 });
+        }
+        const data = parsed.data;
 
         const duration = Number.isInteger(data.duration) && data.duration > 0
             ? Math.min(data.duration, 24 * 60)

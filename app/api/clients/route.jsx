@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
 import { z } from 'zod';
 import rateLimit from '@/lib/rate-limit';
+import { flagSuspiciousSignup } from '@/lib/security';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
 
 export const dynamic = 'force-dynamic';
@@ -37,6 +38,8 @@ const clientSchema = z.object({
     email: z.string().trim().email("E-mail inválido").max(150),
     phone: z.string().trim().max(20).optional().nullable(),
     interest: z.enum(["Compra", "Aluguel", "Cadastro de Imóvel", "Solicitação"]).optional().nullable(),
+    // Usado só na checagem de fraude do cadastro de imóvel; não é gravado em coluna própria.
+    address: z.string().trim().max(300).optional().nullable(),
     // Folga para os formulários, que juntam vários campos aqui.
     notes: z.string().trim().max(2000).optional().nullable()
 });
@@ -77,6 +80,10 @@ export async function POST(request) {
                 notes: validData.notes || null,
             },
         });
+
+        if (validData.interest === 'Cadastro de Imóvel') {
+            await flagSuspiciousSignup(validData, 'cadastro-imovel');
+        }
 
         const response = NextResponse.json(client, { status: 201 });
         resForHeaders.headers.forEach((value, key) => response.headers.set(key, value));

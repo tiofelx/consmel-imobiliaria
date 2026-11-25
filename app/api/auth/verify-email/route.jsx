@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createSession, createPendingSession, verifyPendingEmail } from '@/lib/auth';
+import { startSession, createPendingSession, verifyPendingEmail, getKnownDevice } from '@/lib/auth';
+import { hashPassword } from '@/lib/hash';
 import { codeMatches, confirmAccount } from '@/lib/email-verification';
-import { consumeAttempt, resetRateLimit } from '@/lib/rate-limit';
+import { consumeAttempt, resetRateLimit, resetAccountAttempts } from '@/lib/rate-limit';
 import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
 import { safeLogError } from '@/lib/safe-log';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, isJsonRequest, logSecurityAttempt } from '@/lib/request-security';
@@ -28,10 +29,16 @@ export async function POST(request) {
             return fail('Muitas tentativas. Seu acesso foi bloqueado.', 403);
         }
 
-        const { token } = await request.json();
+        const { token, password } = await request.json();
         const pending = await verifyPendingEmail();
 
         if (!pending) return fail('Sessão expirada. Comece novamente.', 401);
+
+        const isReset = pending.via === 'reset';
+        // Antes de gastar uma tentativa do código: senha fraca não deve consumir o limite.
+        if (isReset && (typeof password !== 'string' || password.length < 8 || password.length > 100)) {
+            return fail('A senha deve ter entre 8 e 100 caracteres.', 400);
+        }
 
         if (!(await consumeAttempt(`code:${pending.codeMac}`, MAX_GUESSES_PER_CODE))) {
             return fail('Muitas tentativas para este código. Comece novamente para receber outro.', 429);
@@ -39,22 +46,21 @@ export async function POST(request) {
 
         if (!codeMatches(pending, String(token ?? ''))) return fail('Código incorreto.', 401);
 
-        const user = await confirmAccount(pending);
+        const user = await confirmAccount(isReset ? { ...pending, passwordHash: await hashPassword(password) } : pending);
         (await cookies()).delete('pending_email');
 
         if (!user) return fail('Não foi possível confirmar. Entre com sua conta.', 409);
 
         await resetRateLimit(ip);
-
-        const session = { userId: user.id, email: user.email, role: user.role, name: user.name };
+        if (isReset) await resetAccountAttempts(user.email, ip, await getKnownDevice(user.email));
 
         // No login com senha o 2FA já foi conferido; nos outros caminhos ele vem agora.
         if (pending.via !== 'password' && user.twoFactorEnabled) {
-            await createPendingSession({ ...session, stage: '2fa_pending' });
+            await createPendingSession({ userId: user.id, email: user.email, role: user.role, name: user.name, stage: '2fa_pending' });
             return NextResponse.json({ redirectUrl: '/login?action=2fa' });
         }
 
-        await createSession(session);
+        await startSession(user);
         return NextResponse.json({ redirectUrl: user.role === 'ADMIN' ? '/admin' : '/' });
     } catch (error) {
         safeLogError('Verify email error', error);

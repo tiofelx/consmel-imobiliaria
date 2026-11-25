@@ -119,7 +119,7 @@ export default function LancamentoPage() {
             }
             setFormData(prev => ({ ...prev, phone: formatted }));
         } else if (name === 'name') {
-            const filtered = value.replace(/[^a-zA-ZÀ-ÿ\s'-]/g, '');
+            const filtered = value.replace(/[^a-zA-ZÀ-ÿ\s'.-]/g, '');
             setFormData(prev => ({ ...prev, name: filtered }));
         } else if (name === 'email') {
             setFormData(prev => ({ ...prev, email: value.replace(/\s/g, '') }));

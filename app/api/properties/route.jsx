@@ -5,52 +5,12 @@ import { verifySession } from '@/lib/auth';
 import { safeLogError } from '@/lib/safe-log';
 import { uploadImageToBlob, UploadValidationError } from '@/lib/upload-blob';
 import { geocodeAddress } from '@/lib/geocode';
+import { parseBrazilianNumber } from '@/lib/validations';
+import { toPublicProperty } from '@/lib/public-property';
+import { deleteBlobs } from '@/lib/upload-blob';
 
 export const revalidate = 60;
 export const dynamic = 'force-dynamic';
-
-function toPublicCoordinate(value) {
-    if (!Number.isFinite(value)) return null;
-    return Number(value.toFixed(3));
-}
-
-function buildLocationLabel(property) {
-    const cityState = [property.city, property.state].filter(Boolean).join(' - ');
-    return [property.neighborhood, cityState].filter(Boolean).join(', ');
-}
-
-function toPublicProperty(property) {
-    return {
-        id: property.id,
-        title: property.title,
-        description: property.description,
-        transactionType: property.transactionType,
-        category: property.category,
-        type: property.category,
-        price: property.price,
-        condoFee: property.condoFee,
-        iptu: property.iptu,
-        bedrooms: property.bedrooms,
-        suites: property.suites,
-        bathrooms: property.bathrooms,
-        parkingSpaces: property.parkingSpaces,
-        usableArea: property.usableArea,
-        totalArea: property.totalArea,
-        area: property.usableArea || property.totalArea,
-        features: property.features,
-        neighborhood: property.neighborhood,
-        city: property.city,
-        state: property.state,
-        location: buildLocationLabel(property),
-        image: property.images?.[0]?.url || null,
-        images: property.images,
-        videos: property.videos || [],
-        lat: toPublicCoordinate(property.latitude),
-        lng: toPublicCoordinate(property.longitude),
-        createdAt: property.createdAt,
-        updatedAt: property.updatedAt,
-    };
-}
 
 export async function GET() {
     const startedAt = Date.now();
@@ -103,39 +63,18 @@ export async function POST(request) {
             if (value) data[key] = value.toString();
         });
 
-        const parseNum = (key, isFloat = false) => {
-            const val = formData.get(key);
-            if (!val) return null;
-            const str = val.toString().replace(',', '.');
-            const parsed = isFloat ? parseFloat(str) : parseInt(str);
-            return isNaN(parsed) ? null : parsed;
-        };
-
-        const parseBrazilianCurrency = (key) => {
-            const val = formData.get(key);
-            if (!val) return null;
-            const str = val.toString();
-            if (/^\d+\.\d+$/.test(str)) return parseFloat(str);
-            const cleaned = str.replace(/[^\d,-]/g, '').replace(',', '.');
-            const parsed = parseFloat(cleaned);
+        const parseInteger = (key) => {
+            const parsed = parseInt(formData.get(key), 10);
             return Number.isNaN(parsed) ? null : parsed;
         };
+        const parseNumber = (key) => parseBrazilianNumber(formData.get(key));
 
-        const images = formData.getAll('images').filter((f) => f && typeof f.arrayBuffer === 'function');
-        const savedImages = [];
-
-        try {
-            for (const file of images) {
-                const { url } = await uploadImageToBlob(file);
-                savedImages.push(url);
-            }
-        } catch (uploadError) {
-            if (uploadError instanceof UploadValidationError) {
-                return NextResponse.json({ error: uploadError.message }, { status: uploadError.status });
-            }
-            throw uploadError;
+        // Valida tudo antes de enviar arquivos: erro depois do upload deixaria órfãos no Blob.
+        if (!data.title?.trim()) {
+            return NextResponse.json({ error: 'Informe o título do imóvel.' }, { status: 400 });
         }
 
+        const images = formData.getAll('images').filter((f) => f && typeof f.arrayBuffer === 'function');
         const customId = Array.from({ length: 12 }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.charAt(randomInt(36))).join('');
 
         let parsedFeatures = [];
@@ -165,6 +104,20 @@ export async function POST(request) {
             }
         }
 
+        const savedImages = [];
+        try {
+            for (const file of images) {
+                const { url } = await uploadImageToBlob(file);
+                savedImages.push(url);
+            }
+        } catch (uploadError) {
+            await deleteBlobs(savedImages);
+            if (uploadError instanceof UploadValidationError) {
+                return NextResponse.json({ error: uploadError.message }, { status: uploadError.status });
+            }
+            throw uploadError;
+        }
+
         let coords = null;
         const manualLat = parseFloat(data.latitude);
         const manualLng = parseFloat(data.longitude);
@@ -189,16 +142,16 @@ export async function POST(request) {
                 transactionType: data.transactionType || 'Venda',
                 category: data.category || 'Casa',
 
-                price: parseBrazilianCurrency('price') || 0,
-                condoFee: parseBrazilianCurrency('condoFee'),
-                iptu: parseBrazilianCurrency('iptu'),
+                price: parseNumber('price') || 0,
+                condoFee: parseNumber('condoFee'),
+                iptu: parseNumber('iptu'),
 
-                bedrooms: parseNum('bedrooms'),
-                suites: parseNum('suites'),
-                bathrooms: parseNum('bathrooms'),
-                parkingSpaces: parseNum('parkingSpaces'),
-                usableArea: parseNum('usableArea', true),
-                totalArea: parseNum('totalArea', true),
+                bedrooms: parseInteger('bedrooms'),
+                suites: parseInteger('suites'),
+                bathrooms: parseInteger('bathrooms'),
+                parkingSpaces: parseInteger('parkingSpaces'),
+                usableArea: parseNumber('usableArea'),
+                totalArea: parseNumber('totalArea'),
 
                 features: parsedFeatures,
 

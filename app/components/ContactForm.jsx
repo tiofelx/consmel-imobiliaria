@@ -6,7 +6,7 @@ import './ContactForm.css';
 const CONTACT_EMAIL = 'imobiliariaconsmel@gmail.com';
 const WHATSAPP_NUMBER = '5517996076414';
 
-export default function ContactForm({ propertyTitle }) {
+export default function ContactForm({ propertyTitle, transactionType }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -60,6 +60,7 @@ export default function ContactForm({ propertyTitle }) {
           phone2: formData.phone2 || null,
           message: formData.message || null,
           propertyTitle: propertyTitle || null,
+          transactionType: transactionType || null,
           contactViaEmail: formData.contactViaEmail,
           contactViaWhatsApp: formData.contactViaWhatsApp,
         }),

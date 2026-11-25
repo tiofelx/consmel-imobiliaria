@@ -25,6 +25,8 @@ model User {
   role     String  @default("CLIENT") // "ADMIN" | "CLIENT"
   phone    String?
   emailVerified DateTime?
+  // Sessões emitidas com outra versão deixam de valer (troca de senha, 2FA desativado).
+  sessionVersion Int @default(0)
 
   // 2FA Fields
   twoFactorEnabled Boolean @default(false)

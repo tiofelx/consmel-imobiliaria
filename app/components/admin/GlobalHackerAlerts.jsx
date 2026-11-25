@@ -3,15 +3,13 @@
 import { useState, useEffect, useRef } from 'react';
 import './GlobalHackerAlerts.css';
 
-const ALERT_POLL_INTERVAL_MS = 1000;
+const ALERT_POLL_INTERVAL_MS = 15000;
 
 export default function GlobalHackerAlerts() {
     const [alerts, setAlerts] = useState([]);
     const lastSyncRef = useRef(null);
 
     useEffect(() => {
-        lastSyncRef.current = new Date().toISOString();
-
         const fetchAlerts = async () => {
             try {
                 const url = new URL('/api/admin/alerts/live', window.location.origin);
@@ -28,9 +26,9 @@ export default function GlobalHackerAlerts() {
                             return [...prev, ...newAlerts];
                         });
                     }
+                    // Relógio do servidor: o do navegador pode estar adiantado ou atrasado.
+                    lastSyncRef.current = data.now;
                 }
-
-                lastSyncRef.current = new Date().toISOString();
             } catch (err) {
             }
         };

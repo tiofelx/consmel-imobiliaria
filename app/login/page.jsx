@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { validateEmail, validatePhone, maskPhone, validatePassword, getPasswordStrengthLabel, detectFraud } from '@/lib/validations';
+import { validateEmail, validatePhone, maskPhone, validatePassword, getPasswordStrengthLabel } from '@/lib/validations';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import './login.css';
@@ -129,7 +129,7 @@ function LoginForm() {
                 });
 
                 const data = await res.json();
-                console.log('DEBUG LOGIN CLIENT: Response data:', data);
+
                 setIsLoading(false);
 
                 if (res.ok) {
@@ -169,23 +169,6 @@ function LoginForm() {
             const passResult = validatePassword(formData.password);
             if (!passResult.valid) {
                 errors.password = passResult.message;
-                if (passResult.suspicious) {
-                    try {
-                        await fetch('/api/alerts', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                type: 'suspicious_password',
-                                severity: 'high',
-                                source: 'register',
-                                name: formData.name,
-                                email: formData.email,
-                                phone: formData.phone,
-                                reasons: ['Senha suspeita detectada: possível tentativa de injection'],
-                            }),
-                        });
-                    } catch {}
-                }
             }
             if (formData.password !== formData.confirmPassword) {
                 errors.confirmPassword = 'As senhas não coincidem.';
@@ -197,30 +180,6 @@ function LoginForm() {
             }
 
             setIsLoading(true);
-
-            const fraud = detectFraud({
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone,
-            });
-
-            if (fraud.suspicious) {
-                try {
-                    await fetch('/api/alerts', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            type: 'fraud',
-                            severity: fraud.severity,
-                            source: 'register',
-                            name: formData.name,
-                            email: formData.email,
-                            phone: formData.phone,
-                            reasons: fraud.reasons,
-                        }),
-                    });
-                } catch {}
-            }
 
             try {
                 const res = await fetch('/api/auth/register', {
@@ -559,7 +518,7 @@ function LoginForm() {
                                             <input type="checkbox" />
                                             <span>Lembrar de mim</span>
                                         </label>
-                                        <Link href="/esqueci-senha" className="forgot-password">
+                                        <Link href="/esqueci-senha" className="forgot-password" prefetch={false}>
                                             Esqueceu a senha?
                                         </Link>
                                     </div>

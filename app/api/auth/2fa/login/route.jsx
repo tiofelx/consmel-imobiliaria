@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { verifyPendingSession, createSession } from '@/lib/auth';
+import { verifyPendingSession, startSession } from '@/lib/auth';
 import { verifyToken } from '@/lib/otp';
 import { decrypt } from '@/lib/encryption';
 import { consumeAttempt, resetRateLimit, consumeTotpCode } from '@/lib/rate-limit';
@@ -64,6 +64,7 @@ export async function POST(request) {
                 role: true,
                 twoFactorEnabled: true,
                 twoFactorSecret: true,
+                sessionVersion: true,
             }
         });
 
@@ -91,12 +92,7 @@ export async function POST(request) {
 
         await resetRateLimit(ip);
         await resetRateLimit(codeKey);
-        await createSession({
-            userId: user.id,
-            email: user.email,
-            role: user.role,
-            name: user.name
-        });
+        await startSession(user);
 
         const cookieStore = await cookies();
         cookieStore.delete('pending_2fa');

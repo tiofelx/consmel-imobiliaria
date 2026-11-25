@@ -60,6 +60,33 @@ export default function ProfileContent({ user }) {
         }
     };
 
+    const handleDisable2FA = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        setSuccess('');
+        try {
+            const res = await fetch('/api/auth/2fa/disable', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: verificationCode }),
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                setSuccess('2FA desativado. As outras sessões desta conta foram encerradas.');
+                setIs2FAEnabled(false);
+                setVerificationCode('');
+            } else {
+                setError(data.error || 'Código inválido.');
+            }
+        } catch (err) {
+            setError('Erro de conexão.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="profile-container fade-in">
             <div className="profile-header slide-up">
@@ -77,6 +104,24 @@ export default function ProfileContent({ user }) {
                                 {is2FAEnabled ? 'Ativo' : 'Inativo'}
                             </span>
                         </div>
+
+                        {is2FAEnabled && (
+                            <form className="verification-input-group" onSubmit={handleDisable2FA}>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    aria-label="Código do aplicativo para desativar o 2FA"
+                                    placeholder="000000"
+                                    value={verificationCode}
+                                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                    maxLength={6}
+                                    className="code-input"
+                                />
+                                <button type="submit" className="btn-verify" disabled={loading || verificationCode.length !== 6}>
+                                    {loading ? 'Aguarde...' : 'Desativar 2FA'}
+                                </button>
+                            </form>
+                        )}
 
                         {!is2FAEnabled && !qrCode && (
                             <button

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { createSession } from '@/lib/auth';
+import { startSession, getKnownDevice } from '@/lib/auth';
 import { hashPassword, verifyPassword } from '@/lib/hash';
 import { randomUUID } from 'crypto';
 import { consumeAttempt, resetRateLimit, consumeAccountAttempt, resetAccountAttempts, consumeTotpCode } from '@/lib/rate-limit';
@@ -55,7 +55,8 @@ export async function POST(request) {
             );
         }
 
-        if (!(await consumeAccountAttempt(email, ip))) {
+        const deviceId = await getKnownDevice(email);
+        if (!(await consumeAccountAttempt(email, ip, deviceId))) {
             logSecurityAttempt('rate-limit-account', { ip, userAgent, route: '/api/auth/login', reason: 'Too many attempts for one account', severity: 'high' });
             return NextResponse.json(
                 { error: 'Muitas tentativas para esta conta. Tente novamente em 1 hora.' },
@@ -74,6 +75,7 @@ export async function POST(request) {
                 twoFactorEnabled: true,
                 twoFactorSecret: true,
                 emailVerified: true,
+                sessionVersion: true,
             }
         });
 
@@ -121,7 +123,7 @@ export async function POST(request) {
         }
 
         await resetRateLimit(ip);
-        await resetAccountAttempts(email, ip);
+        await resetAccountAttempts(email, ip, deviceId);
         if (user.twoFactorEnabled) await resetRateLimit(`2fa:${user.id}`);
 
         if (!user.emailVerified) {
@@ -130,12 +132,7 @@ export async function POST(request) {
             return NextResponse.json({ requireEmailVerification: true });
         }
 
-        await createSession({
-            userId: user.id,
-            email: user.email,
-            role: user.role,
-            name: user.name
-        });
+        await startSession(user);
 
         return NextResponse.json(
             { message: 'Login realizado com sucesso!', user: { name: user.name, email: user.email, role: user.role } },

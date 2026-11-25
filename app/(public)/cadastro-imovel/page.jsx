@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { validateEmail, validatePhone, maskPhone, validateLocation, detectFraud } from '@/lib/validations';
+import { validateEmail, validatePhone, maskPhone, validateLocation } from '@/lib/validations';
 import "./cadastre.css";
 
 const CONTACT_EMAIL = 'imobiliariaconsmel@gmail.com';
@@ -145,32 +145,6 @@ export default function CadastreImovel() {
 
     setStatus("sending");
 
-    const fraud = detectFraud({
-      name: formData.nome,
-      email: formData.email,
-      phone: formData.contato1,
-      address: formData.endereco,
-    });
-
-    if (fraud.suspicious) {
-      try {
-        await fetch('/api/alerts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'fraud',
-            severity: fraud.severity,
-            source: 'cadastro-imovel',
-            name: formData.nome,
-            email: formData.email,
-            phone: formData.contato1,
-            address: formData.endereco,
-            reasons: fraud.reasons,
-          }),
-        });
-      } catch {}
-    }
-
     const details = [
       `Proprietário: ${formData.nome}`,
       `Contato 1: ${formData.contato1}`,
@@ -191,6 +165,7 @@ export default function CadastreImovel() {
           email: formData.email,
           phone: formData.contato1,
           interest: 'Cadastro de Imóvel',
+          address: formData.endereco,
           notes: details,
         })
       });

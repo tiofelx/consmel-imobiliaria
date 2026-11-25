@@ -10,7 +10,9 @@ export const metadata = {
 
 export default async function Imoveis({ searchParams }) {
   const params = await searchParams;
-  const tipo = params?.tipo?.toLowerCase();
+  // ?tipo=a&tipo=b chega como lista.
+  const tipoParam = [params?.tipo].flat()[0];
+  const tipo = tipoParam?.toLowerCase();
 
   const dbProperties = await prisma.property.findMany({
     where: tipo ? {
@@ -41,7 +43,6 @@ export default async function Imoveis({ searchParams }) {
   const filtered = properties;
 
   const getHeroClass = () => {
-    const tipo = params?.tipo?.toLowerCase();
     if (tipo === 'venda') return 'hero-venda';
     if (tipo === 'aluguel') return 'hero-aluguel';
     return 'hero-todos';
@@ -53,8 +54,8 @@ export default async function Imoveis({ searchParams }) {
         <div className="container">
           <h1 className="animate-slide-in-up">Nossos Imóveis</h1>
           <p className="hero-description animate-slide-in-up">
-            {params?.tipo
-              ? `Imóveis para ${params.tipo}`
+            {tipoParam
+              ? `Imóveis para ${tipoParam}`
               : 'Encontre o imóvel perfeito para você'
             }
           </p>
@@ -66,19 +67,19 @@ export default async function Imoveis({ searchParams }) {
           <div className="filters-bar">
             <Link
               href="/imoveis"
-              className={`filter-btn ${!params?.tipo ? 'active' : ''}`}
+              className={`filter-btn ${!tipoParam ? 'active' : ''}`}
             >
               Todos
             </Link>
             <Link
               href="/imoveis?tipo=venda"
-              className={`filter-btn ${params?.tipo === 'venda' ? 'active' : ''}`}
+              className={`filter-btn ${tipoParam === 'venda' ? 'active' : ''}`}
             >
               Venda
             </Link>
             <Link
               href="/imoveis?tipo=aluguel"
-              className={`filter-btn ${params?.tipo === 'aluguel' ? 'active' : ''}`}
+              className={`filter-btn ${tipoParam === 'aluguel' ? 'active' : ''}`}
             >
               Aluguel
             </Link>

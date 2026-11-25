@@ -229,7 +229,7 @@ export default async function PropertyDetail({ params }) {
 
             <div className="property-sidebar-wrapper">
               <div className="property-sidebar-sticky">
-                <ContactForm propertyTitle={property.title} />
+                <ContactForm propertyTitle={property.title} transactionType={property.transactionType} />
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
-import { getLiveAlerts } from '@/lib/alert-store';
+import { safeLogError } from '@/lib/safe-log';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
 
 export async function GET(request) {
@@ -16,14 +17,31 @@ export async function GET(request) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 403 });
         }
 
-        const { searchParams } = new URL(request.url);
-        const since = searchParams.get('since');
+        // Lê do banco: fila em memória não é compartilhada entre instâncias.
+        const now = new Date();
+        const requested = new Date(new URL(request.url).searchParams.get('since') || NaN);
+        const since = Number.isNaN(requested.getTime()) ? new Date(now.getTime() - 60_000) : requested;
 
-        const alerts = getLiveAlerts(since);
+        const events = await prisma.securityEvent.findMany({
+            where: { severity: 'critical', createdAt: { gt: since, lte: now } },
+            orderBy: { createdAt: 'desc' },
+            take: 5,
+        });
 
-        return NextResponse.json({ alerts });
+        return NextResponse.json({
+            now: now.toISOString(),
+            alerts: events.map((event) => ({
+                id: event.id,
+                timestamp: event.createdAt,
+                ip: event.ip,
+                source: event.route,
+                reason: event.reason,
+                severity: event.severity,
+                message: `Evento crítico detectado: ${event.event}`,
+            })),
+        });
     } catch (error) {
-        console.error('Error fetching live alerts:', error);
+        safeLogError('Error fetching live alerts', error);
         return NextResponse.json({ error: 'Erro ao buscar alertas' }, { status: 500 });
     }
 }

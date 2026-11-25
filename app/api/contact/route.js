@@ -18,6 +18,7 @@ const contactSchema = z.object({
     phone2: z.string().trim().max(25).optional().nullable(),
     message: z.string().trim().max(1000).optional().nullable(),
     propertyTitle: z.string().trim().max(200).optional().nullable(),
+    transactionType: z.string().trim().max(20).optional().nullable(),
     contactViaEmail: z.boolean().optional(),
     contactViaWhatsApp: z.boolean().optional(),
 });
@@ -42,10 +43,10 @@ export async function POST(request) {
 
     const parsed = contactSchema.safeParse(body);
     if (!parsed.success) {
-        return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.errors }, { status: 400 });
+        return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.issues }, { status: 400 });
     }
 
-    const { name, email, phone, phone2, message, propertyTitle, contactViaEmail, contactViaWhatsApp } = parsed.data;
+    const { name, email, phone, phone2, message, propertyTitle, transactionType, contactViaEmail, contactViaWhatsApp } = parsed.data;
 
     try {
         await prisma.client.create({
@@ -53,7 +54,7 @@ export async function POST(request) {
                 name,
                 email,
                 phone,
-                interest: propertyTitle ? 'Compra' : 'Compra',
+                interest: transactionType === 'Aluguel' ? 'Aluguel' : 'Compra',
                 status: 'Novo',
                 notes: [
                     propertyTitle ? `Imóvel: ${propertyTitle}` : null,

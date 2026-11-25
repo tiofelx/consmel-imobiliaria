@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import { startEmailVerification } from '@/lib/email-verification';
 import { hashPassword } from '@/lib/hash';
 import { consumeAttempt } from '@/lib/rate-limit';
-import { checkIpBlocked, blockIpAndAlert } from '@/lib/security';
+import { checkIpBlocked, blockIpAndAlert, flagSuspiciousSignup } from '@/lib/security';
 import xss from 'xss';
 import { z } from 'zod';
 import { safeLogError, sanitizeForLog } from '@/lib/safe-log';
@@ -11,7 +11,7 @@ import { getClientIpFromHeaders, getClientUserAgentFromHeaders, isJsonRequest, l
 
 const registerSchema = z.object({
     name: z.string().trim().min(3, "Nome completo é obrigatório").max(100)
-        .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, "O nome contém caracteres inválidos"),
+        .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$/, "O nome contém caracteres inválidos"),
     email: z.string().trim().email("E-mail inválido").max(150),
     password: z.string().min(8, "A senha deve ter pelo menos 8 caracteres").max(100),
     phone: z.string().trim().max(20).optional().nullable()
@@ -75,6 +75,8 @@ export async function POST(request) {
             );
         }
 
+        await flagSuspiciousSignup({ name, email, phone }, 'register');
+
         const existingUser = await prisma.user.findUnique({
             where: { email },
             select: { emailVerified: true },
@@ -86,7 +88,14 @@ export async function POST(request) {
         // A conta só é criada (ou alterada) depois que o código for confirmado.
         const { error, status } = await startEmailVerification(
             { email, via: 'register', name, phone, passwordHash },
-            { accountExists: Boolean(existingUser?.emailVerified) }
+            existingUser?.emailVerified
+                ? {
+                    notice: {
+                        subject: 'Você já tem uma conta na Consmel',
+                        text: 'Recebemos um pedido de cadastro com este e-mail, mas ele já tem uma conta. Entre com sua senha ou com o Google. Se não foi você, ignore esta mensagem.',
+                    },
+                }
+                : undefined
         );
         if (error) return NextResponse.json({ error }, { status });
 

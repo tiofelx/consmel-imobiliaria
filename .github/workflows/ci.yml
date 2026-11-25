@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # Banco inexistente, só para o build; os testes sobem o próprio.
+    env:
+      DATABASE_URL: postgresql://127.0.0.1:55432/postgres
+      DIRECT_DATABASE_URL: postgresql://127.0.0.1:55432/postgres?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Segredos descartáveis para o build
+        run: |
+          echo "JWT_SECRET=$(openssl rand -hex 48)" >> "$GITHUB_ENV"
+          echo "ENCRYPTION_KEY=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+      - run: npm run lint
+      - run: npm run build
+      - run: npm test

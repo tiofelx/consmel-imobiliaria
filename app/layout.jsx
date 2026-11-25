@@ -7,10 +7,13 @@ const inter = Inter({
   display: 'optional',
 });
 
+// O nonce da CSP (proxy.js) exige renderizar cada página no pedido.
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Consmel Imobiliária | Encontre o Imóvel dos Seus Sonhos',
   description: 'Imobiliária especializada em compra, venda e locação de imóveis. Casas, apartamentos, terrenos e muito mais. Encontre seu imóvel ideal com a Consmel.',
-  keywords: 'imobiliária, imóveis, casas, apartamentos, venda, aluguel, São Paulo',
+  keywords: 'imobiliária, imóveis, casas, apartamentos, terrenos, venda, aluguel, Guaraci, SP',
   authors: [{ name: 'Consmel Imobiliária' }],
   openGraph: {
     title: ' Consmel Imobiliária | Encontre o Imóvel dos Seus Sonhos',

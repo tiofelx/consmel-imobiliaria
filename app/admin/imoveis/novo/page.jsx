@@ -220,28 +220,28 @@ export default function NewProperty() {
         {currentStep === 1 && (
           <div className="form-grid">
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-              <label className="form-label">Título do Anúncio</label>
+              <label htmlFor="title" className="form-label">Título do Anúncio</label>
               <div className="input-wrapper">
-                <input type="text" className="form-input" placeholder="Ex: Casa de Alto Padrão no Jardins" value={formData.title} onChange={(e) => handleChange('title', e.target.value)} />
+                <input id="title" type="text" className="form-input" placeholder="Ex: Casa de Alto Padrão no Jardins" value={formData.title} onChange={(e) => handleChange('title', e.target.value)} />
               </div>
             </div>
 
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-              <label className="form-label">Descrição</label>
-              <textarea className="form-textarea" placeholder="Descreva os detalhes..." rows="4" value={formData.description} onChange={(e) => handleChange('description', e.target.value)}></textarea>
+              <label htmlFor="description" className="form-label">Descrição</label>
+              <textarea id="description" className="form-textarea" placeholder="Descreva os detalhes..." rows="4" value={formData.description} onChange={(e) => handleChange('description', e.target.value)}></textarea>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Tipo</label>
-              <select className="form-select" value={formData.transactionType} onChange={(e) => handleChange('transactionType', e.target.value)}>
+              <label htmlFor="transactionType" className="form-label">Tipo</label>
+              <select id="transactionType" className="form-select" value={formData.transactionType} onChange={(e) => handleChange('transactionType', e.target.value)}>
                 <option value="Venda">Venda</option>
                 <option value="Aluguel">Aluguel</option>
               </select>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Categoria</label>
-              <select className="form-select" value={formData.category} onChange={(e) => handleChange('category', e.target.value)}>
+              <label htmlFor="category" className="form-label">Categoria</label>
+              <select id="category" className="form-select" value={formData.category} onChange={(e) => handleChange('category', e.target.value)}>
                 <option value="">Selecione...</option>
                 <option value="Casa">Casa</option>
                 <option value="Apartamento">Apartamento</option>
@@ -259,41 +259,41 @@ export default function NewProperty() {
 
             <div className="form-group" style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: '1fr 2fr 0.6fr 2fr', gap: '20px' }}>
               <div className="form-group">
-                <label className="form-label">CEP *</label>
+                <label htmlFor="cep" className="form-label">CEP *</label>
                 <div className="input-wrapper">
-                  <input type="text" className="form-input" placeholder="00000-000" value={cep} onChange={handleCepChange} onBlur={handleCepBlur} maxLength={9} required />
+                  <input id="cep" type="text" className="form-input" placeholder="00000-000" value={cep} onChange={handleCepChange} onBlur={handleCepBlur} maxLength={9} required />
                   {isLoadingCep && <span style={{ position: 'absolute', right: '10px', top: '10px', fontSize: '12px', color: '#666' }}>Buscando...</span>}
                 </div>
               </div>
               <div className="form-group">
-                <label className="form-label">Cidade *</label>
-                <input type="text" className="form-input" value={address.city} onChange={(e) => handleAddressChange('city', e.target.value)} required />
+                <label htmlFor="city" className="form-label">Cidade *</label>
+                <input id="city" type="text" className="form-input" value={address.city} onChange={(e) => handleAddressChange('city', e.target.value)} required />
               </div>
               <div className="form-group">
-                <label className="form-label">UF *</label>
-                <input type="text" className="form-input" value={address.state} onChange={(e) => handleAddressChange('state', e.target.value.toUpperCase().slice(0, 2))} maxLength={2} placeholder="SP" required />
+                <label htmlFor="state" className="form-label">UF *</label>
+                <input id="state" type="text" className="form-input" value={address.state} onChange={(e) => handleAddressChange('state', e.target.value.toUpperCase().slice(0, 2))} maxLength={2} placeholder="SP" required />
               </div>
               <div className="form-group">
-                <label className="form-label">Bairro *</label>
+                <label htmlFor="neighborhood" className="form-label">Bairro *</label>
                 <div className="input-wrapper">
-                  <input type="text" className="form-input" value={address.neighborhood} onChange={(e) => handleAddressChange('neighborhood', e.target.value)} required />
+                  <input id="neighborhood" type="text" className="form-input" value={address.neighborhood} onChange={(e) => handleAddressChange('neighborhood', e.target.value)} required />
                 </div>
               </div>
             </div>
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-              <label className="form-label">Logradouro *</label>
+              <label htmlFor="street" className="form-label">Logradouro *</label>
               <div className="input-wrapper">
-                <input type="text" className="form-input" placeholder="Rua, Avenida, etc" value={address.street} onChange={(e) => handleAddressChange('street', e.target.value)} required />
+                <input id="street" type="text" className="form-input" placeholder="Rua, Avenida, etc" value={address.street} onChange={(e) => handleAddressChange('street', e.target.value)} required />
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">Número *</label>
-              <input type="text" className="form-input" value={address.number} onChange={(e) => handleAddressChange('number', e.target.value)} required />
+              <label htmlFor="number" className="form-label">Número *</label>
+              <input id="number" type="text" className="form-input" value={address.number} onChange={(e) => handleAddressChange('number', e.target.value)} required />
             </div>
             <div className="form-group">
-              <label className="form-label">Complemento</label>
-              <input type="text" className="form-input" value={address.complement} onChange={(e) => handleAddressChange('complement', e.target.value)} />
+              <label htmlFor="complement" className="form-label">Complemento</label>
+              <input id="complement" type="text" className="form-input" value={address.complement} onChange={(e) => handleAddressChange('complement', e.target.value)} />
             </div>
 
             <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '8px' }}>
@@ -313,32 +313,32 @@ export default function NewProperty() {
 
             <div className="form-grid cols-2" style={{ gridColumn: '1 / -1', gap: '20px', marginBottom: '32px' }}>
               <div className="form-group">
-                <label className="form-label">Quartos</label>
-                <input type="number" className="form-input" placeholder="0" value={formData.bedrooms} onChange={(e) => handleChange('bedrooms', e.target.value)} />
+                <label htmlFor="bedrooms" className="form-label">Quartos</label>
+                <input id="bedrooms" type="number" className="form-input" placeholder="0" value={formData.bedrooms} onChange={(e) => handleChange('bedrooms', e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">Suítes</label>
-                <input type="number" className="form-input" placeholder="0" value={formData.suites} onChange={(e) => handleChange('suites', e.target.value)} />
+                <label htmlFor="suites" className="form-label">Suítes</label>
+                <input id="suites" type="number" className="form-input" placeholder="0" value={formData.suites} onChange={(e) => handleChange('suites', e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">Banheiros</label>
-                <input type="number" className="form-input" placeholder="0" value={formData.bathrooms} onChange={(e) => handleChange('bathrooms', e.target.value)} />
+                <label htmlFor="bathrooms" className="form-label">Banheiros</label>
+                <input id="bathrooms" type="number" className="form-input" placeholder="0" value={formData.bathrooms} onChange={(e) => handleChange('bathrooms', e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">Vagas</label>
-                <input type="number" className="form-input" placeholder="0" value={formData.parkingSpaces} onChange={(e) => handleChange('parkingSpaces', e.target.value)} />
+                <label htmlFor="parkingSpaces" className="form-label">Vagas</label>
+                <input id="parkingSpaces" type="number" className="form-input" placeholder="0" value={formData.parkingSpaces} onChange={(e) => handleChange('parkingSpaces', e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">Área Útil</label>
+                <label htmlFor="usableArea" className="form-label">Área Útil</label>
                 <div className="input-wrapper">
-                  <input type="text" inputMode="decimal" className="form-input" placeholder="0" value={formData.usableArea} onChange={(e) => handleChange('usableArea', e.target.value)} />
+                  <input id="usableArea" type="text" inputMode="decimal" className="form-input" placeholder="0" value={formData.usableArea} onChange={(e) => handleChange('usableArea', e.target.value)} />
                   <span className="input-suffix">m²</span>
                 </div>
               </div>
               <div className="form-group">
-                <label className="form-label">Área Total</label>
+                <label htmlFor="totalArea" className="form-label">Área Total</label>
                 <div className="input-wrapper">
-                  <input type="text" inputMode="decimal" className="form-input" placeholder="0" value={formData.totalArea} onChange={(e) => handleChange('totalArea', e.target.value)} />
+                  <input id="totalArea" type="text" inputMode="decimal" className="form-input" placeholder="0" value={formData.totalArea} onChange={(e) => handleChange('totalArea', e.target.value)} />
                   <span className="input-suffix">m²</span>
                 </div>
               </div>
@@ -354,26 +354,26 @@ export default function NewProperty() {
 
             <div className="form-group" style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '32px' }}>
               <div className="form-group" style={{ flex: '0 1 300px' }}>
-                <label className="form-label">Preço</label>
+                <label htmlFor="price" className="form-label">Preço</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">R$</span>
-                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.price} onChange={(e) => handleCurrencyChange('price', e.target.value)} />
+                  <input id="price" type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.price} onChange={(e) => handleCurrencyChange('price', e.target.value)} />
                 </div>
               </div>
 
               <div className="form-group" style={{ flex: '0 1 300px' }}>
-                <label className="form-label">Condomínio</label>
+                <label htmlFor="condoFee" className="form-label">Condomínio</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">R$</span>
-                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.condoFee} onChange={(e) => handleCurrencyChange('condoFee', e.target.value)} />
+                  <input id="condoFee" type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.condoFee} onChange={(e) => handleCurrencyChange('condoFee', e.target.value)} />
                 </div>
               </div>
 
               <div className="form-group" style={{ flex: '0 1 300px' }}>
-                <label className="form-label">IPTU</label>
+                <label htmlFor="iptu" className="form-label">IPTU</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">R$</span>
-                  <input type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.iptu} onChange={(e) => handleCurrencyChange('iptu', e.target.value)} />
+                  <input id="iptu" type="text" inputMode="decimal" className="form-input" placeholder="0,00" value={formData.iptu} onChange={(e) => handleCurrencyChange('iptu', e.target.value)} />
                 </div>
               </div>
             </div>

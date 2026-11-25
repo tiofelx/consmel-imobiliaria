@@ -1,54 +1,13 @@
 import { NextResponse } from 'next/server';
-import { del } from '@vercel/blob';
+import { parseBrazilianNumber } from '@/lib/validations';
+import { toPublicProperty } from '@/lib/public-property';
+import { deleteBlobs, VERCEL_BLOB_URL_PATTERN } from '@/lib/upload-blob';
 import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
 import { getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
 import { uploadImageToBlob, UploadValidationError } from '@/lib/upload-blob';
 import { safeLogError } from '@/lib/safe-log';
 import { geocodeAddress } from '@/lib/geocode';
-
-function toPublicCoordinate(value) {
-    if (!Number.isFinite(value)) return null;
-    return Number(value.toFixed(3));
-}
-
-function buildLocationLabel(property) {
-    const cityState = [property.city, property.state].filter(Boolean).join(' - ');
-    return [property.neighborhood, cityState].filter(Boolean).join(', ');
-}
-
-function toPublicProperty(property) {
-    return {
-        id: property.id,
-        title: property.title,
-        description: property.description,
-        transactionType: property.transactionType,
-        category: property.category,
-        type: property.category,
-        price: property.price,
-        condoFee: property.condoFee,
-        iptu: property.iptu,
-        bedrooms: property.bedrooms,
-        suites: property.suites,
-        bathrooms: property.bathrooms,
-        parkingSpaces: property.parkingSpaces,
-        usableArea: property.usableArea,
-        totalArea: property.totalArea,
-        area: property.usableArea || property.totalArea,
-        features: property.features,
-        neighborhood: property.neighborhood,
-        city: property.city,
-        state: property.state,
-        location: buildLocationLabel(property),
-        image: property.images?.[0]?.url || null,
-        images: property.images,
-        videos: property.videos || [],
-        lat: toPublicCoordinate(property.latitude),
-        lng: toPublicCoordinate(property.longitude),
-        createdAt: property.createdAt,
-        updatedAt: property.updatedAt,
-    };
-}
 
 export async function GET(request, { params }) {
     try {
@@ -81,25 +40,11 @@ function safeJsonParse(value) {
     }
 }
 
-function parseBrazilianCurrency(value) {
-    if (value === null || value === undefined || value === '') return null;
-    if (typeof value === 'number') return value;
-    const str = value.toString();
-    if (/^\d+\.\d+$/.test(str)) return parseFloat(str);
-    const cleaned = str.replace(/[^\d,-]/g, '').replace(',', '.');
-    const parsed = parseFloat(cleaned);
-    return Number.isNaN(parsed) ? null : parsed;
+// Arquivos que deixaram de ser usados depois de uma edição.
+async function removeUnusedBlobs(before, after) {
+    const used = new Set([...after.images.map((image) => image.url), ...after.videos]);
+    await deleteBlobs([...before.images.map((image) => image.url), ...before.videos].filter((url) => !used.has(url)));
 }
-
-function parseDecimal(value) {
-    if (value === null || value === undefined || value === '') return null;
-    if (typeof value === 'number') return value;
-    const cleaned = value.toString().replace(',', '.');
-    const parsed = parseFloat(cleaned);
-    return Number.isNaN(parsed) ? null : parsed;
-}
-
-const VERCEL_BLOB_URL_PATTERN = /^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\//i;
 
 function sanitizeVideoUrls(input) {
     if (!Array.isArray(input)) return [];
@@ -115,16 +60,15 @@ function buildUpdateDataFromObject(data) {
         description: data.description || null,
         transactionType: data.transactionType,
         category: data.category,
-        price: parseBrazilianCurrency(data.price) || 0,
-        condoFee: parseBrazilianCurrency(data.condoFee),
-        iptu: parseBrazilianCurrency(data.iptu),
+        price: parseBrazilianNumber(data.price) || 0,
+        condoFee: parseBrazilianNumber(data.condoFee),
+        iptu: parseBrazilianNumber(data.iptu),
         bedrooms: data.bedrooms ? parseInt(data.bedrooms) : null,
         suites: data.suites ? parseInt(data.suites) : null,
         bathrooms: data.bathrooms ? parseInt(data.bathrooms) : null,
         parkingSpaces: data.parkingSpaces ? parseInt(data.parkingSpaces) : null,
-        usableArea: parseDecimal(data.usableArea),
-        totalArea: parseDecimal(data.totalArea),
-        features: Array.isArray(data.features) ? data.features : [],
+        usableArea: parseBrazilianNumber(data.usableArea),
+        totalArea: parseBrazilianNumber(data.totalArea),
         cep: data.cep || null,
         street: data.street || null,
         number: data.number || null,
@@ -133,6 +77,11 @@ function buildUpdateDataFromObject(data) {
         city: data.city || null,
         state: data.state || null,
     };
+
+    // A tela de edição não envia as características: sem o campo, nada muda.
+    if (Array.isArray(data.features)) {
+        updateData.features = data.features.filter((item) => typeof item === 'string').slice(0, 50);
+    }
 
     if (data.videos !== undefined) {
         const raw = typeof data.videos === 'string' ? safeJsonParse(data.videos) : data.videos;
@@ -188,6 +137,14 @@ export async function PUT(request, { params }) {
         const { id } = await params;
         const contentType = request.headers.get('content-type') || '';
 
+        const before = await prisma.property.findUnique({
+            where: { id },
+            select: { videos: true, images: { select: { url: true } } },
+        });
+        if (!before) {
+            return NextResponse.json({ error: 'Imóvel não encontrado' }, { status: 404 });
+        }
+
         if (contentType.includes('application/json')) {
             const data = await request.json();
             const updateData = buildUpdateDataFromObject(data);
@@ -220,6 +177,7 @@ export async function PUT(request, { params }) {
                     include: { images: { orderBy: { order: 'asc' } } },
                 });
             });
+            await removeUnusedBlobs(before, property);
             return NextResponse.json(property);
         }
 
@@ -280,6 +238,7 @@ export async function PUT(request, { params }) {
                 newUrls.push(url);
             }
         } catch (uploadError) {
+            await deleteBlobs(newUrls);
             if (uploadError instanceof UploadValidationError) {
                 return NextResponse.json({ error: uploadError.message }, { status: uploadError.status });
             }
@@ -318,6 +277,7 @@ export async function PUT(request, { params }) {
             });
         });
 
+        await removeUnusedBlobs(before, property);
         return NextResponse.json(property);
     } catch (error) {
         safeLogError('Error updating property', error);
@@ -347,12 +307,7 @@ export async function DELETE(request, { params }) {
             include: { images: true },
         });
 
-        const blobUrls = [...deleted.images.map((image) => image.url), ...deleted.videos]
-            .filter((url) => VERCEL_BLOB_URL_PATTERN.test(url));
-        if (blobUrls.length > 0) {
-            // O imóvel já foi excluído: falha aqui só deixa arquivo órfão.
-            await del(blobUrls).catch((error) => safeLogError('Error deleting property blobs', error));
-        }
+        await deleteBlobs([...deleted.images.map((image) => image.url), ...deleted.videos]);
 
         return NextResponse.json({ message: 'Imóvel excluído com sucesso' });
     } catch (error) {

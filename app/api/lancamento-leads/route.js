@@ -12,7 +12,7 @@ const limiter = rateLimit({ uniqueTokenPerInterval: 500, interval: 600000 });
 
 const leadSchema = z.object({
     name: z.string().trim().min(2, 'Nome muito curto').max(100, 'Nome muito longo')
-        .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Nome contém caracteres inválidos'),
+        .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$/, 'Nome contém caracteres inválidos'),
     email: z.string().trim().email('E-mail inválido').max(150),
     phone: z.string().trim().min(8, 'WhatsApp inválido').max(25, 'WhatsApp muito longo')
         .regex(/^[\d\s()+\-]+$/, 'WhatsApp contém caracteres inválidos'),
@@ -50,7 +50,7 @@ export async function POST(request) {
     const parsed = leadSchema.safeParse(data);
     if (!parsed.success) {
         return NextResponse.json(
-            { error: 'Dados inválidos', details: parsed.error.errors },
+            { error: 'Dados inválidos', details: parsed.error.issues },
             { status: 400 }
         );
     }

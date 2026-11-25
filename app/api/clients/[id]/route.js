@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifySession } from '@/lib/auth';
 import { parseRecordId, getClientIpFromHeaders, getClientUserAgentFromHeaders, logSecurityAttempt } from '@/lib/request-security';
+import { clientUpdateSchema } from '@/lib/admin-schemas';
 
 export async function GET(request, { params }) {
     try {
@@ -55,7 +56,11 @@ export async function PUT(request, { params }) {
             return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
         }
 
-        const data = await request.json();
+        const parsed = clientUpdateSchema.safeParse(await request.json());
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.issues }, { status: 400 });
+        }
+        const data = parsed.data;
 
         const client = await prisma.client.update({
             where: { id: parsedId },

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { createSession, createPendingSession } from '@/lib/auth';
+import { startSession, createPendingSession } from '@/lib/auth';
 import { startEmailVerification } from '@/lib/email-verification';
 import { cookies } from 'next/headers';
 import { safeLogError, sanitizeForLog } from '@/lib/safe-log';
@@ -75,6 +75,7 @@ export async function GET(request) {
                 role: true,
                 twoFactorEnabled: true,
                 emailVerified: true,
+                sessionVersion: true,
             }
         });
 
@@ -106,12 +107,7 @@ export async function GET(request) {
             return NextResponse.redirect(new URL('/login?action=2fa', request.url));
         }
 
-        await createSession({
-            userId: user.id,
-            email: user.email,
-            role: user.role,
-            name: user.name
-        });
+        await startSession(user);
 
         if (user.role === 'ADMIN') {
             return NextResponse.redirect(new URL('/admin', request.url));
